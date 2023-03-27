@@ -1,0 +1,55 @@
+<section class="search-gift">
+  <div class="accordion" data-controller="accordion">
+    <button aria-expanded="true" class="accordion__button accordion__button--has-icon-condition" data-accordion-target="trigger" data-action="accordion#toggle" type="button">
+      条件を指定してさがす
+    </button>
+    <div class="accordion__content" data-accordion-target="content">
+      <form class="container gap-40 lg:gap-60 pt-10 lg:pt-80 pb-60" data-action="submit->range-slider#submit" data-controller="range-slider">
+        <div class="toggle-button-group lg:grid-cols-4">
+          <p class="toggle-button-group__title lg:col-span-1">性別</p>
+          <ul class="toggle-button-group__list lg:col-span-3">
+            {% assign items = "すべて,男の子,女の子" | split: ',' %}
+            {% for item in items %}
+              <li class="toggle-button">
+                <input class="toggle-button__button input-gender-gift" name="sex" type="radio" value="{{ item }}" {% if forloop.first %} checked {% endif %}>
+                <label class="toggle-button__label">{{ item }}</label>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+        <div class="price-range-selector lg:grid-cols-4 lg:mt-30">
+          <p class="price-range-selector__title lg:col-span-1">価格帯</p>
+          <div class="price-range-selector__slider lg:col-span-3" data-range-slider-target="sliderContainer">
+            <input data-action="range-slider#onChangeValueLow" class="sliderLow" data-range-slider-target="sliderLow" max="{{ max }}" min="{{ min }}" name="min" step="{{ step }}" type="range" value="{{ min }}">
+            <input data-action="range-slider#onChangeValueHigh" class="sliderHigh" data-range-slider-target="sliderHigh" max="{{ max }}" min="{{ min }}" name="max" step="{{ step }}" type="range" value="{{ max }}">
+            <span data-range-slider-target="range"></span>
+            <div class="price-range-selector__labels"> 
+              <output data-range-slider-target="labelLow" id="labelLow"></output>
+              〜
+              <output data-range-slider-target="labelHigh" id="labelHigh"></output>
+            </div>
+          </div>
+        </div>
+        <div class="checkbox-group lg:grid-cols-4">
+          <p class="checkbox-group__title lg:col-span-1">カテゴリ</p>
+          <ul class="checkbox-group__list grid-cols-2 lg:col-span-3 lg:flex">
+            {% assign items = value | split: "," %}
+            {% for item in items %}
+              <li>
+                <label class="checkbox">
+                  <input name="category" class="input-category-gift" value="{{ item }}" type="checkbox">
+                  <span>{% render 'icon-checkbox' %}</span>
+                  {{ item }}
+                </label>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+        <div class="submit-button grid-cols-4">
+          <input class="button button--light col-span-1" id="js-btn-form-gift" data-action="click->range-slider#reset" type="reset" value="リセット">
+          <button class="button button--cta col-span-3" id="gift-submit" type="submit">この条件で検索</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>

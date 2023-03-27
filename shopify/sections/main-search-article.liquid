@@ -1,0 +1,101 @@
+{% assign label_category_blog = "all," %}
+
+{%- if search.performed -%}
+  {% paginate search.results by search.results_count %}
+    {%- for item in search.results -%}
+      {% assign blog_article = item.url | split: "/" %}
+      {% assign convert_string = blog_article[2] | url_decode %}
+
+      {%- unless label_category_blog contains convert_string -%}
+        {% assign label_category_blog = label_category_blog | append: convert_string | append: ","  %}
+      {%- endunless -%}
+    {%- endfor -%}
+  {% endpaginate %}
+{%- endif -%}
+
+{% assign label_category_blog = label_category_blog | split: ',' %}
+
+<div class="container gap-40 lg:gap-60" data-controller="switcher">
+  <h1 class="news__title">{{ section.settings.heading }}</h1>
+
+  <form data-action="switcher#submitFormSearch">
+    <input data-switcher-target="inputSearch" class="search-form" name="q" value="{{ search.terms | remove: '*' }}" placeholder="キーワード検索" type="search">
+  </form>
+
+  {%- if search.performed -%}
+    <ul class="category-tab">
+      {% for label_category in label_category_blog %}
+        {%- if label_category != blank -%}
+          <li class="category-tab__item">
+            <label>
+              <input data-action="click->switcher#switch" data-switcher-target="tab" data-switcher-index-param="{{ forloop.index0 }}" name="tab" type="radio" value="{{ label_category | upcase }}">
+              <span>
+                {% if label_category == 'ニュース' %}
+                  NEWS
+                {% else %}
+                  {{ label_category | upcase }}
+                {% endif %}
+              </span>
+            </label>
+          </li>
+        {%- endif -%}
+      {% endfor %}
+    </ul>
+
+    <div class="news__container">
+      <hr class="pc">
+
+      <div class="news__content" data-switcher-target="content">
+        <div class="container gap-70 lg:gap-90">
+          <ul class="item-list item-list--article">
+            {%- for item in search.results -%}
+              <li class="{% if forloop.index > settings.item_per_page %}hidden{% endif %}">
+                <a href="{{ item.url }}">
+                  {% render 'article-item-v2', article: item %}
+                </a>
+              </li>
+            {%- endfor -%}
+          </ul>
+          {% render 'pagination', total_items: search.results_count, setting: settings  %}
+        </div>
+      </div>
+
+      {%- for category in label_category_blog -%}
+        {% assign count_item = 0 %}
+
+        {%- if category != 'all' -%}
+          <div class="news__content cate_{{ category }}" data-switcher-target="content">
+            <div class="container gap-70 lg:gap-90">
+              <ul class="item-list item-list--article">
+                {%- for item in search.results -%}
+                  {% assign article_category = item.url | split: "/" %}
+                  {% assign article_category_decode = article_category[2] | url_decode %}
+
+                  {%- if category == article_category_decode -%}
+                    {% assign count_item = count_item | plus : 1 %}
+
+                    <li class="{% if count_item > settings.item_per_page %}hidden{% endif %}">
+                      {% render 'article-item-v2', article: item %}
+                    </li>
+                  {%- endif -%}
+                {%- endfor -%}
+              </ul>
+
+              {% render 'pagination', total_items: count_item, setting: settings %}
+            </div>
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "Search article",
+  "class": "news",
+  "settings": [
+
+  ]
+}
+{% endschema %}

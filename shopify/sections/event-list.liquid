@@ -1,0 +1,152 @@
+<section class="event-list" data-lang="{{ request.locale.iso_code }}">
+  {% if section.settings.title %}
+    <h2 class="event-list__title {% if request.locale.iso_code == 'en' %}hidden{% endif %}">{{ section.settings.title }}</h2>
+  {% endif %}
+  <ul class="event-list__list event-list__list--{{ request.locale.iso_code }}">
+  {% comment %} 
+    TODO: generate list of events 
+    Remove the <li> tag because some case if the block.settings be empty, the li tag will display with empty contents broken layout
+  {% endcomment %}
+  {% for block in section.blocks %}
+    {% if block.type == "list-event" %}
+      {% if request.locale.iso_code == 'en' and block.settings.event_collection_en != blank %}
+        {% assign event_language = block.settings.event_collection_en %}
+        <li>
+          {% render 'event-item', event: event_language %}
+        </li>
+      {% elsif request.locale.iso_code == 'ja' and block.settings.event_collection != blank %}
+        {% assign event_language = block.settings.event_collection %}
+        <li>
+          {% render 'event-item', event: event_language %}
+        </li>
+      {% endif %}
+    {% endif %}
+    {% if block.type == "list-feature" %}
+      <li>
+        {% render 'feature-item', event: block.settings %}
+      </li>
+    {% endif %}
+    {% if block.type == "list-report" %}
+      <li>
+        {% render 'report-item', report_event: block.settings %}
+      </li>
+    {% endif %}
+  {% endfor %}
+  </ul>
+</section>
+
+{% schema %}
+{
+  "name": "Event List",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Event Name"
+    }
+  ],
+  "max_blocks": 9999,
+  "blocks": [
+    {
+      "type": "list-event",
+      "name": "Event",
+      "settings": [
+        {
+          "type": "collection",
+          "id": "event_collection",
+          "label": "Event Collection"
+        },
+        {
+          "type": "collection",
+          "id": "event_collection_en",
+          "label": "Event Collection In English"
+        }
+      ]
+    },
+    {
+      "type": "list-feature",
+      "name": "Feature",
+      "settings": [
+          {
+          "type": "text",
+          "id": "title",
+          "label": "Feature Title"
+        },
+        {
+          "type": "text",
+          "id": "title_en",
+          "label": "Feature Title In English"
+        },
+        {
+          "type": "collection",
+          "id": "collection_for_tags",
+          "label": "Collection for tags"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Feature Image"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Feature Description"
+        },
+        {
+          "type": "textarea",
+          "id": "description_en",
+          "label": "Feature Description In English"
+        },
+        {
+          "type": "url",
+          "id": "url",
+          "label": "Feature URL"
+        }
+      ]
+    },
+    {
+      "type": "list-report",
+      "name": "Report",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Report Title"
+        },
+        {
+          "type": "text",
+          "id": "title_en",
+          "label": "Report Title (en)"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Report Description"
+        },
+        {
+          "type": "textarea",
+          "id": "description_en",
+          "label": "Report Description (en)"
+        },
+        {
+          "type": "collection",
+          "id": "collection_for_tags",
+          "label": "Collection for tags"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Report Image"
+        },
+        {
+          "type": "url",
+          "id": "url",
+          "label": "Report URL"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

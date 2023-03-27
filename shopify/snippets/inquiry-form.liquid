@@ -1,0 +1,73 @@
+<div class="inquiry-form" id="Inquiry_Form">	
+	<form action="" method="post">
+		<div class="container gap-50 lg:gap-60">
+			{%- comment -%} <p class="inquiry__description">
+			各種お問い合わせは下記のフォームからご入力をお願いします。<br>お問い合わせの前に「<a href="">ご利用ガイド</a>」「<a href="">よくあるご質問</a>」をご参照ください。<br>内容により回答にお日にちをいただく場合がございます。<br>ご注文に関するお問い合わせはお手数ですが、【ご注文番号】をお問い合わせ内容にご記入ください。</p> {%- endcomment -%}
+			<div class="inquiry__description">
+				{{ section.contact_description }}
+			</div>
+			<div class="input-form">
+			<hr>
+			<div class="grid-cols-2">
+				<label class="input-form__label col-span-2">お問い合わせの種類*</label>
+				<div class="col-span-2 container gap-20 lg:gap-10">
+				<select name="subject">
+					<option disabled selected>選択してください</option>
+					{% assign items = "オンラインショップのご注文について,オンラインショップの返品・交換について,ショップでのお買い上げ・イベントについて,商品について,ファミリアメンバーズについて,修理・メンテナンスについて,ご意見・ご要望について" | split: ',' %}
+					{% for item in items %}
+						<option value="{{ item }}">{{ item }}</option>
+					{% endfor %}
+				</select>
+				</div>
+				<span class="error hide" id="error-subject">必須項目です。</span>
+			</div>
+			<div class="grid-cols-2">
+				<label class="input-form__label col-span-2">お名前*</label>
+				<div class="col-span-1">
+					<input autocomplete="family-name" class="col-span-1" name="family-name" placeholder="姓" required type="text" value="" >
+					<span class="error hide" id="error-family-name">入力必須項目です。</span>
+				</div>
+				<div class="col-span-1">
+					<input autocomplete="given-name" class="col-span-1" name="given-name" placeholder="名" required type="text" value="" >
+					<span class="error hide" id="error-given-name">入力必須項目です。</span>
+				</div>
+			</div>
+			<div class="grid-cols-2">
+				<label class="input-form__label col-span-2">お名前（カナ）*</label>
+				<div class="col-span-1">
+					<input name="family-name-kana" placeholder="セイ" required type="text" value="" />
+					<span class="error hide" id="error-family-name-kana">入力必須項目です。</span>
+				</div>
+				<div class="col-span-1">
+					<input name="given-name-kana" placeholder="メイ" required type="text" value="" >
+					<span class="error hide" id="error-given-name-kana">入力必須項目です。</span>
+				</div>
+				<p class="input-form__caption col-span-2">全角で入力してください。</p>
+			</div>
+			<div class="grid-cols-2">
+				<label class="input-form__label col-span-2">メールアドレス（PC・スマートフォン）*</label>
+				<input class="col-span-2" name="email-address" required placeholder="you@familiar.co.jp" type="text" value="">
+				<span class="error hide" id="error-email-address">メールアドレスを入力してください。</span>
+			</div>
+			<div class="grid-cols-2">
+				<label class="input-form__caption col-span-2">確認のため、もう一度ご入力ください。</label>
+				<input class="col-span-2" name="email-address-confirm" placeholder="you@familiar.co.jp" type="text" value="">
+				<span class="error hide" id="error-email-address-confirm">メールアドレスを入力してください。</span>
+			</div>
+			<div class="grid-cols-2">
+				<label class="input-form__label col-span-2">電話番号</label>
+				<input class="col-span-2" name="tel" placeholder="000-0000-0000" required type="text" maxlength="13" >
+				<span class="error hide" id="error-phone">入力必須項目です。</span>
+			</div>
+			<div class="grid-cols-2">
+				<label class="input-form__label col-span-2">お問い合わせ内容</label>
+				<textarea class="col-span-2" rows="3" name="description"></textarea>
+				<span class="error hide" id="error-description">入力必須項目です。</span>
+			</div>
+			</div>
+		</div>
+		<div class="inquiry__footer">
+			<button type="button" class="button button--cta">確認する</button>
+		</div>
+	</form>
+</div>  

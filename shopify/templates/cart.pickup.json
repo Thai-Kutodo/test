@@ -1,0 +1,13 @@
+{
+  "sections": {
+    "item": {
+      "type": "checkout-pickup",
+      "settings": {
+
+      }
+    }
+  },
+  "order": [
+    "item"
+  ]
+}

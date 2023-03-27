@@ -1,0 +1,60 @@
+<div class="order-history-item pb-70 lg:pb-80">
+  <div class="order-history-item__header">
+    <div>
+      <div class="order-history-item__date-title">ご注文日</div>
+      <div class="order-history-item__date">{{ order.created_at | date: "%Y.%m.%d" }}</div>
+    </div>
+    <a class="order-history-item__see-detail" href="{{ order.customer_url }}">詳細を見る</a>
+  </div>
+  <dl class="description-list grid-cols-3 lg:grid-cols-8" data-loyal-order-points>
+    <dt>ご注文番号</dt>
+    <dd class="col-span-2 lg:col-span-7">{{ order.order_number }}</dd>
+    <dt>合計金額</dt>
+    <dd class="col-span-2 lg:col-span-7">{{ order.total_price | money }}
+      <span class="description-list__tax-in">税込</span>
+    </dd>
+    {% comment %} {% unless shop.metafields.loyalty.easy_points_attributes.value.stealth_mode and has_order_history %}
+      <dt>{{ 'easypoints.points_earned_total' | t }}</dt>
+      <dd 
+        class="col-span-2 lg:col-span-7"
+        data-label="{{ 'easypoints.points_earned_total' | t }}"
+        data-loyal-order-id="{{ order.id }}">
+        <span data-loyal-target="awardable-points">-</span> {{ 'easypoints.points' | t}}
+      </dd>
+    {% endunless %} {% endcomment %}
+    {% assign order_status = order.fulfillment_status_label %}
+    {% if order.cancelled == true %}
+      {% assign order_status = "キャンセル済み" %}
+    {% endif %}
+    {% if order.fulfillment_status == "partially_refunded" or order.fulfillment_status == "refunded" %}
+      {% assign order_status = "返品受付" %}
+    {% endif %}
+    <dt>ご注文状態</dt>
+    <dd class="col-span-2 lg:col-span-7">{{ order_status }}</dd>
+    {% comment %} if storepickup attribute is blank then hide store name {% endcomment %}
+    {% assign pickup_store_name = "-" %}
+    {% if order.attributes["店舗受取"] != blank %}
+      {% assign pickup_store_name = order.attributes["店舗受取"]| split: " " | first %}
+      {% if pickup_store_name contains "ONLINE" %}
+        {% assign pickup_store_name = "ONLINE STORE" %}
+      {% endif %}
+    {% endif %}
+    {% if pickup_store_name != "-" %}
+      <dt>受取店舗</dt>
+      <dd class="col-span-2 lg:col-span-7">{{ pickup_store_name }}</dd>
+    {% endif %}
+  </dl>
+  <div class="accordion" data-controller="accordion">
+    <button aria-expanded="false" class="accordion__button" data-accordion-target="trigger" data-action="accordion#toggle" type="button">
+      ご注文内容
+    </button>
+    <div class="accordion__content" data-accordion-target="content">
+      <ul class="order-item-list">
+        {% for line_item in order.line_items %}
+          {% render 'order-item', item: line_item %}
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  <a class="button button--has-icon-arrow-right " href="{{ order.customer_url }}">詳細を見る</a>
+</div>

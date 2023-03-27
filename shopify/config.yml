@@ -1,0 +1,6 @@
+development:
+  password: shptka_1e2449a917fcf66db7883863e2fc552a
+  theme_id: 132332126366
+  store: familiar-stg.myshopify.com
+  ignore_files:
+    - config/settings_data.json

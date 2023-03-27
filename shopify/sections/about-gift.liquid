@@ -1,0 +1,92 @@
+<section class="section-product-gift">
+    {%- liquid
+      assign block = section.blocks
+      assign title = section.settings.title
+      assign sub_title = section.settings.sub_title
+      assign icon = section.settings.icon
+      assign content_subtitle = section.settings.content_subtitle
+      assign btn_title = section.settings.btn_title
+      assign btn_url = section.settings.btn_url
+    -%}
+    {% render 'about-gift' , title: title, icon: icon, sub_title: sub_title, content_subtitle:content_subtitle, btn_title: btn_title, btn_url:btn_url, block: block %}
+</section>
+{% schema %}
+  {
+    "name": "t:sections.about_gift.name",
+    "tag": "section",
+    "class": "section-product-gift",
+    "max_blocks": 5,
+    "settings": [
+      {
+          "type": "text",
+          "id": "title",
+          "label": "t:sections.about_gift.settings.title.label",
+          "default": "ギフトのご注文について"
+      },
+      {
+          "type": "textarea",
+          "id": "icon",
+          "label": "t:sections.about_gift.settings.svg_code.label"
+      },
+      {
+          "type": "text",
+          "id": "sub_title",
+          "label": "t:sections.about_gift.settings.subtitle.label",
+          "default": "送料"
+      },
+      {
+          "type": "text",
+          "id": "content_subtitle",
+          "label": "t:sections.about_gift.settings.content_subtitle.label",
+          "default": "11,000円以上(税込)の場合<br>日本国内送料無料"
+      },
+      {
+          "type": "text",
+          "id": "btn_title",
+          "label": "t:sections.about_gift.settings.button_on_bottom.label",
+          "default": "ご利用ガイドへ"
+      },
+      {
+          "type": "url",
+          "id": "btn_url",
+          "label": "t:sections.about_gift.settings.button_url.label"
+      }
+  ],
+    "blocks": [
+      {
+        "type": "about_thumb",
+        "name": "t:sections.about_gift.blocks.about_thumb.name",
+        "settings": [
+          {
+              "type": "image_picker",
+              "id": "image",
+              "label": "t:sections.about_gift.blocks.about_thumb.settings.image.label"
+          },
+          {
+              "type": "text",
+              "id": "title",
+              "label": "t:sections.about_gift.blocks.about_thumb.settings.title.label"
+            },
+          {
+            "type": "textarea",
+            "id": "content",
+            "label": "t:sections.about_gift.blocks.about_thumb.settings.content.label"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "t:sections.about_gift.name",
+        "blocks": [
+          {
+            "type": "about_thumb"
+          },
+          {
+            "type": "about_thumb"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

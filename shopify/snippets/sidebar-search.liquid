@@ -1,0 +1,105 @@
+
+{%- liquid
+  assign sort_by = search.sort_by | default: search.default_sort_by
+  assign terms = search.terms | escape
+-%}
+<aside class="search" data-search-target="search" id="search">
+  <div class="search__close-button">
+    <button data-action="search#close" type="button">{% render 'icon-close' %}</button>
+  </div>
+  <div class="search__content">
+    <div class="search__form-container">
+      <form action="#" data-action="submit->search#submitFormNormal">  
+        <input class="search-form js-search-input-all search-form--large" id="search-form" data-action="focusin->search#toggleInputSearch" data-search-target="searchValue" name="q" placeholder="サイト全体検索" type="search">
+      </form>
+    </div>
+    <div class="container gap-10 lg:gap-20" data-search-related-tags>
+      <h3>関連タグ</h3>
+      <ul class="search__tag-list" id="search__tag">
+        {% assign items = settings.tag_list| split: ',' %}
+        {% for item in items %}
+          <li>
+            <a class="tag tag--large" href="/search?view=filter-content&q={{ item | replace: '#', '%23' }}">{{ item }}</a>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+    <div class="container gap-30 lg:gap-60" data-search-content>
+      <div class="container gap-30 lg:gap-40">
+        <div class="container gap-10 lg:gap-20">
+          <h3>人気のタグ</h3>
+          <ul class="search__tag-list">
+            {% assign items = settings.tag_list | split: ',' %}
+            {% for item in items %}
+              <li>
+                <a class="tag tag--large" href="/search?view=filter-content&q={{ item | replace: '#', 'hashtag_' }}">{{ item }}</a>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+        <hr>
+        <div class="container gap-10 lg:gap-20">
+          <h3>アイテム検索</h3>
+          <ul class="search__link-list">
+            <li>
+              <button class="link-button link-button--has-icon-condition" data-action="search#showConditionSearch" type="button">条件を指定して探す</button>
+            </li>
+            <li data-controller="modal-trigger">
+              <button class="link-button link-button--has-icon-category" data-action="search#showCategorySearch" type="button">カテゴリから探す</button>
+            </li>
+            <li data-controller="modal-trigger">
+              <button class="link-button link-button--has-icon-item" data-action="search#showItemSearch" type="button">アイテムから探す</button>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <hr>
+      {% render 'scroll-item-recently-viewed', title: '最近チェックしたアイテム' %}
+    </div>
+  </div>
+  <div class="search__detail" data-search-target="conditionSearch">
+    <div class="search__nav-bar">
+      <button class="search__nav-button" data-action="search#back" type="button">
+        {% render 'icon-arrow-left' %}
+        条件を指定して探す
+      </button>
+    </div>
+    <div class="search__detail-content panel-search">
+      {% render 'search-with-conditional-form', type_form: 'panel-search-form'%}
+    </div>
+  </div>
+  <div class="search__detail" data-search-target="categorySearch">
+    <div class="search__nav-bar">
+      <button class="search__nav-button" data-action="search#back" type="button">
+        {% render 'icon-arrow-left' %}
+        カテゴリから探す
+      </button>
+    </div>
+    <div class="search__detail-content">
+      <ul class="search__item-list">
+        {%- for link in linklists[settings.menu_category].links -%}
+          <li>
+            <a href="{% if link.url == '#' %}{{ settings.menu_category_config }}{{ link.title }}{% else %}{{ link.url }}{% endif %}?filter.v.availability=1&&sort_by=created-descending" >{{ link.title }}</a>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="search__detail" data-search-target="itemSearch">
+    <div class="search__nav-bar">
+      <button class="search__nav-button" data-action="search#back" type="button">
+        {% render 'icon-arrow-left' %}
+        アイテムから探す
+      </button>
+    </div>
+    <div class="search__detail-content">
+      <ul class="search__item-list">
+        {%- for link in linklists[settings.menu_items].links -%}
+          <li>
+            <a href="{% if link.url == '#' %}{{ settings.menu_items_config }}{{ link.title }}{% else %}{{ link.url }}{% endif %}?sort_by=created-descending">{{ link.title }}</a>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</aside>

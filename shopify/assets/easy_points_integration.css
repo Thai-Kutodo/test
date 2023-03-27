@@ -1,0 +1,271 @@
+:root {
+  --ep-white:           #FFF;
+  --ep-black:           #000;
+  --ep-red:             #E53E3E;
+  --ep-color-text:      #000;
+  --ep-color-points:    var(--color-primary);
+  --ep-font-size:         12px;
+  --ep-spacer-1:          10px;
+  --ep-spacer-2:          20px;
+  --ep-spacer-3:          30px;
+}
+
+.easy-points {
+font-size: var(--ep-font-size);
+color: var(--ep-color-points);
+}
+
+.easy-points [data-loyal-target="point-exclusion"] + .easy-points__text {
+display: none;
+}
+
+.easy-points [data-loyal-target="point-exclusion-product"] + .easy-points__text{
+display: none;
+}
+
+/* Accoun Banance Expiration */
+
+.easy-points__account .easy-points-text__muted {
+font-size: 80%;
+opacity: 50%;
+padding-left: var(--ep-spacer-1);
+}
+
+.easy-points__account .easy-points-balance__container > span:first-child,
+.easy-points__account .easy-points-tiers__container > span:first-child {
+display: inline-block;
+}
+
+/* Account Balance Contaier */
+
+.easy-points__account {
+margin-bottom: var(--ep-spacer-3);
+}
+
+.easy-points-balance__container .easy-points {
+color: inherit;
+font-size: inherit;
+}
+
+.easy-points-tiers__container strong {
+text-transform: uppercase;
+}
+
+/* Bithday Forms */
+
+.easy-points__note-form button[name="commit"] {
+visibility: hidden;
+}
+
+.easy-points__note-form.easy-points__form--changed button[name="commit"] {
+visibility: visible;
+}
+
+#easypoints-note-update {
+display: flex;
+}
+
+#easypoints-note-update input {
+width: min-content;
+margin: unset;
+}
+
+#easypoints-note-update-submit {
+margin: unset;
+margin-left: 10px;
+}
+
+.easy-points__birthday-container {
+margin-top: 20px;
+}
+
+.easy-points__birthday-btn {
+min-width: max-content;
+max-width: max-content;
+}
+
+/* Redemption Forms */
+
+.easy-points-form__container {
+margin-bottom: var(--ep-spacer-3);
+}
+
+.easy-points-form__balance {
+text-align: right;
+margin-bottom: 5px;
+}
+
+.easy-points-form__container button {
+min-width: 140px;
+width: 100%;
+}
+
+@media only screen and (max-width: 749px) {
+.easy-points-form__container button {
+  width: 100%;
+  min-width: auto;
+}
+
+.easy-points-form__container {
+  margin: 0 15px;
+  margin-bottom: var(--ep-spacer-3);
+}
+
+.totals {
+  justify-content: space-between !important;
+  margin: 0 15px;
+}
+}
+
+.easy-points-form__inner {
+display: flex;
+justify-content: flex-end;
+}
+
+.easy-points-form__input input, .easy-points-form__discount {
+text-align: center;
+width: 85px;
+height: 100%;
+max-width: 100%;
+padding: 0;
+margin: 0;
+margin-right: var(--ep-spacer-1);
+}
+
+@media only screen and (max-width: 749px) {
+.easy-points-form__input input, .easy-points-form__discount {
+  width: 100px;
+}
+}
+
+.easy-points-form__input input[type=number]::-webkit-inner-spin-button,
+.easy-points-form__input input[type=number]::-webkit-outer-spin-button {
+-moz-appearance: textfield;
+-webkit-appearance: none;
+margin: 0;
+}
+
+.easy-points-form__input input:disabled {
+color: var(--ep-black);
+border: none;
+}
+
+.easy-points-form__input input.invalid {
+border-color: var(--ep-red);
+box-shadow: none;
+}
+
+.easy-points-form__discount:not(.easy-points-hide) + input {
+display: none;
+}
+
+.easy-points__input-date {
+width: 100%;
+}
+
+/* Discount Input & Dicount Display */
+
+.easy-points-form__input input {
+-moz-appearance: textfield;
+-webkit-appearance: none;
+border: .1rem solid rgba(var(--color-foreground),.55);
+}
+
+.easy-points-form__discount {
+display: flex;
+align-items: center;
+justify-content: center;
+box-sizing: border-box;
+color: inherit;
+min-width: max-content;
+font-size: 1.8rem;
+}
+
+/* Product Points */
+
+.easy-points__product-points {
+display: block;
+margin-top: -10px;
+}
+
+/* Cart Points */
+
+.easy-points__cart-item-points .easy-points {
+color: rgba(var(--color-foreground),.7);
+}
+
+.easy-points__cart-item-points {
+margin-top: -10px;
+}
+
+.easy-points__cart-item-points .easy-points {
+font-size: 80%;
+margin: unset;
+}
+
+.easy-points__cart-points .easy-points {
+color: inherit;
+font-size: 95%;
+}
+
+.product__info-wrapper .price {
+display: inline-block;
+}
+
+.easy-points__subtotal-points {
+margin-top: 10px;
+}
+
+.totals__subtotal-value {
+min-width: 140px;
+text-align: right;
+}
+
+#easy-points-widget {
+display: none;
+}
+
+.easy-points-button__redeem:disabled,
+.easy-points-button__reset:disabled {
+background-color: #222;
+color: #FFF;
+opacity: 0.5;
+}
+
+#checkout:disabled {
+background-color: #222;
+color: #FFF;
+opacity: 0.5;
+} 
+
+.ep-disabled {
+pointer-events: none;
+background-color: #222;
+color: #FFF;
+opacity: 0.5;
+}
+
+.ep-buttons-container {
+display: flex;
+flex-direction: column;
+margin-bottom: 25px;
+gap: 4px;
+}
+
+.ep_point_input {
+width: 100% !important;
+height: 50px !important;
+font-size: 1.8rem;
+text-align: left !important;
+padding-left: 4px !important;
+}
+
+.ep-add-minus {
+display: flex;
+gap: 4px;
+}
+
+.ep-increment,
+.ep-decrement {
+height: 25px;
+}

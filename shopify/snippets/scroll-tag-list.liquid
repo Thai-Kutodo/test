@@ -1,0 +1,30 @@
+<section class="scroll-tag-list">
+  {% if collection.all_tags.size > 0 %}
+    <ul data-controller="scroll-tag-list" class="is-overflow">
+      {% for tag in collection.all_tags %}
+        {% if tag contains 'hashtag_' %}
+          <li class="tag-filters__item active">
+            <label class="tag tag--large">
+              <input name="{{ tag }}" value="{{ tag }}" class="js-input-subcategory" type="checkbox" data-type="{{ collection.url }}" data-action="input->scroll-tag-list#clickSubcategory">
+              <span>{{ tag | replace: 'hashtag_', '#' }}</span>
+            </label>
+          </li>
+      
+        {% endif %}
+      {% endfor %}
+    </ul>
+  {% else %}
+    {% assign items = settings.tag_list_suggest | split: ',' %}
+    <ul data-controller="scroll-tag-list" class="is-overflow">
+    {% for item in items %}
+      <li>
+        <label class="tag tag--large">
+          <input name="{{ item  | replace: '#', ''}}" value="{{ item  | replace: '#', 'hashtag_'}}" class="js-input-subcategory" type="checkbox" data-type="{{ collection.url }}" data-action="input->scroll-tag-list#clickSubcategory">
+          <span>{{ item }}</span>
+        </label>
+      </li>
+    {% endfor %}
+    </ul> 
+  {% endif %}
+  </section>
+  

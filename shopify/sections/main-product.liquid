@@ -1,0 +1,1261 @@
+{% assign discount_staff_account = 1 %}
+{% assign product_without_variant_size = false %}
+{% assign has_hash_tag = false %}
+{% assign now = 'now' | date: "%Y" %}
+{% assign sales_start_date = product.metafields.pre-order.sales_start_date.value | default: product.metafields.custom.sales_start_date.value %}
+{% assign sales_end_date = product.metafields.pre-order.sales_end_date.value | default: product.metafields.custom.sales_end_date.value %}
+{% assign badge_sale = false %}
+{% assign badge_few_in_stock = false %}
+{% assign badge_custom_product = false %}
+{% assign tag_sale_staff_discount = false %}
+{% assign hide_button_atc = false %}
+{% assign hide_message_sale_product = true %}
+{% assign product_tag_store = '' %}
+{% assign stores = '松坂屋名古屋店,ジェイアール名古屋タカシマヤ,星ヶ丘三越ファミリア,名古屋ラシック店,あべのハルカス近鉄本店,近鉄百貨店上本町店ファミリアショップ,髙島屋堺店ファミリアショップ,髙島屋泉北店ファミリアショップ,大丸心斎橋店,大丸梅田店,千里阪急,高槻阪急,京阪百貨店守口店ファミリアショップ,阪急うめだ本店,大阪髙島屋,そごう横浜店,髙島屋横浜店,多摩プラザ店,横浜元町店,博多阪急ファミリアショップ,大丸下関店ファミリアショップ,井筒屋小倉店ファミリアショップ,トキハ本店ファミリアショップ,長崎浜屋ファミリアショップ,福岡岩田屋,大丸京都店,近鉄百貨店和歌山店ファミリアショップ,ジェイアール京都伊勢丹ファミリアショップ,京都髙島屋,奈良近鉄,天満屋倉敷店ファミリアショップ,井筒屋山口店ファミリアショップ,高松三越ファミリアショップ,そごう広島店,髙島屋岡山店,高知大丸ファミリアショップ,天満屋岡山店ファミリアショップ,天満屋福山店ファミリアショップ,広島福屋ファミリア,いよてつ髙島屋ファミリア,伊勢丹新宿店,小田急百貨店新宿店,髙島屋日本橋店,西武池袋本店ファミリアショップ,髙島屋玉川店ファミリアショップ,髙島屋新宿店,松屋銀座店ファミリアショップ,京王百貨店新宿店ファミリアショップ,三越日本橋店,銀座三越ファミリアショップ,東武百貨店池袋店,東急本店,ファミリア自由が丘店,吉祥寺東急,ファミリア広尾店,ファミリア町田小田急店,代官山店,山陽百貨店,西宮阪急,神戸阪急,川西阪急,宝塚阪急,加古川ヤマトヤシキファミリアショップ,ファミリアさんちか店,芦屋モンテメール店,神戸本店,仙台三越ファミリアショップ,さっぽろ東急ファミリア,水戸京成百貨店ファミリアショップ,伊勢丹立川店ファミリアショップ,伊勢丹浦和店ファミリアショップ,髙島屋柏店ファミリアショップ,津松菱ファミリアショップ,大和香林坊店ファミリアショップ,大和富山店ファミリアショップ,松坂屋静岡店ファミリアショップ,ながの東急百貨店ファミリアショップ,新潟伊勢丹ファミリア,三井アウトレットパーク マリンピア神戸ファミリアショップ,三井アウトレットパーク 横浜ベイサイドファミリアショップ' | split: ',' %}
+
+{% assign current_time = 'now' | date: '%s' | plus: 0 %}
+{% assign convert_sale_end_date_second = sales_end_date | date: '%s' %}
+{% assign convert_sales_start_date = sales_start_date | date: '%s' | plus: 0 %}
+{% assign convert_sales_end_date = sales_end_date | date: '%s' | plus: 0 %}
+{% assign after_4_days = 4 | times: 86400 %}
+
+{%- if product.type == "セール品" -%}
+  {% assign badge_sale = true %}
+{%- endif -%}
+
+{%- if product.type == "オーダー品" -%}
+  {% assign badge_custom_product = true %}
+{%- endif -%}
+
+{%- for variant in product.variants -%}
+  {%- if variant.available and variant.inventory_quantity < 10 -%}
+    {% assign badge_few_in_stock = true %}
+  {%- endif -%}
+{%- endfor -%}
+
+{%- for store in stores -%}
+  {%- if product.tags contains store -%}
+    {% assign product_tag_store = product_tag_store | append: '"' | append: store | append: '"' | append: ',' %}
+  {%- endif -%}
+{%- endfor -%}
+
+{% assign product_tag_store = product_tag_store | remove_last: ',' %}
+
+{% if current_time < convert_sales_start_date and product.type == '予約品' %}
+  {% assign hide_button_atc = true %}
+{%- elsif product.type == '通常品' or product.type == 'オーダー品' -%}
+  {%- if convert_sales_end_date != 0 and convert_sales_start_date != 0 -%}
+    {%- if current_time < convert_sales_start_date or current_time > convert_sales_end_date -%}
+      {% assign hide_button_atc = true %}
+    {%- endif -%}
+  {%- endif -%}
+{% endif %}
+
+{%- if product.type == '予約品' and current_time <= convert_sales_end_date and convert_sales_end_date != 0 -%}
+  {% assign hide_message_sale_product = false %}
+{%- elsif product.type == '通常品' or product.type == 'オーダー品' -%}
+  {%- if convert_sales_start_date != 0 and current_time < convert_sales_start_date -%}
+    {% assign hide_message_sale_product = false %}
+  {%- elsif convert_sales_end_date != 0 and current_time > convert_sales_end_date -%}
+    {% assign hide_message_sale_product = false %}
+  {%- endif -%}
+{%- endif -%}
+
+<span
+  class="js-time-sale"
+  data-start_time="{{ sales_start_date }}"
+  data-end_time="{{ sales_end_date }}"></span>
+
+{% for tag in product.tags %}
+  {%- if tag contains 'hashtag_' -%}
+    {% assign has_hash_tag = true %}
+  {%- endif -%}
+{% endfor %}
+
+{% for product_option in product.options_with_values %}
+  {%- if product_option.name == "サイズ" -%}
+    {% assign target_position_size = product_option.position | minus: 1 %}
+  {%- endif -%}
+
+  {%- if product_option.name == "カラー" -%}
+    {% assign target_position_color = product_option.position | minus: 1 %}
+  {%- endif -%}
+{% endfor %}
+
+{% assign product_tags = '' %}
+
+{%- for tag in product.tags -%}
+  {% assign product_tags = product_tags | append: tag %}
+
+  {%- unless forloop.last -%}
+    {% assign product_tags = product_tags | append: ',' %}
+  {%- endunless -%}
+
+  {%- if tag contains '社販セール品' -%}
+    {% assign tag_sale_staff_discount = true %}
+  {%- endif -%}
+{%- endfor -%}
+
+
+{%- if product.has_only_default_variant or target_position_size == blank -%}
+  {% assign product_without_variant_size = true %}
+{%- endif -%}
+
+{%- if customer.tags contains '社員' and customer -%}
+  {%- if tag_sale_staff_discount -%}
+    {% assign discount_staff_account = 0.5 %}
+  {%- else -%}
+    {% assign discount_staff_account = 0.65 %}
+  {%- endif -%}
+{%- endif -%}
+
+<input
+  type="text"
+  id="customer"
+  data-id="{{ customer.id }}"
+  data-email="{{ customer.email }}"
+  data-product="{{ product.id }}"
+  data-staff_account="{% unless customer.tags contains '社員' and customer %}false{% else %}true{% endunless %}"
+  data-staff_discount="{{ discount_staff_account }}"
+  data-favorites=""
+  hidden />
+
+<div class="product" data-controller="product stickable">
+  <div class="product__column-left">
+    <div data-stickable-target="columnLeft">
+      <div
+        class="product-hero swiper"
+        data-carousel-current-index-value="0"
+        data-controller="carousel">
+        <button class="product-hero__left-button swiper-button-prev" type="button"></button>
+        <ul class="product-hero__image-list swiper-wrapper" data-carousel-target="imageList">
+          {% for image in product.images %}
+            <li
+              class="product-hero__image swiper-slide"
+              data-action="click->carousel#onClickImage"
+              data-pswp-height="2400"
+              data-pswp-src="{{ image | image_url: width: 1800 }}"
+              data-pswp-width="1800">
+              <img alt="{{ image.alt }}" src="{{ image | image_url: width: 1800 }}">
+            </li>
+          {% endfor %}
+        </ul>
+        <button class="product-hero__right-button swiper-button-next" type="button"></button>
+        <button
+          class="product-hero__zoom-button"
+          data-action="carousel#onClickZoomButton"
+          type="button"></button>
+      </div>
+    </div>
+    <div class="product-hero__pagination swiper-pagination"></div>
+  </div>
+
+  <div class="product__column-right">
+    <div data-product-target="content" data-stickable-target="columnRight">
+      <div class="product-header">
+        <div class="product-header__tags">
+          {%- if badge_sale -%}
+            <span class="product-header__tag product-header__tag--sale">SALE</span>
+          {%- endif -%}
+
+          {%- if badge_few_in_stock -%}
+            <span class="product-header__tag">在庫わずか</span>
+          {%- endif -%}
+
+          {%- if badge_custom_product -%}
+            <span class="product-header__tag">カスタマイズ商品</span>
+          {%- endif -%}
+        </div>
+        <h1
+          class="product-header__name"
+          data-id="{{ product.id }}"
+          data-price="{{ product.price | money }}">{{ product.title }}</h1>
+        <p class="product-header__price">
+          {%- liquid
+            assign product_ep_metafield = product.metafields.loyalty.easy_points_attributes
+            assign point_exchange_product = product_ep_metafield.value.point_exchange
+            assign point_exchange_product = product_ep_metafield.point_exchange | default: point_exchange_product
+          -%}
+
+          {%- if point_exchange_product -%}
+            {{ point_exchange_product.point_cost | times: 100 | money_without_currency }}
+            <span class="easy-points__text easy-points__text--suffix" {% if product.price >= 0 %}style="padding-right:10px"{% endif %}>
+              {{ 'easypoints.points' | t }}
+            </span>
+          {%- endif -%}
+
+          {%- unless point_exchange_product.point_cost and product.price == 0 -%}
+            {%- if product.price_min == product.price_max -%}
+              {{ product.price | times: discount_staff_account | money }}
+            {%- else -%}
+              {{ product.price_min | times: discount_staff_account | money }} - {{ product.price_max | times: discount_staff_account | money }}
+            {%- endif -%}
+            <span class="product-header__tax-in">税込</span>
+          {%- endunless -%}
+        </p>
+      </div>
+
+      {%- if sales_start_date != blank or sales_end_date != blank -%}
+        {%- unless hide_message_sale_product -%}
+          <div class="product-preorder">
+            <p class="product-preorder__title">
+              {%- if product.type != '通常品' and product.type != 'オーダー品'  -%}
+                こちらはご予約商品です
+              {%- else -%}
+                {%- if sales_end_date != blank and current_time > convert_sales_end_date -%}
+                  販売終了しました
+                {%- else -%}
+                  販売開始前です
+                {%- endif -%}
+              {%- endif -%}
+            </p>
+            <dl class="product-preorder__info">
+              <dt>
+                {%- if product.type != '通常品' and product.type != 'オーダー品'  -%}
+                  ご予約期間
+                {%- else -%}
+                  販売期間
+                {%- endif -%}
+              </dt>
+              <dd>{{ sales_start_date | date: "%Y年%m月%d日 %H:%M:%S" }} ~ {{ sales_end_date | date: "%Y年%m月%d日 %H:%M:%S" }}</dd>
+              {%- if product.type != '通常品' and product.type != 'オーダー品'  -%}
+                <dt>お届け予定</dt>
+                <dd>
+                  {{ convert_sale_end_date_second | plus: after_4_days | date: "%Y年%m月%d日" }} ~ 順次発送
+                </dd>
+              {%- endif -%}
+            </dl>
+          </div>
+        {%- endunless -%}
+      {% endif %}
+
+      <hr>
+
+      {%- if target_position_color == blank and target_position_size == blank and product.has_only_default_variant == false -%}
+        {% for product_option in product.options_with_values %}
+          {% assign index = forloop.index0 %}
+          <div
+            class="product-special-selector"
+            data-product-target="beginSp specialSelector"
+            data-cart-target="specialSelector">
+            <h4 class="product__title">{{ product_option.name }}</h4>
+            <ul class="product-color-selector__list">
+              {% assign array_color = '' %}
+
+              {% for variant in product.variants %}
+                {%- unless array_color contains variant.options[index] -%}
+                  {% assign color = variant.options[target_position_color] %}
+                  {% assign array_color = array_color | append: color | append: ',' %}
+
+                  {% capture arrayQtyVariant %}
+                    {
+                    {%- for _variant in product.variants -%}
+                      {%- if _variant.title contains color -%}
+                        "{{- _variant.options[target_position_size] -}}": {{- _variant.inventory_quantity -}},
+                      {%- endif -%}
+                    {%- endfor -%}
+                    }
+                  {% endcapture %}
+
+                  <li class="product-color-selector__item">
+                    <div class="product-color-selector__image">
+                      <input
+                        name="{{ product_option.name | handle }}"
+                        type="radio"
+                        data-action="product#checkVariantAvailable"
+                        class="js-optionSpecial"
+                        data-qty_variant='{{- arrayQtyVariant | remove_last: "," | strip -}}'
+                        value="{{ variant.options[index] }}"
+                        {% if forloop.first %}checked{% endif %}>
+                      {% if variant.image.src != blank %}
+                        {% assign src_img = variant.image | image_url: width: 500 %}
+                      {%- elsif product.featured_image != blank -%}
+                        {% assign src_img = product.featured_image | image_url: width: 500 %}
+                      {% else %}
+                        {% assign src_img = '' %}
+                      {% endif %}
+                      <img alt="{{ variant.options[index] | handle }}" src="{{ src_img }}">
+                    </div>
+                    <div class="product-color-selector__name">{{ variant.options[index] }}</div>
+                  </li>
+                {%- endunless -%}
+              {% endfor %}
+            </ul>
+          </div>
+        {% endfor %}
+
+        <hr>
+      {%- endif -%}
+
+      <div
+        class="product-color-selector{% if target_position_color == blank %} hidden{% endif %}"
+        data-product-target="beginSp colorSelector"
+        data-cart-target="colorSelector">
+        <h4 class="product__title">カラー</h4>
+        <ul class="product-color-selector__list">
+          {% assign array_color = '' %}
+
+          {% for variant in product.variants %}
+            {%- unless array_color contains variant.options[target_position_color] -%}
+              {% assign color = variant.options[target_position_color] %}
+              {% assign array_color = array_color | append: color | append: ',' %}
+
+              {% capture arrayQtyVariant %}
+                {
+                {%- for _variant in product.variants -%}
+                  {%- if _variant.title contains color -%}
+                    "{{- _variant.options[target_position_size] -}}": {{- _variant.inventory_quantity -}},
+                  {%- endif -%}
+                {%- endfor -%}
+                }
+              {% endcapture %}
+
+              <li class="product-color-selector__item">
+                <div class="product-color-selector__image">
+                  <input
+                    name="color"
+                    type="radio"
+                    data-action="product#checkVariantAvailable"
+                    class="js-optionColor"
+                    value="{{ variant.options[target_position_color] }}"
+                    data-qty_variant='{{- arrayQtyVariant | remove_last: "," | strip -}}'
+                    {% if forloop.first %}
+                    checked
+                    {% endif %}>
+                  {% if variant.image.src != blank %}
+                    {% assign src_img = variant.image | image_url: width: 500 %}
+                  {%- elsif product.featured_image != blank -%}
+                    {% assign src_img = product.featured_image | image_url: width: 500 %}
+                  {% else %}
+                    {% assign src_img = '' %}
+                  {% endif %}
+                  <img alt="{{ variant.options[target_position_color] | handle }}" src="{{ src_img }}">
+                </div>
+                {%- if variant.options[target_position_color] != blank -%}
+                  {% assign variant_color_code = variant.options[target_position_color] | handle %}
+                  {% unless variant_color_code == blank %}
+                    {% if FAMILIAR.localeCode == "en" %}
+                       <div class="product-color-selector__name"><span data-handle-name="{{variant_color_code}}-en"></span></div>
+                    {% else %}
+                       <div class="product-color-selector__name"><span data-handle-name="{{variant_color_code}}"></span></div>
+                    {% endif %}
+                  {% else %}
+                     <div class="product-color-selector__name">{{ variant.option2 }}</div>
+                  {% endunless %}
+                {%- endif -%}
+              </li>
+            {%- endunless -%}
+          {% endfor %}
+        </ul>
+      </div>
+
+      {% if target_position_color != blank %}<hr>{% endif %}
+
+      {%- if product.metafields.custom.type.value != blank -%}
+        {%- for options in product.metafields.custom.type.value -%}
+          {% assign type_number = options.formType | plus: 0 %}
+
+          {%- case type_number -%}
+            {%- when 1 -%}
+              {% assign placeholder_first_name = options.placeholder_first_name %}
+              {% assign placeholder_last_name = options.placeholder_last_name %}
+              {% assign heading_form = options.heading %}
+              {% assign property_first_name = options.nameProperty_first_name %}
+              {% assign property_last_name = options.nameProperty_last_name %}
+              {% assign note_max_letter = options.note_max_letter %}
+              {% assign note_type_letter = options.note_type_letter %}
+              {% assign max_length_letter = options.max_length %}
+
+              <div class="product-form">
+                <h4 class="product__title">
+                  {{ heading_form }}
+                  <span>{{ note_max_letter }}</span>
+                </h4>
+                <div class="product-form__input grid-cols-2">
+                  <input
+                    placeholder="{%- if placeholder_last_name != blank -%}{{ placeholder_last_name }}{%- else -%}姓{%- endif -%}"
+                    data-property="{{ property_last_name }}"
+                    {% if max_length_letter != blank %}maxlength="{{ max_length_letter | plus: 0 }}"{% endif %}
+                    class="last-name js-validateName"
+                    type="text">
+                  <input
+                    placeholder="{%- if placeholder_first_name != blank -%}{{ placeholder_first_name }}{%- else -%}名{%- endif -%}"
+                    data-property="{{ property_first_name }}"
+                    {% if max_length_letter != blank %}maxlength="{{ max_length_letter | plus: 0 }}"{% endif %}
+                    class="first-name js-validateName"
+                    type="text">
+                </div>
+                <p class="product-form__note">{{ note_type_letter }}</p>
+              </div>
+            {%- when 2 -%}
+              {% assign placeholder_full_name = options.placeholder %}
+              {% assign heading_form = options.heading %}
+              {% assign property = options.nameProperty %}
+              {% assign note_max_letter = options.note_max_letter %}
+              {% assign max_length_letter = options.max_length %}
+              {% assign note_type_letter = options.note_type_letter %}
+
+              <div class="product-form">
+                <h4 class="product__title">
+                  {{ heading_form }}
+                  <span>{{ note_max_letter }}</span>
+                </h4>
+                <div class="product-form__input">
+                  <input
+                    placeholder="{%- if product.metafields.placeholder.full_name != blank -%}{{ product.metafields.placeholder.full_name }}{%- else -%}お名前{%- endif -%}"
+                    class="full-name js-validateName"
+                    data-property="{{ property }}"
+                    {% if max_length_letter != blank %}maxlength="{{ max_length_letter | plus: 0 }}"{% endif %}
+                    type="text">
+                </div>
+                <p class="product-form__note">{{ note_type_letter }}</p>
+              </div>
+            {%- when 3 -%}
+              {% assign heading_form = options.heading %}
+              {% assign property = options.nameProperty %}
+
+              <div class="product-form" data-product-target="birthDay">
+                <h4 class="product__title">{{ heading_form }}</h4>
+                <div class="product-form__input lg:grid-cols-3 grid-cols-2">
+                  <div class="datetime">
+                    <select class="year" data-property="{{ property }}">
+                      <option value="" hidden>年を選択</option>
+                      {%- for i in (1930..now) -%}
+                        <option value="{{ i }}">{{ i }}</option>
+                      {%- endfor -%}
+                    </select>
+
+                    <span>年</span>
+                  </div>
+
+                  <div class="datetime">
+                    <select class="month">
+                      <option value="" hidden>月を選択</option>
+                      {%- for i in (1..12) -%}
+                        <option value="{{ i }}">{{ i }}</option>
+                      {%- endfor -%}
+                    </select>
+
+                    <span>月</span>
+                  </div>
+
+                  <div class="datetime">
+                    <select class="date">
+                      <option value="" hidden>日付を選択</option>
+                      {%- for i in (1..31) -%}
+                        <option value="{{ i }}">{{ i }}</option>
+                      {%- endfor -%}
+                    </select>
+
+                    <span>日</span>
+                  </div>
+                </div>
+              </div>
+            {%- when 4 -%}
+              {% assign heading_form = options.heading %}
+              {% assign value = options.value | split: ',' %}
+              {% assign placeholder = options.placeholder %}
+              {% assign property = options.nameProperty %}
+
+              <div class="product-form">
+                <h4 class="product__title">{{ heading_form }}</h4>
+                <div class="product-form__input">
+                  <select class="lining-fabric" data-property="{{ property }}">
+                    <option value="" hidden>
+                      {%- if placeholder != blank -%}
+                        {{ placeholder }}{%- else -%}裏生地を選択{%- endif -%}
+                    </option>
+                    {%- for item in value -%}
+                      <option value="{{ item | lstrip | handle }}">{{ item | lstrip }}</option>
+                    {%- endfor -%}
+                  </select>
+                </div>
+              </div>
+            {%- when 5 -%}
+              {% assign heading_form = options.heading %}
+              {% assign value_1 = options.value_1 | split: ',' %}
+              {% assign placeholder_1 = options.placeholder_1 %}
+              {% assign property_1 = options.nameProperty_1 %}
+
+              {% assign value_2 = options.value_2 | split: ',' %}
+              {% assign placeholder_2 = options.placeholder_2 %}
+              {% assign property_2 = options.nameProperty_2 %}
+
+              <div class="product-form">
+                <h4 class="product__title">{{ heading_form }}</h4>
+                <div class="product-form__input grid-cols-2">
+                  <select class="inner-fabric" data-property="{{ property_1 }}">
+                    <option value="" hidden>
+                      {%- if placeholder_1 != blank -%}
+                        {{ placeholder_1 }}{%- else -%}内生地を選択{%- endif -%}
+                    </option>
+                    {%- for item in value_1 -%}
+                      <option value="{{ item | lstrip | handle }}">{{ item | lstrip }}</option>
+                    {%- endfor -%}
+                  </select>
+
+                  <select class="motif" data-property="{{ property_2 }}">
+                    <option value="" hidden>
+                      {%- if placeholder_2 != blank -%}
+                        {{ placeholder_2 }}{%- else -%}モチーフを選択{%- endif -%}
+                    </option>
+                    {%- for item in value_2 -%}
+                      <option value="{{ item | lstrip | handle }}">{{ item | lstrip }}</option>
+                    {%- endfor -%}
+                  </select>
+                </div>
+              </div>
+            {%- when 6 -%}
+              {% assign value = options.value | split: ',' %}
+              {% assign heading_form = options.heading %}
+              {% assign placeholder = options.placeholder %}
+              {% assign name_property = options.nameProperty %}
+
+              <div class="product-form">
+                <h4 class="product__title">{{ heading_form }}</h4>
+                <div class="product-form__input">
+                  <select data-cart-target="optionDropdown" data-name_property="{{ name_property }}">
+                    <option value="" hidden>{{ placeholder }}</option>
+                    {%- for item in value -%}
+                      <option value="{{ item | lstrip | handle }}">{{ item | lstrip }}</option>
+                    {%- endfor -%}
+                  </select>
+                </div>
+              </div>
+            {%- when 7 -%}
+              {% assign heading_form = options.heading %}
+              {% assign placeholder = options.placeholder %}
+              {% assign name_property = options.nameProperty %}
+
+              <div class="product-form">
+                <h4 class="product__title">
+                  {{ heading_form }}
+                </h4>
+                <div class="product-form__input">
+                  <input
+                    placeholder="{{ placeholder }}"
+                    data-cart-target="optionInput"
+                    data-name_property="{{ name_property }}"
+                    type="text">
+                </div>
+              </div>
+          {%- endcase -%}
+        {%- endfor -%}
+      {%- endif -%}
+
+      {%- if product.metafields.custom.type.value != blank -%}
+        <hr>
+      {%- endif -%}
+      <div class="product-size-selector">
+        <div
+          class="product-size-selector__header{% if target_position_size == blank %} hidden{% endif %}"
+          data-product-target="sizeSelector"
+          data-cart-target="sizeSelector">
+          <h4 class="product__title">サイズ</h4>
+          <div class="product-size-selector__buttons">
+            <div data-controller="modal-trigger">
+              <button
+                class="underlined-button"
+                data-action="modal-trigger#open"
+                type="button">サイズガイド</button>
+              <template data-modal-trigger-target="template">
+                <div class="modal modal-full lg:modal-full" data-controller="modal product">
+                  <div class="modal__header">
+                    <button
+                      aria-label="閉じる"
+                      class="modal__close-button"
+                      data-action="modal#close"
+                      type="button">{% render 'icon-close' %}</button>
+                  </div>
+                  <div class="modal__content">
+                    <div class="container gap-50 pb-70">
+                      <h1 class="modal__title">サイズガイド</h1>
+                      <div class="modal__body">
+                        <p>ファミリアの製品は身長表示を基本とし、ヌード寸（裸でのサイズ）を基準として企画しています。<br>お子様のヌード寸を下記サイズ表でご確認頂き、ご注文ください。<br>デザインや素材により、製品の仕上がり寸法につきましては表示より異なる場合がございます。<br>商品の仕上がり寸法は「商品ページ」の「仕上がり寸法」からご確認いただけます。</p>
+                        <p>【仕上がり寸法の胴囲（ウエスト）について】<br>胴囲1・・・ゴム入り前　　胴囲2・・・ゴム入り後</p>
+                      </div>
+                      {% render 'size-guide' %}
+                    </div>
+                  </div>
+                </div>
+              </template>
+            </div>
+            <div data-controller="modal-trigger">
+              {%- if product.metafields.additional.dimensions.value != blank -%}
+                <button
+                  class="underlined-button"
+                  data-action="modal-trigger#open"
+                  type="button">仕上がり寸法</button>
+              {%- endif -%}
+
+              <template data-modal-trigger-target="template">
+                <div class="modal modal-center lg:modal-center" data-controller="modal">
+                  <div class="modal__header">
+                    <button
+                      aria-label="閉じる"
+                      class="modal__close-button"
+                      data-action="modal#close"
+                      type="button">{% render 'icon-close' %}</button>
+                  </div>
+                  <div class="modal__content">
+                    <div class="container gap-50 pb-70">
+                      <h1 class="modal__title">仕上がり寸法</h1>
+                      {{ product.metafields.additional.dimensions.value }}
+                    </div>
+                  </div>
+                </div>
+              </template>
+            </div>
+          </div>
+        </div>
+
+        <ul class="product-size-selector__list{% if hide_button_atc %} hidden{% endif %}" data-controller="alert-trigger">
+          {%- if product_without_variant_size -%}
+            <li>
+              <div class="product-size-selector__content addtocart-pdp">
+                <button
+                  class="button button--small{% if product.variants[0].available %} button--cta button--has-icon-cart{% endif %}"
+                  data-index="0"
+                  {% if product.has_only_default_variant %}data-default_variant="{{ product.variants[0].id }}"{% endif %}
+                  data-product_type="{{ product.type }}"
+                  data-store='[{{ product_tag_store }}]'
+                  data-tag_pickup="{%- if product_tags contains '配送不可商品' -%}true{%- else -%}false{%- endif -%}"
+                  data-login="{%- if customer -%}true{%- else -%}false{%- endif -%}"
+                  data-max_qty="{% if product.metafields.additional.max_qty != blank %}{{ product.metafields.additional.max_qty }}{% else %}9{% endif %}"
+                  data-action="cart#addToCart"
+                  data-qty="{{ product.variants[0].inventory_quantity }}"
+                  {% unless product.variants[0].available %}disabled{% endunless %}
+                  {% render 'easy_points_point_exchange_product' %}
+                  type="button">
+                  {% if product.variants[0].available == false %}
+                    SOLD OUT
+                  {% else %}
+                    {%- if product.type == "予約品" or product.type == "通常品" or product.type == "オーダー品" -%}
+                      {%- if convert_sales_end_date != 0 -%}
+                        {%- if current_time > convert_sales_end_date -%}
+                          <label>カートに入れる</label>
+                        {%- else -%}
+                          {%- if product.type == "通常品" or product.type == "オーダー品" -%}
+                            <label>カートに入れる</label>
+                          {%- else -%}
+                            <label>予約注文</label>
+                          {%- endif -%}
+                        {%- endif -%}
+                      {%- else -%}
+                        <label>カートに入れる</label>
+                      {%- endif -%}
+                    {%- else -%}
+                      <label>カートに入れる</label>
+                    {%- endif -%}
+                  {% endif %}
+                </button>
+                <div class="product-size-selector__favorite">
+                  <input
+                    class="favorite"
+                    type="checkbox"
+                    data-index="0"
+                    data-variant=""
+                    data-product=""
+                    data-handle=""
+                    data-price="">
+                </div>
+              </div>
+            </li>
+          {%- else -%}
+            {% assign array_size = '' %}
+            {% assign first_variants = array_color | split: ',' | first %}
+            {% assign check_product_available = '' %}
+            {% assign index = 0 %}
+
+            {%- for variant in product.variants -%}
+              {%- if variant.title contains first_variants -%}
+                {% assign check_product_available = check_product_available | append: variant.available | append: ',' %}
+              {%- endif -%}
+            {%- endfor -%}
+
+            {%- for variant in product.variants -%}
+              {%- unless array_size contains variant.options[target_position_size] -%}
+                {% assign array_size = array_size | append: variant.options[target_position_size] | append: ',' %}
+                {% assign product_variant_available = check_product_available | split: ',' %}
+                {% assign first_letter = variant.options[target_position_size] | first | plus: 0 %}
+
+                {%- if first_letter == 0 -%}
+                  {% assign variant_size = variant.options[target_position_size] | slice: 1, 2 %}
+                {%- else -%}
+                  {% assign variant_size = variant.options[target_position_size] %}
+                {%- endif -%}
+                <li>
+                  <div class="product-size-selector__title">
+                    <p class="product-size-selector__size">{{ variant_size }}</p>
+                    <p
+                      class="product-size-selector__price"
+                      data-product-target="priceSelector"
+                      data-size="{{ variant.options[target_position_size] }}"
+                      data-color="{{ variant.options[target_position_color] }}"
+                      data-price="{{ variant.price }}">
+                      {%- if point_exchange_product -%}
+                        {{ point_exchange_product.point_cost | times: 100 | money_without_currency }}
+                        <span class="easy-points__text easy-points__text--suffix" {% if variant.price != 0 %}style="padding-right:10px;"{% endif %}>
+                          {{ 'easypoints.points' | t }}
+                        </span>
+                      {%- endif -%}
+
+                      {%- unless point_exchange_product.point_cost and variant.price == 0 -%}
+                        {{ variant.price | times: discount_staff_account | money }}
+                        <span class="product-size-selector__tax-in">税込</span>
+                      {%- endunless -%}
+                    </p>
+                  </div>
+                  <div class="product-size-selector__content addtocart-pdp">
+                    <button
+                      class="button button--small{% if product_variant_available[index] == 'true' %} button--cta button--has-icon-cart{% endif %}"
+                      data-size="{{ variant.options[target_position_size] }}"
+                      data-color="{{ variant.options[target_position_color] }}"
+                      data-price="{{ variant.price }}"
+                      data-store='[{{ product_tag_store }}]'
+                      data-product_type="{{ product.type }}"
+                      data-tag_pickup="{%- if product_tags contains '配送不可商品' -%}true{%- else -%}false{%- endif -%}"
+                      data-login="{%- if customer -%}true{%- else -%}false{%- endif -%}"
+                      data-max_qty="{% if product.metafields.additional.max_qty != blank %}{{ product.metafields.additional.max_qty }}{% else %}9{% endif %}"
+                      data-action="cart#addToCart"
+                      data-qty="{{ variant.inventory_quantity }}"
+                      data-index="{{index}}"
+                      {% if product_variant_available[index] == 'false' %}disabled{% endif %}
+                      {% render 'easy_points_point_exchange_product' %}
+                      type="button">
+                      {% if product_variant_available[index] == 'false' %}
+                        SOLD OUT
+                      {% else %}
+                        {%- if product.type == "予約品" or product.type == "通常品" or product.type == "オーダー品" -%}
+                          {%- if convert_sales_end_date != 0 -%}
+                            {%- if current_time > convert_sales_end_date -%}
+                              <label>
+                                カートに入れる<br>
+                                {%- if variant.available and variant.inventory_quantity < 10 -%}
+                                  <span>在庫わずか</span>
+                                {%- endif -%}
+                              </label>
+                            {%- else -%}
+                              {%- if product.type == "通常品" or product.type == "オーダー品" -%}
+                                <label>
+                                  カートに入れる<br>
+                                  {%- if variant.available and variant.inventory_quantity < 10 -%}
+                                    <span>在庫わずか</span>
+                                  {%- endif -%}
+                                </label>
+                              {%- else -%}
+                                <label>
+                                  予約注文<br>
+                                  {%- if variant.available and variant.inventory_quantity < 10 -%}
+                                    <span>在庫わずか</span>
+                                  {%- endif -%}
+                                </label>
+                              {%- endif -%}
+                            {%- endif -%}
+                          {%- else -%}
+                            <label>
+                              カートに入れる<br>
+                              {%- if variant.available and variant.inventory_quantity < 10 -%}
+                                <span>在庫わずか</span>
+                              {%- endif -%}
+                            </label>
+                          {%- endif -%}
+                        {%- else -%}
+                          <label>
+                            カートに入れる<br>
+                            {%- if variant.available and variant.inventory_quantity < 10 -%}
+                              <span>在庫わずか</span>
+                            {%- endif -%}
+                          </label>
+                        {%- endif -%}
+                      {% endif %}
+                    </button>
+                    <div class="product-size-selector__favorite">
+                      <input
+                        class="favorite fav-button add-to-favorites"
+                        type="checkbox"
+                        data-index="{{ index }}"
+                        data-variant=""
+                        data-product=""
+                        data-handle=""
+                        data-price="">
+                    </div>
+                  </div>
+                </li>
+                {% assign index = index | plus: 1 %}
+              {%- endunless -%}
+            {%- endfor -%}
+          {%- endif -%}
+        </ul>
+        <div class="hidden error-out-of-stock">商品が上限に達したため、追加できません。</div>
+      </div>
+      <hr>
+      <div class="product-description" data-product-target="beginPc">
+        {{ product.description }}
+      </div>
+      <hr>
+      <dl class="product-info">
+        <dt>商品番号</dt>
+        <dd>{{ product.handle | split: "/" | last }}</dd>
+
+        {%- if product.metafields.additional.material.value != blank -%}
+          <dt>素材</dt>
+          <dd>{{ product.metafields.additional.material.value }}</dd>
+        {%- endif -%}
+
+        {%- if product.metafields.additional.country_of_origin.value != blank -%}
+          <dt>原産国</dt>
+          <dd>{{ product.metafields.additional.country_of_origin.value }}</dd>
+        {%- endif -%}
+
+        {%- if product.metafields.additional.laundry.value != blank -%}
+          <dt style="align-items: center;">
+            洗濯表示
+            <div data-controller="modal-trigger">
+              <button
+                aria-label="洗濯表示について"
+                class="help-button"
+                data-action="modal-trigger#open"
+                type="button"></button>
+              <template data-modal-trigger-target="template">
+                <div class="modal modal-full lg:modal-full" data-controller="modal">
+                  <div class="modal__header">
+                    <button
+                      aria-label="閉じる"
+                      class="modal__close-button"
+                      data-action="modal#close"
+                      type="button">
+                      {% render 'icon-close' %}
+                    </button>
+                  </div>
+                  <div class="modal__content">
+                    <div class="container gap-50 pb-70">
+                      <h1 class="modal__title">洗濯表示について</h1>
+                      {% render 'laundry-symbol-list' %}
+                    </div>
+                  </div>
+                </div>
+              </template>
+            </div>
+          </dt>
+          <dd>
+            <ul class="product-laundry-symbol-list">
+              {%- for item in product.metafields.additional.laundry.value -%}
+                {%- render 'icon-laundry-item', icon_alphabet: item -%}
+              {%- endfor -%}
+            </ul>
+          </dd>
+        {%- endif -%}
+      </dl>
+
+      {%- if product.metafields.additional.notice.value != blank -%}
+        <hr>
+        <div class="product-caution">
+          {% assign array_string = product.metafields.additional.notice.value | split: '||' %}
+
+          <p class="product-caution__title">注意事項</p>
+          <ul class="product-caution__list">
+            {%- for item in array_string -%}
+              <li>{{ item }}</li>
+            {%- endfor -%}
+          </ul>
+        </div>
+      {%- endif -%}
+
+      {%- if product.tags contains '店舗受取不可商品' or product.tags contains '自宅配送不可商品' or product.tags contains 'ギフト包装不可' -%}
+        <div class="product-tag-large">
+          {%- if product.tags contains '店舗受取不可商品' -%}
+            <span>ファミリアショップ受取不可商品</span>
+          {%- endif -%}
+
+          {%- if product.tags contains '自宅配送不可商品' -%}
+            <span>自宅配送不可商品</span>
+          {%- endif -%}
+
+          {%- if product.tags contains 'ギフト包装不可' -%}
+            <span>ギフト包装不可</span>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+
+      {%- if product.tags.size > 0 and has_hash_tag -%}
+        <div class="product-tag-list">
+          <h4 class="product__title">タグ</h4>
+          <ul class="product-tag-list__list">
+            {% for tag in product.tags %}
+              {%- if tag contains 'hashtag_' -%}
+                <li>
+                  <span class="tag tag--large">
+                    <a href="/search?view=filter-content&q=*{{ tag | replace: 'hashtag_', '%23' }}*">#{{ tag | remove: 'hashtag_' }}</a>
+                  </span>
+                </li>
+              {%- endif -%}
+            {% endfor %}
+          </ul>
+        </div>
+      {%- endif -%}
+
+      <div
+        aria-hidden="true"
+        class="product-footer{% if hide_button_atc %} hidden{% endif %}"
+        data-controller="modal-trigger"
+        data-product-target="footer">
+        <button
+          class="button button--cta button--has-icon-cart"
+          data-action="modal-trigger#open"
+          type="button">
+          {%- if product.type == "予約品" or product.type == "通常品" or product.type == "オーダー品" -%}
+            {%- if convert_sales_end_date != 0 -%}
+              {%- if current_time > convert_sales_end_date -%}
+                カートに入れる
+              {%- else -%}
+                {%- if product.type == "通常品" or product.type == "オーダー品" -%}
+                  カートに入れる
+                {%- else -%}
+                  予約注文
+                {%- endif -%}
+              {%- endif -%}
+            {%- else -%}
+              カートに入れる
+            {%- endif -%}
+          {%- else -%}
+            カートに入れる
+          {%- endif -%}
+        </button>
+        <template data-modal-trigger-target="template">
+          <div class="modal-bottom lg:modal-center modal-cart" data-controller="modal">
+            <div class="modal__header">
+              <button
+                aria-label="閉じる"
+                class="modal__close-button"
+                data-action="modal#closeModalPDP"
+                type="button">
+                {% render 'icon-close' %}
+              </button>
+            </div>
+            <div class="modal__content">
+              <div class="container gap-40 pt-40 lg:pt-10 pb-40 lg:pb-80">
+                <div class="product-header">
+                  <h1 class="product-header__name">{{ product.title }}</h1>
+                  <p class="product-header__price">
+                    {%- if point_exchange_product.point_cost -%}
+                      {{ point_exchange_product.point_cost | times: 100 | money_without_currency }}
+                      <span class="easy-points__text easy-points__text--suffix" {% if product.price != 0 %}style="padding-right:10px;"{% endif %}>
+                        {{ 'easypoints.points' | t }}
+                      </span>
+                    {%- endif -%}
+
+                    {%- unless point_exchange_product.point_cost and product.price == 0 -%}
+                      {%- if product.price_min == product.price_max -%}
+                        {{ product.price | times: discount_staff_account | money }}
+                      {%- else -%}
+                        {{ product.price_min | times: discount_staff_account | money }} - {{ product.price_max | times: discount_staff_account | money }}
+                      {%- endif -%}
+                      <span class="product-header__tax-in">税込</span>
+                    {%- endunless -%}
+                  </p>
+                </div>
+
+                {%- if target_position_color == blank and target_position_size == blank and product.has_only_default_variant == false -%}
+                  {% for product_option in product.options_with_values %}
+                    {% assign index = forloop.index0 %}
+                    <div
+                      class="product-special-selector"
+                      data-product-target="beginSp"
+                      data-cart-target="specialSelector"
+                      data-modal-target="specialSelector">
+                      <h4 class="product__title">{{ product_option.name }}</h4>
+                      <ul class="product-color-selector__list">
+                        {% assign array_color = '' %}
+
+                        {% for variant in product.variants %}
+                          {%- unless array_color contains variant.options[index] -%}
+                            {% assign color = variant.options[target_position_color] %}
+                            {% assign array_color = array_color | append: color | append: ',' %}
+
+                            {% capture arrayQtyVariant %}
+                              {
+                              {%- for _variant in product.variants -%}
+                                {%- if _variant.title contains color -%}
+                                  "{{- _variant.options[target_position_size] -}}": {{- _variant.inventory_quantity -}},
+                                {%- endif -%}
+                              {%- endfor -%}
+                              }
+                            {% endcapture %}
+
+                            <li class="product-color-selector__item">
+                              <div class="product-color-selector__image">
+                                <input
+                                  name="{{ product_option.name | handle }}"
+                                  type="radio"
+                                  data-action="modal#checkVariantAvailable"
+                                  data-qty_variant='{{- arrayQtyVariant | remove_last: "," | strip -}}'
+                                  class="js-optionSpecial"
+                                  value="{{ variant.options[index] }}">
+                                {% if variant.image.src != blank %}
+                                  {% assign src_img = variant.image | image_url: width: 500 %}
+                                {%- elsif product.featured_image != blank -%}
+                                  {% assign src_img = product.featured_image | image_url: width: 500 %}
+                                {% else %}
+                                  {% assign src_img = '' %}
+                                {% endif %}
+                                <img alt="{{ variant.options[index] | handle }}" src="{{ src_img }}">
+                              </div>
+                              <div class="product-color-selector__name">{{ variant.options[index] }}</div>
+                            </li>
+                          {%- endunless -%}
+                        {% endfor %}
+                      </ul>
+                    </div>
+                  {% endfor %}
+                {%- endif -%}
+
+                <div class="product-color-selector{% if target_position_color == blank %} hidden{% endif %}" data-modal-target="colorSelector">
+                  <h4 class="product__title">カラー</h4>
+                  <ul class="product-color-selector__list">
+                    {% assign array_color = '' %}
+
+                    {% for variant in product.variants %}
+                      {%- unless array_color contains variant.options[target_position_color] -%}
+                        {% assign color = variant.options[target_position_color] %}
+                        {% assign array_color = array_color | append: color | append: ',' %}
+
+                        {% capture arrayQtyVariant %}
+                          {
+                          {%- for _variant in product.variants -%}
+                            {%- if _variant.title contains color -%}
+                              "{{- _variant.options[target_position_size] -}}": {{- _variant.inventory_quantity -}},
+                            {%- endif -%}
+                          {%- endfor -%}
+                          }
+                        {% endcapture %}
+
+                        <li class="product-color-selector__item">
+                          <div class="product-color-selector__image">
+                            <input
+                              name="color"
+                              data-action="modal#checkVariantAvailable"
+                              class="js-optionColor"
+                              type="radio"
+                              value="{{ variant.options[target_position_color] }}"
+                              data-qty_variant='{{- arrayQtyVariant | remove_last: "," | strip -}}'
+                              {% if forloop.first %}
+                              checked
+                              {% endif %}>
+                            {% if variant.image.src != blank %}
+                              {% assign src_img = variant.image | image_url: width: 500 %}
+                            {%- elsif product.featured_image != blank -%}
+                              {% assign src_img = product.featured_image | image_url: width: 500 %}
+                            {% else %}
+                              {% assign src_img = '' %}
+                            {% endif %}
+                            <img alt="{{ variant.options[target_position_color] | handle }}" src="{{ src_img }}">
+                          </div>
+                          <div class="product-color-selector__name">{{ variant.options[target_position_color] }}</div>
+                        </li>
+                      {%- endunless -%}
+                    {% endfor %}
+                  </ul>
+                </div>
+                <div class="product-size-selector">
+                  <hr>
+                  <div class="product-size-selector__header{% if target_position_size == blank %} hidden{% endif %}" data-modal-target="sizeSelector">
+                    <h4 class="product__title">サイズ</h4>
+                  </div>
+                  <ul class="product-size-selector__list button-atc-modal">
+                    {%- if product_without_variant_size -%}
+                      <li>
+                        <div class="product-size-selector__content">
+                          <button
+                            class="button button--small{% if product.variants[0].available %} button--cta button--has-icon-cart{% endif %}"
+                            data-index="0"
+                            {% if product.has_only_default_variant %}data-default_variant="{{ product.variants[0].id }}"{% endif %}
+                            data-login="{%- if customer -%}true{%- else -%}false{%- endif -%}"
+                            data-product_type="{{ product.type }}"
+                            data-store='[{{ product_tag_store }}]'
+                            data-tag_pickup="{%- if product_tags contains '配送不可商品' -%}true{%- else -%}false{%- endif -%}"
+                            data-max_qty="{% if product.metafields.additional.max_qty != blank %}{{ product.metafields.additional.max_qty }}{% else %}9{% endif %}"
+                            data-qty="{{ product.variants[0].inventory_quantity }}"
+                            data-action="cart#addToCart"
+                            data-index="0"
+                            {% unless product.variants[0].available %}disabled{% endunless %}
+                            {% render 'easy_points_point_exchange_product' %}
+                            type="button">
+                            {% if product.variants[0].available == false %}
+                              SOLD OUT
+                            {% else %}
+                              {%- if product.type == "予約品" or product.type == "通常品" or product.type == "オーダー品" -%}
+                                {%- if convert_sales_end_date != 0 -%}
+                                  {%- if current_time > convert_sales_end_date -%}
+                                    <label>カートに入れる</label>
+                                  {%- else -%}
+                                    {%- if product.type == "通常品" or product.type == "オーダー品" -%}
+                                      <label>カートに入れる</label>
+                                    {%- else -%}
+                                      <label>予約注文</label>
+                                    {%- endif -%}
+                                  {%- endif -%}
+                                {%- else -%}
+                                  <label>カートに入れる</label>
+                                {%- endif -%}
+                              {%- else -%}
+                                <label>カートに入れる</label>
+                              {%- endif -%}
+                            {% endif %}
+                          </button>
+                          <div class="product-size-selector__favorite">
+                            <input
+                              class="favorite"
+                              type="checkbox"
+                              data-index="0"
+                              data-variant=""
+                              data-product=""
+                              data-handle=""
+                              data-price="">
+                          </div>
+                        </div>
+                        <div class="hidden error-out-of-stock">商品が上限に達したため、追加できません。</div>
+                      </li>
+                    {%- else -%}
+                      {% assign array_size = '' %}
+                      {% assign first_variants = array_color | split: ',' | first %}
+                      {% assign check_product_available = '' %}
+                      {% assign index = 0 %}
+
+                      {%- for variant in product.variants -%}
+                        {%- if variant.title contains first_variants -%}
+                          {% assign check_product_available = check_product_available | append: variant.available | append: ',' %}
+                        {%- endif -%}
+                      {%- endfor -%}
+
+                      {%- for variant in product.variants -%}
+                        {%- unless array_size contains variant.options[target_position_size] -%}
+                          {% assign array_size = array_size | append: variant.options[target_position_size] | append: ',' %}
+                          {% assign product_variant_available = check_product_available | split: ',' %}
+                          {% assign first_letter = variant.options[target_position_size] | first | plus: 0 %}
+
+                          {%- if first_letter == 0 -%}
+                            {% assign variant_size = variant.options[target_position_size] | slice: 1, 2 %}
+                          {%- else -%}
+                            {% assign variant_size = variant.options[target_position_size] %}
+                          {%- endif -%}
+
+                          <li>
+                            <div class="product-size-selector__title">
+                              <p class="product-size-selector__size">{{ variant_size }}</p>
+                              <p
+                                class="product-size-selector__price"
+                                data-modal-target="priceSelector"
+                                data-size="{{ variant.options[target_position_size] }}"
+                                data-color="{{ variant.options[target_position_color] }}"
+                                data-price="{{ variant.price }}">
+                                {%- if point_exchange_product -%}
+                                  {{ point_exchange_product.point_cost | times: 100 | money_without_currency }}
+                                  <span class="easy-points__text easy-points__text--suffix" {% if variant.price != 0 %}style="padding-right:10px;"{% endif %}>
+                                    {{ 'easypoints.points' | t }}
+                                  </span>
+                                {%- endif -%}
+
+                                {%- unless point_exchange_product.point_cost and variant.price == 0 -%}
+                                  {{ variant.price | times: discount_staff_account | money }}
+                                  <span class="product-size-selector__tax-in">税込</span>
+                                {%- endunless -%}
+                              </p>
+                            </div>
+
+                            <div class="product-size-selector__content">
+                              <button
+                                class="button button--small{% if product_variant_available[index] == 'true' %} button--cta button--has-icon-cart{% endif %}"
+                                data-product_type="{{ product.type }}"
+                                data-store='[{{ product_tag_store }}]'
+                                data-tag_pickup="{%- if product_tags contains '配送不可商品' -%}true{%- else -%}false{%- endif -%}"
+                                data-login="{%- if customer -%}true{%- else -%}false{%- endif -%}"
+                                data-size="{{ variant.options[target_position_size] }}"
+                                data-color="{{ variant.options[target_position_color] }}"
+                                data-price="{{ variant.price }}"
+                                {% if product_variant_available[index] == 'false' %}disabled{% endif %}
+                                data-max_qty="{% if product.metafields.additional.max_qty != blank %}{{ product.metafields.additional.max_qty }}{% else %}9{% endif %}"
+                                data-qty="{{ variant.inventory_quantity }}"
+                                data-action="cart#addToCart"
+                                {% render 'easy_points_point_exchange_product' %}
+                                type="button">
+                                {% if product_variant_available[index] == 'false' %}
+                                  SOLD OUT
+                                {% else %}
+                                  {%- if product.type == "予約品" or product.type == "通常品" or product.type == "オーダー品" -%}
+                                    {%- if convert_sales_end_date != 0 -%}
+                                      {%- if current_time > convert_sales_end_date -%}
+                                        <label>
+                                          カートに入れる<br>
+                                          {%- if variant.available and variant.inventory_quantity < 10 -%}
+                                            <span>在庫わずか</span>
+                                          {%- endif -%}
+                                        </label>
+                                      {%- else -%}
+                                        {%- if product.type == "通常品" or product.type == "オーダー品" -%}
+                                          <label>
+                                            カートに入れる<br>
+                                            {%- if variant.available and variant.inventory_quantity < 10 -%}
+                                              <span>在庫わずか</span>
+                                            {%- endif -%}
+                                          </label>
+                                        {%- else -%}
+                                          <label>
+                                            予約注文<br>
+                                            {%- if variant.available and variant.inventory_quantity < 10 -%}
+                                              <span>在庫わずか</span>
+                                            {%- endif -%}
+                                          </label>
+                                        {%- endif -%}
+                                      {%- endif -%}
+                                    {%- else -%}
+                                      <label>
+                                        カートに入れる<br>
+                                        {%- if variant.available and variant.inventory_quantity < 10 -%}
+                                          <span>在庫わずか</span>
+                                        {%- endif -%}
+                                      </label>
+                                    {%- endif -%}
+                                  {%- else -%}
+                                    <label>
+                                      カートに入れる<br>
+                                      {%- if variant.available and variant.inventory_quantity < 10 -%}
+                                        <span>在庫わずか</span>
+                                      {%- endif -%}
+                                    </label>
+                                  {%- endif -%}
+                                {% endif %}
+                              </button>
+                              <div class="product-size-selector__favorite">
+                                <input class="favorite" type="checkbox">
+                              </div>
+                            </div>
+                          </li>
+
+                          {% assign index = index | plus: 1 %}
+                        {%- endunless -%}
+                      {%- endfor -%}
+                    {%- endif -%}
+                  </ul>
+                  <div class="hidden error-out-of-stock">商品が上限に達したため、追加できません。</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </template>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  var arrayProduct = {{ product | json }};
+  sessionStorage.colorSelected = 0;
+</script>
+
+{% schema %}
+  {
+    "name": "t:sections.main_product.name",
+    "settings": []
+  }
+{% endschema %}

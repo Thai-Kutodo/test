@@ -1,0 +1,11 @@
+{
+	"sections": {
+	  "main": {
+  		"type": "main-1000days",
+  		"settings": {}
+    }
+	},
+	"order": [
+	  "main"
+	]
+}

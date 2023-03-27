@@ -1,0 +1,244 @@
+{% assign total_tax = 0 %}
+{% assign total_tax_tax_8 = 0 %}
+{% assign total_tax_tax_10 = 0 %}
+{% assign discount_staff_account = 1 %}
+{% assign tag_sale_staff_discount = false %}
+{% assign list_sku = '' %}
+
+{%- for line_item in cart.items -%}
+  {%- for tag in line_item.product.tags -%}
+    {%- if tag contains '社販セール品' -%}
+      {% assign tag_sale_staff_discount = true %}
+    {%- endif -%}
+  {%- endfor -%}
+{%- endfor -%}
+
+{%- if customer.tags contains '社員' and customer -%}
+  {%- if tag_sale_staff_discount -%}
+    {% assign discount_staff_account = 0.5 %}
+  {%- else -%}
+    {% assign discount_staff_account = 0.65 %}
+  {%- endif -%}
+{%- endif -%}
+
+{%- for item in cart.items -%}
+  {%- if item.product.tags contains '軽減税率対象' -%}
+    {% assign origin_price_line_item = item.final_line_price | divided_by: 100 | times: discount_staff_account | divided_by: 1.08 | round  %}
+    {% assign tax_line_item = item.final_line_price | divided_by: 100 | times: discount_staff_account | minus: origin_price_line_item | round %}
+    {% assign total_tax_tax_8 = total_tax_tax_8 | plus: tax_line_item %}
+  {%- else -%}
+    {% assign origin_price_line_item = item.final_line_price | divided_by: 100 | times: discount_staff_account | divided_by: 1.1 | round %}
+    {% assign tax_line_item = item.final_line_price | divided_by: 100 | times: discount_staff_account | minus: origin_price_line_item | round %}
+    {% assign total_tax_tax_10 = total_tax_tax_10 | plus: tax_line_item %}
+  {%- endif -%}
+
+  {%- unless list_sku contains item.variant.sku -%}
+    {% assign list_sku = list_sku | append: item.variant.sku | append: ',' %}
+  {%- endunless -%}
+
+  {%- if item.product.type == '大型家具' -%}
+    {% assign key_order_attribute = '大型商品' %}
+  {%- elsif item.product.type == 'メーカー直送' -%}
+    {% assign key_order_attribute = 'メーカー直送' %}
+  {%- elsif item.product.type == '予約品' -%}
+    {% assign key_order_attribute = '予約商品' %}
+  {%- elsif item.product.type == 'オーダー品' -%}
+    {% assign key_order_attribute = 'オーダー商品' %}
+  {%- elsif item.product.type == 'セール品' -%}
+    {% assign key_order_attribute = 'セール' %}
+  {%- elsif item.product.type == '通常品' -%}
+    {% assign key_order_attribute = '通常' %}
+  {%- endif -%}
+{%- endfor -%}
+
+{% assign total_tax = total_tax_tax_10 | plus: total_tax_tax_8 | times: 100 %}
+
+{%- capture array_items -%}
+  {%- for item in cart.items -%}
+    {
+      "variant_id": {{ item.variant_id }},
+      "product_id": {{ item.product.id }},
+      "quantity": {{ item.quantity }},
+      "type": "{{ item.product.type }}",
+      "price": {{ item.variant.price | times: discount_staff_account | divided_by: 100 }},
+      "properties": [
+        {%- for property in item.properties -%}
+          {
+            "name": "{{ property.first }}",
+            "value": "{{ property.last }}"
+          }{%- unless forloop.last -%},{%- endunless -%}
+        {%- endfor -%}
+      ]
+    }{%- unless forloop.last -%},{%- endunless -%}
+  {%- endfor -%}
+{%- endcapture -%}
+
+{%- render 'header-checkout', media: 'sp', url: '/cart?view=pickup' -%}
+{%- render 'breadcrumbs-checkout', class: "lg:mt-30 sp" -%}
+
+<button aria-expanded="false" class="checkout-accordion-button checkout-accordion-button--cart mt-50 sp" data-accordion-target="trigger" data-action="accordion#toggle" type="button">
+  {% render 'icon-cart' %}
+  <span>ご注文内容を表示</span>
+  <p class="checkout-price">
+    {{ cart.total_price | times: discount_staff_account | money }}
+    <span class="checkout-price__tax-in">税込</span>
+  </p>
+</button>
+
+<div class="js-addressCustomer hidden"
+     data-customer_id="{{ customer.id }}"
+     data-last_name="{{ customer.default_address.last_name }}"
+     data-first_name="{{ customer.default_address.first_name }}"
+     data-zip="{{ customer.default_address.zip }}"
+     data-province="{{ customer.default_address.province }}"
+     data-province_code="{{ customer.default_address.province_code }}"
+     data-city="{{ customer.default_address.city }}"
+     data-address1="{{ customer.default_address.address1 }}"
+     data-address2="{{ customer.default_address.address2 }}"
+     data-phone="{{ customer.default_address.phone }}"
+ >
+</div>
+
+<div class="checkout__wrapper" data-controller="pickup" data-cart_null="{% if cart.item_count > 0 %}false{% else %}true{% endif %}">
+  <div class="hidden" data-controller="alert-trigger">
+    <button data-pickup-target="messageError" data-action="alert-trigger#open" type="button"></button>
+    <template data-alert-trigger-target="template">
+      <div class="alert" data-alert-close-modal-value="true" data-controller="alert">
+        <div class="alert__title">問題が発生しました。<br>しばらくしてからもう一度実行してください。</div>
+        <button class="button button--cta" data-action="alert#close" type="button">閉じる</button>
+      </div>
+    </template>
+  </div>
+  <div class="hidden" data-controller="alert-trigger">
+    <button data-pickup-target="messageErrorOrder" data-action="alert-trigger#open" type="button"></button>
+    <template data-alert-trigger-target="template">
+      <div class="alert" data-alert-close-modal-value="true" data-controller="alert">
+        <div class="alert__title">本カートは既にご注文が成立しておりますため、追加で購入いただけません。</div>
+        <button class="button button--cta" data-action="alert#close" type="button">閉じる</button>
+      </div>
+    </template>
+  </div>
+  <div class="hidden" data-controller="alert-trigger">
+    <button data-pickup-target="messageErrorOutOfStock" data-action="alert-trigger#open" type="button"></button>
+    <template data-alert-trigger-target="template">
+      <div class="alert" data-alert-close-modal-value="true" data-controller="alert">
+        <div class="alert__title"><div class="product-name"></div> はお買い物中に在庫切れとなりました。<br>お手数をおかけいたしますが、カートより在庫切れの商品を削除の上、改めてのご注文をお願いいたします。</div>
+        <a href="/cart" class="button button--cta">カートに戻る</a>
+      </div>
+    </template>
+  </div>
+  <div class="hidden" data-pickup-target="itemsCart"
+    data-total="{{ cart.total_price | times: discount_staff_account }}"
+    data-subtotal="{{ cart.items_subtotal_price | times: discount_staff_account }}"
+    data-items='[{{- array_items -}}]'
+    data-tax_8="{{ total_tax_tax_8 }}"
+    data-tax_10="{{ total_tax_tax_10 }}"
+    data-list_sku="{{ list_sku | remove_last: ','}}"
+    data-key_attritbute="{{ key_order_attribute }}"
+  >
+  </div>
+  <div class="checkout__container">
+    {%- render 'header-checkout', media: 'pc', url: '/cart?view=pickup' -%}
+    {%- render 'breadcrumbs-checkout',class: "lg:mt-30 pc" -%}
+
+    <div class="lg:mt-80 lg:has-divider-bottom" data-controller="accordion">
+      <button aria-expanded="false" class="checkout-accordion-button checkout-accordion-button--shipping" data-accordion-target="trigger" data-action="accordion#toggle" type="button">
+        <img alt="" src="{{ 'icon_pickup.svg' | asset_url }}">
+        <span>受取店舗を表示</span>
+      </button>
+      <div class="accordion__content" data-accordion-target="content">
+        <div class="container gap-50 lg:gap-60 pt-20 pb-50 lg:pb-60">
+          <div class="container gap-15">
+            <h3>受取店舗</h3>
+            <div class="checkout__body" data-pickup-target="storeName">三井アウトレットパーク<br>横浜ベイサイドファミリアショップ</div>
+          </div>
+          <a class="button button--has-icon-arrow-left" href="/cart?view=pickup">受取店舗情報を修正する</a>
+          <button class="checkout-accordion-close-button" data-accordion-target="trigger" data-action="accordion#toggle" type="button">閉じる</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="checkout__content">
+      <div class="container gap-50 lg:gap-80 pt-50 lg:pt-80">
+        <h1>お支払い方法</h1>
+        <div class="container gap-20 lg:gap-10">
+          <h4 class="has-divider">お支払い方法</h4>
+          <p class="checkout-store-payment">店頭支払い</p>
+        </div>
+        <div class="container gap-20 sp">
+          {{ details }}
+        </div>
+        <hr class="full-width">
+        <a class="button button--has-icon-arrow-left sp" href="/cart?view=pickup">受取店舗選択へ戻る</a>
+      </div>
+
+      <div class="checkout__footer">
+        <a class="button button--has-icon-arrow-left pc lg:col-span-4" href="/cart?view=pickup">もどる</a>
+        <a class="button button--cta lg:col-span-4" href="#" data-action="pickup#createDraftOrder">ご注文を確定する</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="checkout__sidebar" data-accordion-target="content">
+    <div class="container gap-50 lg:gap-60 pt-20 lg:pt-80 pb-50">
+      <div class="checkout-accordion-button checkout-accordion-button--cart pc">
+        {% render 'icon-cart' %}
+        <span>ご注文内容</span>
+        <p class="checkout-price">
+          {{ cart.total_price | times: discount_staff_account | money }}
+          <span class="checkout-price__tax-in">税込</span>
+        </p>
+      </div>
+
+      <h2 class="has-divider has-button" data-controller="alert-trigger">
+        ご注文商品
+        <button data-action="alert-trigger#open" type="button">カートに戻って修正する</button>
+        <template data-alert-trigger-target="template">
+          <div class="alert" data-controller="alert">
+            <div class="alert__title">入力内容が消えますが<br>よろしいでしょうか？</div>
+            <a class="button button--cta" href="/cart">内容削除してカートを修正</a>
+            <button class="button button--light" data-action="alert#close" type="button">購入フローに戻る</button>
+          </div>
+        </template>
+      </h2>
+
+      <div class="container gap-15 lg:gap-20">
+        {% for item in cart.items %}
+          {% render 'order-item-checkout', item: item, show_qty: true, slash: true, tag_sale_staff_discount: tag_sale_staff_discount %}
+        {% endfor %}
+      </div>
+
+      <div class="container gap-20 pc">
+        <hr>
+        <div class="detail-list">
+          <dl class="description-list grid-cols-2">
+            <dt>商品小計</dt>
+            <dd>
+              <span>{{ cart.items_subtotal_price | times: discount_staff_account | money }}</span>
+              <span class="detail-list__tax-in">税込</span>
+            </dd>
+
+            {% render 'easy_points_point_exchange_checkout_total' %}
+
+            <dt>小計</dt>
+            <dd>
+              <span>{{ cart.items_subtotal_price | times: discount_staff_account | money }}</span>
+              <span class="detail-list__tax-in">税込</span>
+            </dd>
+
+            <dt>送料</dt>
+            <dd>¥0 <span class="detail-list__tax-in"> 税込</span></dd>
+
+            <dt class="detail-list__prices">お支払い合計</dt>
+            <dd class="detail-list__prices">
+              <span class="detail-list__price">{{ cart.total_price | times: discount_staff_account | money }}</span>
+              <span class="detail-list__tax-in">税込</span>
+            </dd>
+            <dt>内消費税</dt>
+            <dd>({{ total_tax | money }})</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

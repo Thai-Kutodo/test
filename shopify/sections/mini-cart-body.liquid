@@ -1,0 +1,31 @@
+{% if cart.item_count == 0 or cart.item_count == blank %}
+  <div class="cart__body">
+    <div class="cart__header cart__null" data-cart-target="cartHeader">
+      カートの中は空です
+    </div>
+  </div>
+{% else %}
+  <div class="cart__body" data-total_price="{{ cart.total_price }}" data-total_item="{{ cart.item_count }}">
+    <div class="cart__header{% if template == 'cart' %} hidden{% endif %}" data-cart-target="cartHeader">
+      下記の商品をカートに追加しました
+    </div>
+    <ul class="cart__item-list">
+      {% for line_item in cart.items %}
+        {%- if line_item.product.handle != 'ラッピング' -%}
+          <li>
+            {% render 'cart-item', line_item: line_item %}
+          </li>
+        {%- endif -%}
+      {% endfor %}
+    </ul>
+    <p class="cart__note">ご購入完了までは、在庫は確保されておりません。</p>
+  </div>
+{% endif %}
+
+
+{% schema %}
+{
+  "name": "カートモーダルの内容",
+  "class": "cart-body"
+}
+{% endschema %}

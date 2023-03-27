@@ -1,0 +1,82 @@
+<link rel="stylesheet" href="{{ 'section-main-page.css' | asset_url }}" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="{{ 'component-rte.css' | asset_url }}" media="print" onload="this.media='all'">
+
+<noscript>{{ 'section-main-page.css' | asset_url | stylesheet_tag }}</noscript>
+<noscript>{{ 'component-rte.css' | asset_url | stylesheet_tag }}</noscript>
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+<input type="text" id="customer" data-id="{{ customer.id }}" data-email="{{ customer.email }}" data-page_id="{{ page.id }}" data-staff_account="{% unless customer.tags contains '社員' and customer %}false{% else %}true{% endunless %}" data-favorites="" hidden/>
+
+
+<div class="page-width page-width--narrow section-{{ section.id }}-padding">
+  <div class="page__title text-center">
+    <h1 class="main-page-title text-center page-title h0">
+      {{ page.title | escape }}
+    </h1>
+  
+    <div class="article__favorite"> お気に入りに追加 
+      <input
+          class="fav-button add-to-favorites" 
+          type="checkbox" 
+          data-page_id="{{ page.id }}" 
+          data-page_title="{{ page.title }}" 
+          data-blog_title="{{ blog.title }}" 
+          data-page_url="{{ page.handle }}" 
+          data-src="{{ page.metafields.custom.featured_image  | img_url: 'master' }}" 
+          data-page_date="{{ page.published_at | date: '%Y.%m.%d' }}" 
+          data-handle="{{ page.title }}" 
+          data-page_tags="{{ page.metafields.custom.tag }}">
+      <span></span>
+    </div>
+  </div>
+  <div class="rte">
+    {{ page.content }}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.main-page.name",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 36
+    }
+  ]
+}
+{% endschema %}

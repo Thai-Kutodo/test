@@ -1,0 +1,67 @@
+{%- if template == 'page.shogun.default' -%}
+  <input
+    type="text"
+    id="customer"
+    data-id="{{ customer.id }}"
+    data-email="{{ customer.email }}"
+    data-page_id="{{ page.id }}"
+    data-staff_account="{% unless customer.tags contains '社員' and customer %}false{% else %}true{% endunless %}"
+    data-favorites=""
+    hidden />
+  <div class="article__title hidden">
+    <div class="article__favorite">
+      お気に入りに追加
+      <input
+        class="fav-button add-to-favorites"
+        type="checkbox"
+        data-page_id="{{ page.id }}"
+        data-page_title="{{ page.title }}"
+        data-blog_title="{{ blog.title }}"
+        data-page_url="{{ page.handle }}"
+        data-src="{{ page.metafields.custom.featured_image  | img_url: 'master' }}"
+        data-page_date="{{ page.published_at | date: '%Y.%m.%d' }}"
+        data-handle="{{ page.title }}"
+        data-page_tags="{{ page.metafields.custom.tag }}">
+      <span></span>
+    </div>
+
+    {%- assign share_url = shop.url | append: page.url -%}
+    {%- assign twitter_text = page.title -%}
+    {%- assign pinterest_description = page.excerpt_or_content | strip_html | truncatewords: 15 | url_param_escape -%}
+    {%- assign pinterest_image = page.metafields.custom.featured_image  | img_url: 'master' -%}
+
+    <ul class="dropdown article__sharing" role="menu" aria-labelledby="dropdownMenu1"> 
+        <li><a class="dropdown-item js-social-copy" href="{{ shop.url }}{{ page.url }}">Copy</a></li>
+        <li><a class="dropdown-item js-social-line" href="https://social-plugins.line.me/lineit/share?url={{ share_url }}">Line</a></li>
+        <li><a class="dropdown-item js-social-twitter" href="https://twitter.com/share?{% if twitter_text != blank %}text={{twitter_text}}&{% endif %}url={{ share_url }}">Twitter</a></li>
+        <li><a class="dropdown-item js-social-fb" href="https://www.facebook.com/sharer.php?u={{ share_url }}">Facebook</a></li>
+    </ul>	
+
+  </div>
+{%- elsif template == 'article' -%}
+  <input
+    type="text"
+    id="customer"
+    data-id="{{ customer.id }}"
+    data-email="{{ customer.email }}"
+    data-article_id="{{ article.id }}"
+    data-favorites=""
+    hidden />
+  <div class="article__title hidden">
+    <div class="article__favorite">
+      お気に入りに追加
+      <input
+        class="fav-button add-to-favorites"
+        type="checkbox"
+        data-blog_id="{{ blog.id }}"
+        data-article_id="{{ article.id }}"
+        data-article_title="{{ article.title }}"
+        data-blog_title="{{ blog.title }}"
+        data-article_url="{{ article.handle }}"
+        data-src="{{ article.image.src | img_url: 'large' }}"
+        data-article_date="{{ article.published_at | date: '%Y.%m.%d' }}"
+        data-handle="{{ article.title }}">
+      <span></span>
+    </div>
+  </div>
+{% endif %}

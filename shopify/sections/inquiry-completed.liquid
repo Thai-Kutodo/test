@@ -1,0 +1,56 @@
+ <div class="inquiry-completed inquiry container gap-70 lg:gap-80 pt-100 lg:pt-160" id="inquiry_completed">
+ <img alt="" class="lazy animated text-center" data-src="{{ 'icon_completed.svg' | asset_url }}" height="70" width="70">
+  <div class="container gap-15 lg:gap-25">
+    <h1 class="inquiry__title">送信完了しました</h1>
+    <div class="inquiry__completed">
+    お問い合わせいただきまことにありがとうございます。<br>
+    内容を確認後、改めてご連絡させていただきます。<br>
+    恐れ入りますが、今しばらくお待ちくださいますようお願いいたします。
+    </div>
+  </div>
+  <div class="inquiry__button">
+    <a class="button button--cta" href="/">TOPへ</a>
+  </div>
+  {% render 'link-image', section: section %}
+</div>
+
+{% schema %}
+{
+  "name": "Inquiry Completed",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "default": "Contact form",
+      "label": "ヘッダ"
+    },
+    {
+      "type": "header",
+      "content": "Inquiry Completed"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_completed",
+      "label": "画像"
+    },
+    {
+      "type": "url",
+      "id": "url_completed",
+      "label": "リンク"
+    },
+    {
+      "type": "text",
+      "id": "tag_completed",
+      "default": "#STYLEBOOK",
+      "label": "Tag"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.contact-form.presets.name"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,42 @@
+{% if item_per_page == blank %}
+  {% assign item_per_page = setting.item_per_page %}
+{% endif %}
+{% assign total_page = total_items | plus : 0.0 | divided_by: item_per_page | ceil %}
+<div class="pagination" data-controller="pagination" data-item_per_page="{{ item_per_page }}" data-total_page="{{ total_page }}">
+  <a class="pagination__arrow pagination__arrow--prev pagination__item--disabled{% if total_page <= 1 %} hidden{% endif %}" data-action="click->pagination#prevPagination" data-pagination-target="previous" href=""></a>
+
+  <ul class="pagination__list">
+    {%- for i in (1..total_page) -%}
+      {%- if forloop.first -%}
+        <li class="pagination__item pagination__item--active {% if total_page <= 1 %}hidden{% endif %} show-default">
+          <a href="#" data-pagination-target="number" data-action="click->pagination#displayItems click->pagination#processPagination" data-pagination-index-param="1">1</a>
+        </li>
+
+        {%- if total_page > 5 -%}
+          <li class="pagination__item pagination-dots-first pagination__item--disabled hidden">
+            ...
+          </li>
+        {%- endif -%}
+      {%- endif -%}
+
+      {%- unless forloop.first or forloop.last -%}
+        <li class="pagination__item{% if i > 4 and i < total_items %} hidden{% endif %}">
+          <a href="#" data-pagination-target="number" data-action="click->pagination#displayItems click->pagination#processPagination" data-pagination-index-param="{{ i }}">{{ i }}</a>
+        </li>
+      {%- endunless -%}
+
+      {%- if forloop.last and total_page > 1 -%}
+        {%- if total_page > 5 -%}
+          <li class="pagination__item pagination-dots-last pagination__item--disabled">
+            ...
+          </li>
+        {%- endif -%}
+        <li class="pagination__item show-default">
+          <a href="#" data-pagination-target="number" data-action="click->pagination#displayItems click->pagination#processPagination" data-pagination-index-param="{{ total_page }}">{{ total_page }}</a>
+        </li>
+      {%- endif -%}
+    {%- endfor -%}
+  </ul>
+
+  <a class="pagination__arrow pagination__arrow--next{% if total_page <= 1 %} hidden{% endif %}" data-action="click->pagination#nextPagination" data-pagination-target="next" href=""></a>
+</div>

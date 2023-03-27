@@ -1,0 +1,24 @@
+{
+	"sections": {
+		"main": {
+			"type": "image-with-hashtag",
+			"settings": {}
+		},
+		"news-topics-en": {
+			"type": "news-topics",
+			"settings": {
+				"heading": "News & Topics",
+				"link": "shopify:\/\/blogs\/ニュース"
+			}
+		},
+		"link-images": {
+			"type": "link-images-en",
+			"settings": {}
+		}
+	},
+	"order": [
+		"main",
+		"news-topics-en",
+		"link-images"
+	]
+}

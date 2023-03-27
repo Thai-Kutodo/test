@@ -1,0 +1,13 @@
+{
+  "sections": {
+    "item": {
+      "type": "checkout-delivery-date",
+      "settings": {
+
+      }
+    }
+  },
+  "order": [
+    "item"
+  ]
+}

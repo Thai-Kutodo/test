@@ -1,0 +1,112 @@
+<input type="text" id="acc-id" value="{{ customer.id }}" hidden/>
+<input type="text" id="acc-email" value="{{ customer.email }}" hidden/>
+{% assign hmac = customer.id | hmac_sha256: settings.SALT %}
+<input type="text" id="hmac" value="{{ hmac }}" hidden/>
+<main class="mypage mypage-reserved-events">
+  <div class="container gap-40 lg:gap-80 pt-40 lg:pt-60 pb-70 lg:pb-160">
+    <h1 class="mypage__title">予約中のイベント</h1>
+      <div class="mypage-reserved-events__list">
+      {% assign ticketsFound = false %}
+        {% for order in customer.orders %}
+          {% assign firstLineItem = order.line_items | first %}
+          {% if firstLineItem.product.type == "Ticket" and order.financial_status != "refunded"  and order.cancelled == false %}
+            {% comment %} <div id="{{order.id}}" hidden></div> {% endcomment %}
+            {% assign ticket = firstLineItem.variant %}
+            {% assign eventData = ticket.metafields.event_ticketing.event_v2.value %}
+            {% assign ticketData = ticket.metafields.event_ticketing.ticket.value %}
+            
+            {% comment %} event products can have multiple collections so assign first with ticket items {% endcomment %}
+            {% assign event = ticket.product.collections | first %}
+            {% for collection in ticket.product.collections %}
+              {% assign first_product = collection.products | first %}
+              {% if first_product.type == "Ticket" %}
+                {% assign event = collection %}
+              {% endif %}
+            {% endfor %}
+
+            {% assign eventInfo = event.metafields.event.reservation_html_data %}
+            {% assign canCancel = true %}
+            {% assign currentDateTime = "now" | date: '%s'%}
+            {% assign eventStartTime = eventData.starts_at | replace: "-08:00", "+09:00" %}
+            {% assign eventEndTime = eventData.ends_at | replace: "-08:00", "+09:00" %}
+            {% assign ticketDateTime = eventStartTime | date %}
+            {% assign cancelTimeLimit = eventStartTime | date: "%s" %}
+            {% comment %} disable cancel button if current time is greater than the start of event day {% endcomment %}
+            {% if cancelTimeLimit < currentDateTime %}
+              {% assign canCancel = false %} 
+            {% endif %}
+            {% comment %} don't display ticket if current time is greater than event end time {% endcomment %}
+            {% assign ticketEndTime = eventEndTime | date: '%s' %}
+            {% comment %} {% if currentDateTime > ticketEndTime %}
+              <div id="{{order.id}}" data-currentTime="{{currentDateTime}}" data-endTime="{{ticketEndTime}}" data-error="AFTER END TIME"hidden></div>
+            {% endif %} {% endcomment %}
+            {% unless currentDateTime > ticketEndTime %}
+              {% assign ticketsFound = true %}
+              <div class="mypage-reserved-events__item" data-title="{{event.title}}" data-id="{{event.id}}">
+                <div class="container gap-50 lg:gap-60">
+                  <div class="mypage-reserved-events__hero">
+                    <div class="mypage-reserved-events__image">
+                      <img alt="{{ event.title }}" class="lazy animated" data-src="{{ event.image | image_url: width: 500 }}">
+                    </div>
+                    <h2 class="mypage__sub-title">{{event.title}}</h2>
+                    <dl class="description-list grid-cols-3 lg:grid-cols-5">
+                      <dt class="lg:col-span-2">開催日時</dt>
+                      {% assign eventDate = eventStartTime | date: "%Y-%m-%d" %}
+                      {% assign eventStartTime24 = eventStartTime | date: "%H:%M" %}
+                      {% assign eventEndTime24 = eventEndTime | date: "%H:%M" %}
+                      {% assign eventDay = eventStartTime | date: "%A" %}
+                      {% assign dayKanji = "events.event_reservations." | append: eventDay %}
+                      <dd class="col-span-2 lg:col-span-3 event-date">{{eventDate | replace: "-", "/" }}（{{ dayKanji | t }}）{{eventStartTime24}}-{{eventEndTime24}}</dd>
+                      <dt class="lg:col-span-2">開催場所</dt>
+                      {% if eventData.venue.name == "EC倉庫"%}
+                        <dd class="col-span-2 lg:col-span-3 event-venue">ONLINE STORE</dd>
+                      {% else %}
+                        <dd class="col-span-2 lg:col-span-3 event-venue">{{ eventData.venue.name }}</dd>
+                      {% endif %}
+                      <dt class="lg:col-span-2">予約枠数</dt>
+                      <dd class="col-span-2 lg:col-span-3">{{ firstLineItem.quantity }}枠</dd>
+                      <dt class="lg:col-span-2">参加料金/1枠</dt>
+                      <dd class="col-span-2 lg:col-span-3">{{ firstLineItem.final_price | money_without_currency }}円</dd>
+                    </dl>
+                  </div>
+                  {% if eventInfo != blank %}
+                    <div class="container gap-15 lg:gap-20">
+                      <h4>ご案内</h4>
+                      <ul class="mypage__notes">
+                        {{ eventInfo }}
+                      </ul>
+                    </div>
+                  {% endif %}
+                  <div data-controller="alert-trigger">
+                    <button class="button cancel_event {% unless canCancel %}disabled{% endunless %}" data-action="alert-trigger#open" data-id="{{order.id}}" type="button">キャンセルする</button>
+                    <template data-alert-trigger-target="template">
+                      <div class="alert" data-controller="alert">
+                        <div class="alert__title">本当にキャンセルしますか？</div>
+                        <div data-controller="alert-trigger">
+                          <button class="button button--cta cancel-request" type="button">キャンセルする</button>
+                          <button class="button button--cta cancel-complete" data-action="alert#close alert-trigger#open" type="button"  style="display: none;">キャンセルする</button>
+                          <button class="button" data-action="alert#close" type="button">もどる</button>
+                          <template data-alert-trigger-target="template">
+                            <div class="alert" data-controller="alert">
+                              <div class="alert__title">キャンセル完了しました</div>
+                              <a class="button button--cta" href="" type="button">閉じる</a>
+                            </div>
+                          </template>
+                        </div>
+                      </div>
+                    </template>
+                  </div>
+                </div>
+              </div>
+            {% endunless %}
+          {% endif %}
+        {% endfor %}
+        <hr class="pc">
+      </div>
+    {% if ticketsFound == false %}
+      <p class="mypage__description mypage__description--large">予約中のイベントはありません。</p>
+    {% endif %}
+      <a class="button button--has-icon-arrow-right" href="/account/?view=reserved-events-history">過去参加したイベントを見る</a>
+   
+  </div>
+</main>

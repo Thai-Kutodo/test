@@ -1,0 +1,163 @@
+{
+	"sections": {
+	  "main": {
+		"type": "company-history",
+		"blocks": {
+		  "f58ffa25-7a82-47f3-a015-657b5a16ac9f": {
+			"type": "timeline",
+			"settings": {
+			  "position": true,
+			  "timeline": "1948.12",
+			  "image": "shopify:\/\/shop_images\/history-1948.jpg",
+			  "info_text": "<p>ファミリアの前身である<br\/>ベビーショップ・モトヤオープン<\/p>"
+			}
+		  },
+		  "6b8f33ab-3965-4f5f-ac0c-a369493d6cd7": {
+			"type": "timeline",
+			"settings": {
+			  "position": false,
+			  "timeline": "1950.4",
+			  "image": "shopify:\/\/shop_images\/history-1950.jpg",
+			  "info_text": "<p>ファミリア 創業<br\/>神戸市生田区三宮に神戸店<br\/>（センター街店）をオープン<\/p>"
+			}
+		  },
+		  "8c8702ed-ec6e-42cf-91de-d51b3dfb1f8d": {
+			"type": "timeline",
+			"settings": {
+			  "position": true,
+			  "timeline": "1966.8",
+			  "image": "shopify:\/\/shop_images\/history-1966.jpg",
+			  "info_text": "<p>神戸元町店オープン<\/p>"
+			}
+		  },
+		  "7e9030eb-b9b3-4ead-acbb-e36c6e836ace": {
+			"type": "timeline",
+			"settings": {
+			  "position": false,
+			  "timeline": "1976.9",
+			  "image": "shopify:\/\/shop_images\/history-1976.jpg",
+			  "info_text": "<p>東京銀座に日本初の<br\/>子ども百貨店 銀座ファミリア をオープン<\/p>"
+			}
+		  },
+		  "35af74df-70eb-45d4-8298-e8b4dc059673": {
+			"type": "timeline",
+			"settings": {
+			  "position": true,
+			  "timeline": "1985.3",
+			  "info_text": "<p>創立35周年を迎え、岡崎晴彦が社長に就任<\/p>"
+			}
+		  },
+		  "3c062a8d-f3ec-4d12-8101-2a36860f9005": {
+			"type": "timeline",
+			"settings": {
+			  "position": false,
+			  "timeline": "2000.4",
+			  "info_text": "<p>創立50周年を迎える<\/p>"
+			}
+		  },
+		  "567b1a8d-e7df-44cd-bd53-26dfc361ba22": {
+			"type": "timeline",
+			"settings": {
+			  "position": true,
+			  "timeline": "2011.4",
+			  "info_text": "<p>岡崎忠彦が社長に就任<\/p>"
+			}
+		  },
+		  "59a77482-f976-4233-bef8-fdf0fcfeb74f": {
+			"type": "timeline",
+			"settings": {
+			  "position": true,
+			  "timeline": "2012.11",
+			  "image": "shopify:\/\/shop_images\/history-2012.jpg",
+			  "info_text": "<p>阪急うめだ本店ファミリアを<br\/>リニューアルオープン<\/p>"
+			}
+		  },
+		  "062af419-c011-4433-aa23-ffab6ff77669": {
+			"type": "timeline",
+			"settings": {
+			  "position": false,
+			  "timeline": "2015.4",
+			  "image": "shopify:\/\/shop_images\/history-2015.jpg",
+			  "info_text": "<p>東京都港区にファミリアの保育園<br\/>「familiar PRESCHOOL白金台」を開園<\/p>"
+			}
+		  },
+		  "74f92a46-caa0-4bc9-9055-89d1f3638644": {
+			"type": "timeline",
+			"settings": {
+			  "position": true,
+			  "timeline": "2016.5",
+			  "info_text": "<p>神戸本社を神戸市中央区磯上通へ移転<\/p>"
+			}
+		  },
+		  "645f0a47-faf4-4f4b-917b-433fb341983c": {
+			"type": "timeline",
+			"settings": {
+			  "position": true,
+			  "timeline": "2016.6",
+			  "image": "shopify:\/\/shop_images\/history-2016.jpg",
+			  "info_text": "<p>体感型ショップ「ファミリア代官山店」オープン<\/p>"
+			}
+		  },
+		  "8d6db50a-4a00-4fcc-a3f1-b159e389a6d7": {
+			"type": "timeline",
+			"settings": {
+			  "position": false,
+			  "timeline": "2016.10",
+			  "info_text": "<p>創業者の4人の女性を<br\/>モデルとしたドラマ「べっぴんさん」放映<\/p>"
+			}
+		  },
+		  "bf0ef8dc-05b4-411b-aadd-836017990ed2": {
+			"type": "timeline",
+			"settings": {
+			  "position": true,
+			  "timeline": "2018.4",
+			  "info_text": "<p>東京オフィスを港区六本木に開設<\/p>"
+			}
+		  },
+		  "b8b4cd35-9a44-49d7-b3b0-81afcd3bc07a": {
+			"type": "timeline",
+			"settings": {
+			  "position": false,
+			  "timeline": "2018.9",
+			  "image": "shopify:\/\/shop_images\/history-2018.jpg",
+			  "info_text": "<p>子どもと家族の可能性が広がる新しい空間「ファミリア神戸本店」オープン2020.4創業70周年を迎える<\/p>"
+			}
+		  },
+		  "c27e9c07-740d-4cb2-b151-b4a5c4cd49f9": {
+			"type": "timeline",
+			"settings": {
+			  "position": true,
+			  "timeline": "2020.4",
+			  "info_text": "<p>創業70周年を迎える<\/p>"
+			}
+		  }
+		},
+		"block_order": [
+		  "f58ffa25-7a82-47f3-a015-657b5a16ac9f",
+		  "6b8f33ab-3965-4f5f-ac0c-a369493d6cd7",
+		  "8c8702ed-ec6e-42cf-91de-d51b3dfb1f8d",
+		  "7e9030eb-b9b3-4ead-acbb-e36c6e836ace",
+		  "35af74df-70eb-45d4-8298-e8b4dc059673",
+		  "3c062a8d-f3ec-4d12-8101-2a36860f9005",
+		  "567b1a8d-e7df-44cd-bd53-26dfc361ba22",
+		  "59a77482-f976-4233-bef8-fdf0fcfeb74f",
+		  "062af419-c011-4433-aa23-ffab6ff77669",
+		  "74f92a46-caa0-4bc9-9055-89d1f3638644",
+		  "645f0a47-faf4-4f4b-917b-433fb341983c",
+		  "8d6db50a-4a00-4fcc-a3f1-b159e389a6d7",
+		  "bf0ef8dc-05b4-411b-aadd-836017990ed2",
+		  "b8b4cd35-9a44-49d7-b3b0-81afcd3bc07a",
+		  "c27e9c07-740d-4cb2-b151-b4a5c4cd49f9"
+		],
+		"settings": {
+		  "title": "社史沿革",
+		  "description": "<p>1948年12月、坂野惇子をはじめとする4人の女性たちが「ベビーショップ・モトヤ」を神戸市でオープンしました。<br\/>1950年4月、「子どものためにより良いものを」という情熱に燃えて、わずか3坪という小さなお店からスタートしました。<\/p>",
+		  "padding_top": 28,
+		  "padding_bottom": 28
+		}
+	  }
+	},
+	"order": [
+	  "main"
+	]
+  }

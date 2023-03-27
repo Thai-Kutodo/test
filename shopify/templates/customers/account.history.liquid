@@ -1,0 +1,44 @@
+<main class="mypage mypage-order-history" data-controller="switcher" data-switcher-hash-enabled-value="false">
+  <div class="container gap-40 pt-40 lg:pt-60">
+    <h1 class="mypage__title">ご購入履歴一覧</h1>
+    <div class="mypage-order-history__description">オンラインショップ・ファミリアショップでの2023年2月1日以降のご購入内容をご確認いただけます。</div>
+    <div class="container gap-20 lg:gap-40">
+      <ul class="category-tab">
+        {% assign items = "オンラインショップ,ファミリアショップ" | split: ',' %}
+        {% for item in items %}
+          <li class="category-tab__item">
+            <label>
+              <input data-action="click->switcher#switch" data-switcher-target="tab" data-switcher-index-param="{{ forloop.index0 }}" name="tab" type="radio" value="{{ item }}">
+              <span>{{ item }}</span>
+            </label>
+          </li>
+        {% endfor %}
+      </ul>
+      <hr>
+    </div>
+  </div>
+  <div class="mypage-order-history__content" data-switcher-target="content">
+    <div class="container gap-70 lg:gap-80 pb-70 lg:pb-160">
+      {%- paginate customer.orders by 1000 -%}
+        <ul class="item-list gap-70 lg:gap-80">
+          {% assign loopCount =  0 %}
+          {% for order in customer.orders %}
+            <li class="{% if loopCount > 3 %}hidden{% endif %} pt-70 lg:pt-80">
+                {% render 'order-history-item', order: order %}
+                {% assign loopCount = loopCount | plus: 1 %}
+                <hr>
+            </li> 
+          {% endfor %}
+        </ul>
+        {% assign item_per_page = 4 %}
+        {% assign order_count = customer.orders.size %}
+        {% render 'pagination', total_items: order_count, item_per_page: item_per_page %}
+      {%- endpaginate -%}
+    </div>
+  </div>
+  <div class="mypage-order-history__content" data-switcher-target="content">
+    <div id="shop-history-container" class="container gap-70 lg:gap-80 pt-70 lg:pt-80 pb-70 lg:pb-160">
+      {% comment %} shop history orders loaded from history.ts {% endcomment %}
+    </div>
+  </div>
+</main>

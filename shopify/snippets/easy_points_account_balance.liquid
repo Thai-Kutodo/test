@@ -1,0 +1,34 @@
+{%- comment -%} START EASYPOINTS - DO NOT MODIFY! 変更しないでください! INFO @ https://bit.ly/2Dn7ESM {%- endcomment -%}
+  {%- assign shop_ep_metafield = shop.metafields.loyalty.easy_points_attributes.value -%}
+  {%- unless shop_ep_metafield.stealth_mode -%}
+    {%- if customer -%}
+      {%- assign customer_ep_metafield = customer.metafields.loyalty.easy_points_attributes.value -%}
+      {%- if has_feature_tiers and shop.metafields.loyalty['tiers_active'] == "true" -%}
+      <h2>{{ 'easypoints.tiers.current_rank_title' | t }}</h2>
+      <div class="easy-points__account">
+        <p class="easy-points-tiers__container">
+          {{
+            'easypoints.tiers.current_rank_html' | t:
+              rank: '<span data-loyal-target="tier-name">-</span>'
+          }}
+        </p>
+        {% render 'easy_points_tiers_rank_advancement', class: 'easy-points-text__muted' %}
+      </div>
+      {%- endif -%}
+      <h2>{{ 'easypoints.points_balance' | t }}</h2>
+      <div class="easy-points__account">
+        <p class="easy-points-balance__container">
+          <span class="easy-points">
+            <span data-loyal-target="balance">-</span> <span class="easy-points__text">{{ 'easypoints.points' | t }}</span>
+          </span>
+          <span data-loyal-target="balance-expiration" class="easy-points-text__muted easy-points-hide">
+            <span>{{ 'easypoints.expiration_date' | t }}</span>
+            <span data-loyal-target="balance-expiration__yy">-</span>{{ 'easypoints.date_year' | t }}
+            <span data-loyal-target="balance-expiration__mm">-</span>{{ 'easypoints.date_month' | t }}
+            <span data-loyal-target="balance-expiration__dd">-</span>{{ 'easypoints.date_day' | t }}
+          </span>
+        </p>
+      </div>
+    {%- endif -%}
+  {%- endunless -%}
+{%- comment -%} END EASYPOINTS {%- endcomment -%}

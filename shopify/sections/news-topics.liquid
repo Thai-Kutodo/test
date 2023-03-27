@@ -1,0 +1,115 @@
+{% if section.blocks.size > 0 %}
+  <div data-lang="{% if section.settings.language %}en{% else %}ja{% endif %}" class="article-list {% if template.suffix contains 'event' %}mt-80 {% endif %}">
+    <div class="article-list__header">
+      {%- if section.settings.heading != blank -%}
+        <h2>{{ section.settings.heading }}</h2>
+      {%- endif -%}
+
+      {%- if section.settings.link != blank -%}
+        <a class="article-list__view-all" href="{{ section.settings.link }}">{{ "general.news.all" | t }}</a>
+      {%- endif -%}
+    </div>
+
+    <ul class="article-list__list">
+      {%- for block in section.blocks -%}
+        {% assign article = block.settings.article %}
+        {% assign category = article.url | split: "/" %}
+        {% assign indexItem = forloop.index %}
+
+        {% liquid
+          assign prefixCategory = ''
+          if request.locale.iso_code contains 'ja'
+              assign prefixCategory = category[2] | url_decode | handleize
+          else
+              assign prefixCategory = category[3] | url_decode | handleize
+          endif
+      %}
+
+        {%- if article != blank -%}
+          <li>
+            <a href="{{ article.url }}" class="article-item">
+              <div class="article-item__content">
+                <p class="article-item__header">
+                  <span class="article-item__category article-item__category--event-{{ indexItem }}">{% if prefixCategory  == 'ニュース'%}News{% else %}{{ prefixCategory }}{% endif %}</span>
+                  <span class="article-item__date">{{ article.published_at  | date: '%Y.%m.%d'}}</span>
+                </p>
+                <p class="article-item__body">{{ article.title }}</p>
+              </div>
+
+              <div class="article-item__image">
+                {%- if article.image.src != blank -%}
+                  <img class="lazy animated" data-src="{{ article.image.src | image_url: width: 400 }}" >
+                {%- else -%}
+                  {{ 'image' | placeholder_svg_tag }}
+                {%- endif -%}
+              </div>
+            </a>
+          </li>
+
+          {% if block.settings.bg_category != blank or block.settings.color_text != blank %}
+            <style type="text/css">
+              .article-item__category--event-{{ indexItem }} {
+                background-color: {{ block.settings.bg_category }};
+                color: {{ block.settings.color_text }};
+              }
+            </style>
+          {% endif %}
+        {%- endif -%}
+      {%- endfor -%}
+    </ul>
+  </div>
+{% endif %}
+
+{% schema %}
+{
+  "name": "ニュース＆トピックス",
+  "class": "section-news-topics",
+  "settings": [
+    {
+      "type":"checkbox",
+      "id": "language",
+      "label": "Show Page In English"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "ヘッダ"
+    },
+    {
+      "type": "url",
+      "id": "link",
+      "label": "リンク"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "item_aritcle",
+      "name": "記事",
+      "settings": [
+        {
+          "type": "color",
+          "id": "bg_category",
+          "label": "Background category",
+          "default": "#000000"
+        },
+        {
+          "type": "color",
+          "id": "color_text",
+          "label": "Color text category",
+          "default": "#ffffff"
+        },
+        {
+          "type": "article",
+          "id": "article",
+          "label": "記事"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "ニュース＆トピックス"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,92 @@
+{% assign total_product = recommendations.products.size %}
+
+<div class="container gap-50 lg:gap-80">
+  <hr>
+  <product-recommendations class="product-recommendations isolate scroll-item-list" data-url="{{ routes.product_recommendations_url }}?section_id={{ section.id }}&product_id={{ product.id }}&limit=10">
+    {% if recommendations.performed and recommendations.products_count > 0 %}
+      <h2 class="scroll-item-list__title">{{ section.settings.heading }}</h2>
+      <div class="scroll-item-list__images" data-controller="scrollable">
+        <button aria-label="左にスクロールする" class="scroll-item-list__button scroll-item-list__button--left{% if recommendations.products.size < 5 %} hidden{% endif %}" data-action="scrollable#scrollLeft" data-scrollable-target="leftButton" type="button"></button>
+        <ul class="scroll-image-list" data-scrollable-target="content">
+          {% for recommendation in recommendations.products %}
+            {% assign vip_company_sale = false %}
+
+            {%- for tag in recommendation.tags -%}
+              {%- if tag contains '社販セール品' or tag contains 'VIP' -%}
+                {% assign vip_company_sale = true %}
+              {%- endif -%}
+            {%- endfor -%}
+
+            {%- if recommendation.handle != '998002' and vip_company_sale == false -%}
+              <li{% if total_product < 4 %} class="max-width"{% endif %}>
+                {% render 'item-product' card_product: recommendation %}
+              </li>
+            {%- endif -%}
+          {% endfor %}
+        </ul>
+        <button aria-label="右にスクロールする" class="scroll-item-list__button scroll-item-list__button--right{% if recommendations.products.size < 5 %} hidden{% endif %}" data-action="scrollable#scrollRight" data-scrollable-target="rightButton" type="button"></button>
+      </div>
+    {% endif %}
+  </product-recommendations>
+</div>
+
+{% javascript %}
+  class ProductRecommendations extends HTMLElement {
+    constructor() {
+      super();
+
+      const handleIntersection = (entries, observer) => {
+        if (!entries[0].isIntersecting) return;
+        observer.unobserve(this);
+
+        fetch(this.dataset.url)
+          .then(response => response.text())
+          .then(text => {
+            const html = document.createElement('div');
+            html.innerHTML = text;
+            const recommendations = html.querySelector('product-recommendations');
+
+            if (recommendations && recommendations.innerHTML.trim().length) {
+              this.innerHTML = recommendations.innerHTML;
+            }
+
+            if (html.querySelector('.grid__item')) {
+              this.classList.add('product-recommendations--loaded');
+            }
+          })
+          .catch(e => {
+            console.error(e);
+          });
+      }
+
+      new IntersectionObserver(handleIntersection.bind(this), {rootMargin: '0px 0px 200px 0px'}).observe(this);
+    }
+  }
+
+  customElements.define('product-recommendations', ProductRecommendations);
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "t:sections.product-recommendations.name",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "t:sections.product-recommendations.settings.paragraph__1.content"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "default": "You may also like",
+      "label": "t:sections.product-recommendations.settings.heading.label"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.product-recommendations.name"
+    }
+  ]
+}
+{% endschema %}

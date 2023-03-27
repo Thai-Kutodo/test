@@ -1,0 +1,59 @@
+<div data-lang="{% if section.settings.language %}en{% else %}ja{% endif %}" class="link-list">
+  <ul class="link-list__list">
+    {%- for block in section.blocks -%}
+      <li class="link-list__item">
+        <a href="{{ block.settings.link }}">
+          <div class="link-item">
+            <div class="link-item__image">
+              <img class="lazy animated" data-src="{{ block.settings.image | image_url:width: 160 }}">
+            </div>
+
+            <div class="link-item__title">{{ block.settings.heading }}</div>
+          </div>
+        </a>
+      </li>
+    {%- endfor -%}
+  </ul>
+</div>
+
+{% schema %}
+{
+  "name": "リンクのリスト",
+  "class": "section-link-lists",
+  "settings": [
+    {
+      "type":"checkbox",
+      "id": "language",
+      "label": "Show Page In English"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Item",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "画像"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "ヘッダ"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "リンク"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "リンクのリスト"
+    }
+  ]
+}
+{% endschema %}

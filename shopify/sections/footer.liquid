@@ -1,0 +1,174 @@
+{% capture sns %}
+  <div class="footer__sns">
+    <h4 class="footer__title">Official SNS</h4>
+    <div class="footer__sns-links">
+      {%- if settings.social_instagram_link != blank -%}
+        <a href="{{ settings.social_instagram_link }}" data-sns="Instagram" rel="noopener" target="_blank">
+          {% render 'icon-instagram' %}
+          <span>Instagram</span>
+        </a>
+      {%- endif -%}
+
+      {%- if settings.social_line_link != blank -%}
+        <a href="{{ settings.social_line_link }}" data-sns="LINE" rel="noopener" target="_blank">
+          {% render 'icon-line' %}
+          <span>LINE</span>
+        </a>
+      {%- endif -%}
+    </div>
+  </div>
+{% endcapture %}
+
+{% capture chat_button %}
+  <button class="button button--cta footer__chat-button" type="button">
+    {% render 'icon-balloon' %}
+    チャットでお問い合わせ
+  </button>
+{% endcapture %}
+
+{% capture support_links %}
+  {%- if section.settings.menu_1 != blank -%}
+    <ul class="footer__link-list">
+      {%- for link in linklists[section.settings.menu_1].links -%}
+        <li>
+          <a href="{{ link.url }}">{{ link.title }}</a>
+        </li>
+      {%- endfor -%}
+    </ul>
+  {%- endif -%}
+{% endcapture %}
+
+{% capture corporate_links %}
+  {%- if section.settings.menu_2 != blank -%}
+    <ul class="footer__link-list">
+      {%- for link in linklists[section.settings.menu_2].links -%}
+        <li>
+          <a href="{{ link.url }}">{{ link.title }}</a>
+        </li>
+      {%- endfor -%}
+    </ul>
+  {%- endif -%}
+{% endcapture %}
+
+{% capture app %}
+  <div class="footer__app">
+    <h4 class="footer__title">Official APP</h4>
+    <div class="footer__app-badges">
+      {% if section.settings.link_google.size > 0 %}
+        <a href="{{ section.settings.link_google }}" data-store="Google Play" rel="noopener" target="_blank">
+          <img alt="Google Play" height="47" src="{{ 'badge_google@3x.png' | asset_url }}" srcset="{{ 'badge_google@3x.png' | asset_url }}" width="160">
+        </a>
+      {% endif %}
+      {% if section.settings.link_apple.size > 0 %} 
+        <a href="{{ section.settings.link_apple }}" data-store="App Store" rel="noopener" target="_blank">
+          <img alt="App Store" height="47" src="{{ 'badge_apple@3x.png' | asset_url}}" srcset="{{ 'badge_apple@3x.png' | asset_url}}" width="160">
+        </a>
+      {% endif %}
+    </div>
+  </div>
+{% endcapture %}
+
+{% capture legal_links %}
+  {%- if section.settings.menu_3 != blank -%}
+    <ul class="footer__legal-link-list">
+      {%- for link in linklists[section.settings.menu_3].links -%}
+        <li>
+          <a href="{{ link.url }}">{{ link.title }}</a>
+        </li>
+      {%- endfor -%}
+    </ul>
+  {%- endif -%}
+{% endcapture %}
+
+{% capture copyright %}
+  <div class="footer__copyright">
+    Copyright &copy; familiar, Ltd. All rights reserved.
+  </div>
+{% endcapture %}
+
+<footer class="footer footer-languages">
+  <div class="footer__inner">
+    {%- if request.locale.iso_code == 'ja' -%}
+    <div class="sp">
+      <div class="container gap-40 pt-70 pb-30">
+        {{ sns }}
+        <hr>
+        {{ chat_button }}
+        <hr>
+        {{ support_links }}
+        <hr>
+        {{ corporate_links }}
+        <hr>
+        {{ app }}
+        <hr>
+        {{ legal_links }}
+        <hr>
+        {{ copyright }}
+      </div>
+    </div>
+    <div class="pc">
+      <div class="grid-cols-10 pt-120 pb-60">
+        <div class="footer__column-left">
+          <div class="container gap-60">
+            <div class="grid-cols-2">
+              {{ support_links }}
+              {{ corporate_links }}
+            </div>
+            <hr>
+            {{ legal_links }}
+            <hr>
+            {{ copyright }}
+          </div>
+        </div>
+        <div class="footer__column-right">
+          <div class="container gap-40">
+            {{ sns }}
+            <hr>
+            {{ chat_button }}
+            <hr>
+            {{ app }}
+          </div>
+        </div>
+      </div>
+    </div>
+    {%- else -%}
+      {%- render 'footer-en' -%}
+    {%- endif -%}
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "t:sections.footer.name",
+  "blocks": [
+
+  ],
+  "settings": [
+    {
+      "type": "link_list",
+      "id": "menu_1",
+      "label": "Menu 1"
+    },
+    {
+      "type": "link_list",
+      "id": "menu_2",
+      "label": "Menu 2"
+    },
+    {
+      "type": "link_list",
+      "id": "menu_3",
+      "label": "Menu 3"
+    },
+    {
+      "type": "url",
+      "id": "link_google",
+      "label": "Link google play"
+    },
+    {
+      "type": "url",
+      "id": "link_apple",
+      "label": "Link app apple"
+    }
+  ]
+}
+{% endschema %}

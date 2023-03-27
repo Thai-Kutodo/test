@@ -1,0 +1,134 @@
+{% assign label_category_blog = "all," %}
+
+{%- for block in section.blocks -%}
+  {% assign blog = blogs[block.settings.blog_category] %}
+  {% assign label_category_blog = label_category_blog | append: blog.title %}
+
+  {%- unless forloop.last -%}
+    {% assign label_category_blog = label_category_blog | append: "," %}
+  {%- endunless -%}
+
+  {% paginate blog.articles by blog.articles_count %}
+    {% assign all_article = all_article | concat: blog.articles %}
+  {% endpaginate %}
+{%- endfor -%}
+
+{% assign all_article = all_article | sort:'published_at' | reverse %}
+{% assign label_category_blog = label_category_blog | split: ',' %}
+
+{% liquid
+  assign language = request.locale.iso_code
+  assign class_language = 'ja__item-list--articles'
+  assign class = 'container gap-40 lg:gap-60'
+
+  if language == 'en'
+     assign class_language = 'en__item-list--articles'
+     assign class = 'container gap-60 lg:gap-100'
+  endif
+
+%}
+
+
+<div class="{{ class }}" data-controller="switcher">
+  <h1 class="news__title">{{ section.settings.heading }}</h1>
+
+{%- if request.locale.iso_code contains 'ja' -%}
+  <form data-action="switcher#submitFormSearch" id="searchForm">
+    <input data-switcher-target="inputSearch" class="search-form" name="q" placeholder="キーワード検索" type="search">
+  </form>
+
+  <ul class="category-tab">
+    {% for label_category in label_category_blog %}
+      <li class="category-tab__item">
+        <label>
+          <input data-action="click->switcher#switch" data-switcher-target="tab" data-switcher-index-param="{{ forloop.index0 }}" name="tab" type="radio" value="{{ label_category | upcase }}">
+          <span>
+            {% if label_category == 'ニュース' %}
+            NEWS
+          {% else %}
+            {{ label_category | upcase }}
+          {% endif %}
+          </span>
+        </label>
+      </li>
+    {% endfor %}
+  </ul>
+{%- endif -%}
+
+  <div class="news__container">
+    <hr class="pc">
+
+    <div class="news__content" data-switcher-target="content">
+      <div class="container gap-70 lg:gap-90">
+        <ul class="item-list item-list--article {{ class_language }}">
+          {%- for article in all_article -%}
+            {%- if article != blank -%}
+              <li class="{% if forloop.index > section.settings.item_per_page %}hidden{% endif %}">
+                <a href="{{ article.url }}">
+                  {% render 'article-item-v2', article: article %}
+                </a>
+              </li>
+            {%- endif -%}
+          {%- endfor -%}
+        </ul>
+        {% render 'pagination', total_items: all_article.size, setting: section.settings  %}
+      </div>
+    </div>
+
+    {%- for block in section.blocks -%}
+      {% assign blog = blogs[block.settings.blog_category] %}
+
+      <div class="news__content {{ category }}" data-switcher-target="content">
+        <div class="container gap-70 lg:gap-90">
+          <ul class="item-list item-list--article {{ class_language }}">
+            {%- for article in blog.articles -%}
+              <li class="{% if forloop.index > section.settings.item_per_page %}hidden{% endif %}">
+                <a href="{{ article.url }}">
+                  {% render 'article-item-v2', article: article  %}
+                </a>
+              </li>
+            {%- endfor -%}
+          </ul>
+          {% render 'pagination', total_items: blog.articles.size, setting: section.settings %}
+        </div>
+      </div>
+    {%- endfor -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.main-blog.name",
+  "class": "news",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "t:sections.main-blog.settings.heading.label",
+      "default": "News & Topics"
+    },
+    {
+      "type": "range",
+      "id": "item_per_page",
+      "min": 6,
+      "max": 24,
+      "step": 1,
+      "label": "t:sections.main-blog.settings.item_per_page.label",
+      "default": 6
+    }
+  ],
+  "blocks": [
+    {
+      "type": "blog",
+      "name":  "ブログ",
+      "settings": [
+        {
+          "type": "blog",
+          "id": "blog_category",
+          "label":  "ブログを選択してください"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

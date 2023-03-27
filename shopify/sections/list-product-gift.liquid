@@ -1,0 +1,62 @@
+<section class="section-product-gift">
+  <div class="container gap-70 lg:gap-60">
+    {%- for block in section.blocks -%}
+    {%- liquid
+      assign title = block.settings.title
+      assign description = block.settings.description
+      assign collection = block.settings.collection
+    -%}
+    {% render 'scroll-item-list', title: title, description: description, collection_gift: collection, has_divider: true, has_header_link: true %}
+    {%- endfor -%}
+  </div>
+</section>
+{% schema %}
+{
+  "name": "t:sections.list_product_gift.name",
+  "tag": "section",
+  "class": "section-product-gift",
+  "max_blocks": 5,
+  "blocks": [
+    {
+      "type": "featured_collection_gift",
+      "name": "t:sections.list_product_gift.blocks.block.name",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label":  "t:sections.list_product_gift.blocks.block.settings.title.label",
+          "default": "Title of collection"
+        },
+        {
+          "type": "text",
+          "id": "description",
+          "label": "t:sections.list_product_gift.blocks.block.settings.description.label",
+          "default": "Description of collection"
+        },
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "t:sections.list_product_gift.blocks.block.settings.choose_collection.label"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.list_product_gift.name",
+      "blocks": [
+        {
+          "type": "featured_collection_gift"
+        },
+        {
+          "type": "featured_collection_gift"
+        },
+        {
+          "type": "featured_collection_gift"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
+

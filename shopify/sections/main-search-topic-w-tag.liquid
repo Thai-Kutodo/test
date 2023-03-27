@@ -1,0 +1,44 @@
+{% layout none %}
+<div class="container gap-70 lg:gap-90">
+  <ul class="item-list item-list--content">
+    {% assign count_result = 0 %}
+    {%- for item in search.results -%}
+    {% assign article_category = item.url | split: "/" %}
+    {% assign article_category_decode = article_category[2] | url_decode %}
+      {%- if article_category_decode == 'topic' %}
+      {% assign count_result = count_result | plus: 1 %}
+        <li class="{% if count_result > 6 %}hidden{% endif %}">
+          <div class="tagged-image">
+            <a href="{{ item.url}}">
+              {%- if item.image != blank -%}
+              <img alt="{{ item.image.alt }}" class="lazy animated" data-src="{{ item.image | image_url: width: 500 }}" />
+            {%- else -%}
+                {{ 'image' | placeholder_svg_tag }}
+            {% endif %}
+            <span class="tag tag--small">#アーカイブマーケット</span></a>
+          </div>
+        </li>
+       
+        {%- endif -%}
+    {%- endfor -%}
+  </ul>
+  {%  if count_result > 0%}
+    {% render 'pagination', total_items: count_result, setting: settings  %}
+  {% else %}
+    <div class="template-search__results text-center article-empty page-width" >
+      <div class="loading-overlay gradient"></div>
+      <div class="article-empty-text center">
+        <p class="list__no-items">
+          一致する投稿が見つかりませんでした
+        </p>
+      </div>
+    </div>
+  {% endif %}
+ </div>
+{% schema %}
+{
+  "name": "Topic",
+  "tag": "section",
+  "class": "topic-section"
+}
+{% endschema %}

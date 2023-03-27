@@ -1,0 +1,30 @@
+{% comment %} event: shopify collection {% endcomment %}
+<div class="event-item">
+    <div class="event-item__image">
+      {%- if event.image != blank -%}
+      <img alt="{{ event.image.alt }}" class="lazy animated" data-src="{{ event.image | image_url: width: 500 }}" />
+      {%- else -%}
+        {{ 'image' | placeholder_svg_tag }}
+      {% endif %}
+    </div>
+    <div class="event-item__content">
+      <div class="event-item__statuses">
+        {% for tag in event.metafields.event.tags.value %}
+          {% assign tag_style = ""%}
+          {% if tag.style != "" %}
+            {% assign tag_style = "--" | append: tag.style %}
+          {% endif %}
+          <span class="event-item__status event-item__status{{tag_style}}">{{ tag.name }}</span>
+        {% endfor %}
+      </div>
+      {% if request.locale.iso_code == 'en' and event.metafields.custom.shop_name_in_english.value != blank %}
+        <div class="event-item__venue">{{ event.metafields.custom.shop_name_in_english.value }}</div> 
+      {% endif %}
+      <h2 class="event-item__title">{{ event.title | newline_to_br }}</h2>
+      <div class="event-item__description">{{ event.description | newline_to_br }}</div>
+      <div class="event-item__button">
+        <a class="button button--has-icon-arrow-right" href="{{ event.url }}" data-title="{{event.title}}" data-id="{{event.id}}">{{ 'events.event_list.button' | t }}</a>
+      </div>
+    </div>
+  </div>
+  

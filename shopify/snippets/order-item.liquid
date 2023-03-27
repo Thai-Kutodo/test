@@ -1,0 +1,102 @@
+{% assign discount_staff_account = 1 %}
+
+{%- if customer.tags contains '社員' and customer and template contains 'cart' -%}
+  {% assign discount_staff_account = 0.65 %}
+{%- endif -%}
+
+{%- if item.variant.option2 != blank -%}
+  {% assign first_letter = item.variant.option1 | first | plus: 0 %}
+
+  {%- if first_letter == 0 -%}
+    {% assign variant_size = item.variant.option1 | slice: 1, 2 %}
+  {%- else -%}
+    {% assign variant_size = item.variant.option1 %}
+  {%- endif -%}
+{%- endif -%}
+
+{% for product_option in item.product.options_with_values %}
+  {%- if product_option.name == "サイズ" -%}
+    {% assign target_position_size = product_option.position | minus: 1 %}
+  {%- endif -%}
+
+  {%- if product_option.name == "カラー" -%}
+    {% assign target_position_color = product_option.position | minus: 1 %}
+  {%- endif -%}
+{% endfor %}
+
+
+<div class="order-item">
+  <div class="order-item__image">
+    {%- if item.image != blank -%}
+      <img class="lazy animated" data-src="{{ item.image | image_url: width: 300 }}">
+    {% elsif item.product.featured_image != blank %}
+      <img class="lazy animated" data-src="{{ item.product.featured_image | image_url: width: 300 }}">
+    {%- else -%}
+      <img class="lazy animated" src="">
+    {%- endif -%}
+  </div>
+  <div class="order-item__body">
+    <div>
+      <p class="order-item__name">{{ item.product.title }}</p>
+      <p class="order-item__id">商品番号 {{ item.product.handle }}</p>
+      {% unless item.product.title == "ショッピングバッグ" or item.product.title == "ギフトラッピング" or item.product.type == "Ticket" %}
+        <p class="order-item__info">
+          {%- if target_position_color == blank and target_position_size == blank and item.product.has_only_default_variant == false -%}
+            {%- for option in item.product.options_with_values -%}
+              <span>{{ option.name }} ：{{ item.variant.options[forloop.index0] }}</span>
+            {%- endfor -%}
+          {%- endif -%}
+
+          {%- if variant_size != blank -%}
+            <span>サイズ： {{ variant_size }} {% if slash != blank %}/{% endif %} </span>
+          {%- endif -%}
+
+          {%- if item.variant.option2 != blank -%}
+            {% assign variant_color_text = settings[item.variant.option2] %}
+          {%- else -%}
+            {% assign variant_color_text = settings[item.variant.option1] %}
+          {%- endif -%}
+
+          {%- if item.variant.options[target_position_color] != blank -%}
+            {% assign variant_color_code = item.variant.options[target_position_color] | handle %}
+            {% unless variant_color_code == blank %}
+              {% if FAMILIAR.localeCode == "en" %}
+                <span>カラー ： <span data-handle-name="{{variant_color_code}}-en"></span></span>
+              {% else %}
+                <span>カラー ： <span data-handle-name="{{variant_color_code}}"></span></span>
+              {% endif %}
+            {% else %}
+              <span>カラー ：{{ item.variant.option2 }}</span>
+            {% endunless %}
+          {%- endif -%}
+        </p>
+        {% endunless %}
+
+      {% comment %} {%- if item.properties != blank -%}
+        <p class="order-item__properties order-item__info">
+          {% for property in item.properties %}
+            {%- if property.first != "_line_item" -%}
+              {{ property.first }}: {{ property.last }}
+              {%- unless forloop.last -%}<br>{%- endunless -%}
+            {%- endif -%}
+          {% endfor %}
+        </p>
+      {%- endif -%} {% endcomment %}
+
+      {%- if show_qty != blank -%}
+        <p class="order-item__qty">
+          <span>数量: {{ item_qty }}</span>
+        </p>
+      {%- endif -%}
+    </div>
+    {% assign item_qty = item.quantity | minus: item.refunded_quantity %}
+    {% if force_item_qty and item_qty > 0 %}
+      {% assign item_qty = force_item_qty %}
+    {% endif %}
+    <p class="order-item__price">{{ item.price | times: discount_staff_account | money }}
+      <span class="order-item__price-info">税込<span class="order-item__item-count">
+          / 数量{{ item_qty }}</span>
+      </span>
+    </p>
+  </div>
+</div>

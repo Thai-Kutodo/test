@@ -1,0 +1,27 @@
+{
+	"sections": {
+	  	"banner-gift": {
+		    "type": "banner-gift"
+	  	},
+		"filter-box-gift": {
+			"type": "filter-box-gift"
+		},
+		"image_with_hashtag": {
+			"type": "image-with-hashtag"
+		},
+		"list-product-gift": {
+			"type": "list-product-gift"
+		},
+		"about-gift": {
+			"type": "about-gift"
+		}
+	},
+	"order": [
+	  	"banner-gift",
+		"filter-box-gift",
+		"image_with_hashtag",
+		"list-product-gift",
+		"about-gift" 
+	]
+}
+  

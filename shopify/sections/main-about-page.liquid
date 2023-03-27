@@ -1,0 +1,76 @@
+<div>
+	<div class="about__hero">
+	<div class="about__hero-image">
+		{% if section.settings.main_banner %}	
+		<img class="lazy animated" data-src="{{ section.settings.main_banner | img_url: 'master' }}" data-srcset="{{ section.settings.main_banner | img_url: 'master' }} 1x, {{ section.settings.main_banner | img_url: 'master', scale: 2 }} 2x">
+		{% else %}
+		{{ 'lifestyle-1' | placeholder_svg_tag }}
+		{% endif %}
+	</div>
+	<h1 class="about__hero-title"> {{ section.settings.title | default: 'ABOUT familiar' }}</h1>
+	<h2 class="about__hero-subtitle">{{ section.settings.sub_title | default: '“Creating Chances for Children”' }}</h2>
+	<div class="about__description">{{ section.settings.description | default: "Our mission is to create chances for children. Together, we will create children's futures full of possibilities." }}</div>
+	</div>
+	<div class="about__sub-hero">
+	<div class="about__sub-hero-image">
+		{% if section.settings.main_banner %}	
+			<img class="lazy animated" data-src="{{ section.settings.image_section | img_url: 'master' }}" data-srcset="{{ section.settings.image_section | img_url: 'master' }} 1x, {{ section.settings.image_section | img_url: 'master', scale: 2 }} 2x">
+		{% else %}
+			{{ 'product-4' | placeholder_svg_tag }}
+		{% endif %}
+	</div>
+	<div class="about__sub-hero-content">
+		<h2 class="about__sub-hero-title">{{ section.settings.title_section | default: 'familiar method' }}</h2>
+		<div class="about__description">{{ section.settings.description_section | default: "The familiar method embodies our corporate philosophy of “Creating Chances for Children.” It has been established to unify not only our merchandise but also other products including events, services, food, education, art, UI, etc." }}</div>
+	</div>
+	</div>
+</div>
+
+{% schema %}
+{
+  "name": "Main About Familiar",
+  "class": "section-about",
+  "settings": [
+	{
+		"type": "image_picker",
+		"id": "main_banner",
+		"label": "Main Banner"
+	},
+	{
+		"type": "text",
+		"id": "title",
+		"label": "Title"
+	},
+	{
+		"type": "html",
+		"id": "sub_title",
+		"label": "Sub Title"
+	},
+	{
+		"type": "richtext",
+		"id": "description",
+		"label": "Description"
+	},
+	{
+		"type": "header",
+		"content": "Section Item"
+	},
+	{
+		"type": "image_picker",
+		"id": "image_section",
+		"label": "Image Section"
+	},
+	{
+		"type": "text",
+		"id": "title_section",
+		"label": "Title Section"
+	},
+	{
+		"type": "richtext",
+		"id": "description_section",
+		"label": "Description Section"
+	}
+  ],
+  "blocks": []
+}
+{% endschema %}

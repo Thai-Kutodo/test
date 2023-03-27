@@ -1,0 +1,39 @@
+{% comment %} event: shopify collection {% endcomment %}
+<div class="event-item">
+    <div class="event-item__image">
+      {%- if report_event.image != blank -%}
+      <img alt="{{ report_event.image.alt }}" class="lazy animated" data-src="{{ report_event.image | image_url: width: 500 }}" />
+      {%- else -%}
+        {{ 'image' | placeholder_svg_tag }}
+      {% endif %}
+    </div>
+    <div class="event-item__content">
+      <div class="event-item__statuses">
+        {% for tag in report_event.collection_for_tags.metafields.event.tags.value %}
+          {% assign tag_style = ""%}
+          {% if tag.style != "" %}
+            {% assign tag_style = "--" | append: tag.style %}
+          {% endif %}
+          <span class="event-item__status event-item__status{{tag_style}}">{{ tag.name }}</span>
+        {% endfor %}
+      </div>
+      <h2 class="event-item__title">
+        {% if request.locale.iso_code == 'en' and report_event.title_en != blank %}
+          {{ report_event.title_en | newline_to_br }}
+        {% else %}
+          {{ report_event.title | newline_to_br }}
+        {% endif %}
+      </h2>
+      <div class="event-item__description">
+        {% if request.locale.iso_code == 'en' and report_event.description_en != blank %}
+          {{ report_event.description_en | newline_to_br }}
+        {% else %}
+          {{ report_event.description | newline_to_br }}
+        {% endif %}
+      </div>
+      <div class="event-item__button">
+        <a class="button button--has-icon-arrow-right" href="{{ report_event.url }}">{{ 'events.event_list.button' | t }}</a>
+      </div>
+    </div>
+  </div>
+  

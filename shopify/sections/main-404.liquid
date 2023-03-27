@@ -1,0 +1,31 @@
+<style type="text/css">
+  .template-404 .title + * {
+    margin-top: 1rem;
+  }
+
+  @media screen and (min-width: 750px) {
+    .template-404 .title + * {
+      margin-top: 2rem;
+    }
+  }
+  .template-404{
+    text-align: center;
+  }
+</style>
+
+<div class="template-404 page-width page-margin center">
+  <div class="error__status">404</div>
+  <div class="error__title">お探しのページは<br>見つかりませんでした。</div>
+  <div class="error__description">あなたがアクセスしようとしたページは<br>削除されたかURLが変更されているため、<br>見つけることができません。</div>
+  <div class="error__footer">
+    <a class="button button--cta" href="/">TOPへ</a>
+  </div>
+</div>
+
+{% schema %}
+  {
+    "name": "Main 400",
+    "settings": [
+    ]
+  }
+{% endschema %}

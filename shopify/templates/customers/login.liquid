@@ -1,0 +1,218 @@
+{{ 'customer.css' | asset_url | stylesheet_tag }}
+{% assign hide_guest_checkout = false %}
+
+{%- for item in cart.items -%}
+  {%- if item.product.tags contains '配送不可商品' -%}
+    {% assign hide_guest_checkout = true %}
+  {%- endif -%}
+{%- endfor -%}
+
+<div class="mypage mypage-password modal__content" data-controller="login-recover">
+  <div class="container gap-50 lg:gap-60 pt-40 lg:pt-60">
+
+    <h1 id="recover" class="mypage__title" tabindex="-1">
+      {{ 'customer.recover_password.title' | t }}
+    </h1>
+    <div>
+      <div class="mypage__description text-center text-recover">
+        {{ 'customer.recover_password.subtext_html' | t }}
+      </div>
+	  <!--recover_customer_password-->
+      {%- form 'recover_customer_password', id: "", data-login-recover-target: "loginRecover" -%}
+        <div class="input-form">
+            {% assign recover_success = form.posted_successfully? %}
+
+              <div class="grid-cols-2">
+                <label for="RecoverEmail" class="input-form__label col-span-2">
+                  {{ 'customer.login_page.email' | t }}
+                </label>
+                <input type="email"
+                  value=""
+                  name="email"
+                  id="RecoverEmail"
+                  autocorrect="off"
+                  autocapitalize="off"
+                  autocomplete="email"
+                  {% if form.errors %}
+                    aria-invalid="true"
+                    aria-describedby="RecoverEmail-email-error"
+                    autofocus
+                  {% endif %}
+                  placeholder="you@familiar.co.jp"
+                  class="col-span-2"
+                >
+              </div>
+              {%- if form.errors -%}
+                <small id="RecoverEmail-email-error" class="form__message">
+                  {% render 'icon-error' %}
+                  {{ form.errors.messages['form'] }}
+                </small>
+              {%- endif -%}
+			  <small id="RecoverEmail-email-empty" class="form__message">
+				{% render 'icon-error' %}
+				{{ 'customer.reset_password.error.email_empty' | t }}
+			  </small>
+			  <small id="RecoverEmail-email-match" class="form__message">
+				{% render 'icon-error' %}
+				{{ 'customer.reset_password.error.email_match' | t }}
+			  </small>
+        </div>
+        <div class="mypage__footer">
+          <div data-controller="modal-trigger">
+            <button id="btn-recover-success" class="button button--cta" type="button">
+              {{ 'customer.login_page.submit' | t }}
+            </button>
+          </div>
+        </div>
+
+        <a href="#login" class="back-to-loggin">
+          {{ 'customer.login_page.cancel' | t }}
+        </a>
+      {%- endform -%}
+    </div>
+
+    <h1 id="login" tabindex="-1" class="modal-login__title" {%- if recover_success == true -%}style="display:none;"{%- endif -%}>
+      {{ 'customer.login_page.title' | t }}
+    </h1>
+	<div>
+		<div class="container gap-40 lg:gap-60">
+		{%- if recover_success == true -%}
+			<div class="form__message" tabindex="-1" autofocus style="margin-top: 0px;">
+				<div class="recover-password-success">
+					<h1 class="mypage__title lg:pb-60">メールを送信しました</h1>
+					<div class="container gap-30 lg:gap-35 pt-40 lg:pt-0">
+						<p class="mypage__description mypage__description--large confirm-sent-email">下記のメールアドレスにパスワード再設定用の<br>URLを記載したメールを送信いたしました。</p>
+						<p class="mypage__email" id="email_recover_after_send">{{ email }} </p>
+					</div>
+					<div class="mypage__footer form-sent-email">
+						{%- form 'recover_customer_password', id: "resending_recover_customer_password" -%}
+						<input type="email"
+							value=""
+							name="email"
+							id="ResendingRecoverEmail"
+							autocorrect="off"
+							autocapitalize="off"
+							autocomplete="email"
+							{% if form.errors %}
+								aria-invalid="true"
+								aria-describedby="RecoverEmail-email-error"
+								autofocus
+							{% endif %}
+							class="col-span-2"
+							>
+						<button id="ResendingEmailButton" class="button button--cta" type="button">メールを再送する</button>
+						{%- endform -%}
+						<div class="mypage__footer-note">※パスワード再設定用のメールが届かない場合は<br>迷惑メールフォルダのご確認をお願いいたします。</div>
+					</div>
+				</div>
+			</div>
+		{%- else -%}
+			{%- form 'customer_login', novalidate: 'novalidate', class: 'modal-login__forms' -%}
+				{%- if form.errors -%}
+				<h2 class="form__message" tabindex="-1" autofocus>
+					<span class="visually-hidden">{{ 'accessibility.error' | t }} </span>
+					<svg aria-hidden="true" focusable="false" role="presentation" viewBox="0 0 13 13">
+					<circle cx="6.5" cy="6.50049" r="5.5" stroke="white" stroke-width="2"/>
+					<circle cx="6.5" cy="6.5" r="5.5" fill="#EB001B" stroke="#EB001B" stroke-width="0.7"/>
+					<path d="M5.87413 3.52832L5.97439 7.57216H7.02713L7.12739 3.52832H5.87413ZM6.50076 9.66091C6.88091 9.66091 7.18169 9.37267 7.18169 9.00504C7.18169 8.63742 6.88091 8.34917 6.50076 8.34917C6.12061 8.34917 5.81982 8.63742 5.81982 9.00504C5.81982 9.37267 6.12061 9.66091 6.50076 9.66091Z" fill="white"/>
+					<path d="M5.87413 3.17832H5.51535L5.52424 3.537L5.6245 7.58083L5.63296 7.92216H5.97439H7.02713H7.36856L7.37702 7.58083L7.47728 3.537L7.48617 3.17832H7.12739H5.87413ZM6.50076 10.0109C7.06121 10.0109 7.5317 9.57872 7.5317 9.00504C7.5317 8.43137 7.06121 7.99918 6.50076 7.99918C5.94031 7.99918 5.46982 8.43137 5.46982 9.00504C5.46982 9.57872 5.94031 10.0109 6.50076 10.0109Z" fill="white" stroke="#EB001B" stroke-width="0.7">
+					</svg>
+					{{ 'templates.contact.form.error_heading' | t }}
+				</h2>
+					{% for error in form.errors %}
+						{% if form.errors.messages[error] contains "パスワードリセットエラー" and canonical_url contains "invalid_token" %}
+							<p class="password-invalid-token-error">認証URLの有効期限が切れております。再度はじめから手続きしてください。</p>
+						{% else %}
+							{{form.errors.messages[error]}}
+						{% endif %}
+					{% endfor %}
+				{%- endif -%}
+
+				<div class="modal-login__form">
+				<label for="CustomerEmail">
+					{{ 'customer.login_page.email_logging' | t }}
+				</label>
+				<input
+					type="email"
+					name="customer[email]"
+					id="CustomerEmail"
+					autocomplete="email"
+					autocorrect="off"
+					autocapitalize="off"
+					{% if form.errors contains 'form' %}
+					aria-invalid="true"
+					{% endif %}
+					placeholder="{{ 'customer.login_page.email' | t }}"
+				>
+				</div>
+
+				{%- if form.password_needed -%}
+				<div class="modal-login__form">
+					<label for="CustomerPassword">
+					{{ 'customer.login_page.password' | t }}
+					</label>
+					<input
+					type="password"
+					value=""
+					name="customer[password]"
+					id="CustomerPassword"
+					autocomplete="current-password"
+					{% if form.errors contains 'form' %}
+						aria-invalid="true"
+					{% endif %}
+					placeholder="{{ 'customer.login_page.password' | t }}"
+					>
+					<a class="underlined-button" href="#recover">パスワードをお忘れですか？</a>
+				</div>
+
+
+				{%- endif -%}
+
+				<button>
+				{{ 'customer.login_page.sign_in' | t }}
+				</button>
+				<a id="register-button" class="button button--has-icon-arrow-right" href="/account/register?view=terms">新規会員登録はこちら</a>
+				<a class="button button--has-icon-arrow-right{% if hide_guest_checkout %} hidden{% endif %}" data-before-checkout href="/cart?view=contact_information">会員登録せずご購入手続きへ</a>
+				<p class="modal__caption" data-before-checkout style="align-self: center;">
+					<a href="/pages/guide">ご注文の際の注意事項はこちら</a>
+				</p>
+			{%- endform -%}
+		{%- endif -%}
+		</div>
+	</div>
+
+  </div>
+
+</div>
+<script type="text/javascript">
+	document.addEventListener("DOMContentLoaded", function(e) {
+
+		document.querySelector("#btn-recover-success").addEventListener("click", function(e) {
+			e.preventDefault();
+			let email = document.querySelector('#RecoverEmail').value;
+			let validEmail = ValidateEmail(email);
+			if(validEmail == true){
+				localStorage.setItem("email_recover", email);
+			}
+			document.querySelector("#recover_customer_password").submit();
+		})
+
+		if(localStorage.getItem('email_recover') && document.querySelector("#email_recover_after_send")){
+			document.querySelector("#email_recover_after_send").innerHTML = localStorage.getItem('email_recover');
+			document.querySelector("#ResendingRecoverEmail").value = localStorage.getItem('email_recover');
+		}
+		if(localStorage.getItem('email_recover') && document.querySelector("#ResendingEmailButton")){
+			document.querySelector("#ResendingEmailButton").addEventListener("click", function(e) {
+				document.querySelector("#resending_recover_customer_password").submit();
+			})
+		}
+	})
+	function ValidateEmail(mail) {
+		if (/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(mail))
+		{
+			return true;
+		}else{
+			return false;
+		}
+	}
+</script>

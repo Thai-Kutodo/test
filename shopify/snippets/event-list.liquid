@@ -1,0 +1,13 @@
+<section class="event-list">
+  {% if title %}
+    <h2 class="event-list__title">{{ title }}</h2>
+  {% endif %}
+  <ul class="event-list__list">
+  {% comment %} TODO: generate list of events {% endcomment %}
+  {% for event in events %}
+    <li>
+      {% render 'event-item', event: event %}
+    </li>
+  {% endfor %}
+  </ul>
+</section>

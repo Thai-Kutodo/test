@@ -1,0 +1,13 @@
+{
+  "sections": {
+    "item": {
+      "type": "pickup-confirm",
+      "settings": {
+
+      }
+    }
+  },
+  "order": [
+    "item"
+  ]
+}

@@ -1,0 +1,85 @@
+<link rel="stylesheet" href="{{ 'section-main-page.css' | asset_url }}" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="{{ 'component-rte.css' | asset_url }}" media="print" onload="this.media='all'">
+
+<noscript>{{ 'section-main-page.css' | asset_url | stylesheet_tag }}</noscript>
+<noscript>{{ 'component-rte.css' | asset_url | stylesheet_tag }}</noscript>
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+<div class="section-{{ section.id }}-padding">
+  <div class="container gap-70 lg:gap-160 pb-70 lg:pb-160">
+    <div class="container gap-50 lg:gap-80">
+      {% render 'page-header', title: 'GIFT', description: 'ファミリアのご出産祝い。\nおすすめのセットやギフトの選び方をご提案します。' %}
+      {% render 'search-gift' %}
+    </div>
+    {% render 'gallery', show_b: true %}
+    <div class="container gap-70 lg:gap-60">
+      {% render 'scroll-item-list', title: 'NEWセットのご紹介', description: '12/1販売スタートのギフトセットをご紹介♪\nどうぶつの刺繍モチーフは、カバーオールとスタイとでリンクしています。カラーも新鮮！', has_divider: true, has_header_link: true %}
+      {% render 'scroll-item-list', title: '雑貨のセットのご紹介', description: 'ご出産を少し時間を置いてから知った場合や、お洋服以外を贈りたい方に。スリーピングベストは3ヶ月から2歳ごろまでご使用いただけます。大変人気アイテムです♪', has_divider: true, has_header_link: true %}
+      {% render 'scroll-item-list', title: 'お洋服のセットのご紹介', description: 'すぐに着ていただけるお洋服のセットをご用意しました。\nツーウェイオールは生まれてから4.5ヶ月頃まで着ていただけます。', has_divider: true, has_header_link: true %}
+    </div>
+    <hr>
+    {% render 'about-gift' %}
+  </div>
+
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.main-page.name",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 36
+    },
+    {
+      "type": "header",
+      "content": "Main banner"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "画像"
+    },
+    {
+      "type": "header",
+      "content": "List box banner"
+    }
+
+  ]
+}
+{% endschema %}

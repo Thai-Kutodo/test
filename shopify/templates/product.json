@@ -1,0 +1,40 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-product"
+    },
+    "recently-viewed": {
+      "type": "recently-viewed",
+      "settings": {
+        "heading": "最近チェックしたアイテム"
+      }
+    },
+    "product-recommendations": {
+      "type": "product-recommendations",
+      "settings": {
+        "heading": "よく一緒に購入されている商品"
+      }
+    },
+    "related-product": {
+      "type": "related-product",
+      "settings": {
+        "heading": "関連アイテム"
+      }
+    },
+    "16551918693434a4a1": {
+      "type": "banner-with-hashtag",
+      "settings": {
+        "banner": "shopify:\/\/shop_images\/04.jpg",
+        "hashtag": "STYLEBOOOK",
+        "link": "#"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "recently-viewed",
+    "product-recommendations",
+    "related-product",
+    "16551918693434a4a1"
+  ]
+}

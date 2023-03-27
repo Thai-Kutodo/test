@@ -1,0 +1,57 @@
+<div class="inquiry_confirmation" id="inquiry__confirmation">
+	<div class="container gap-50 lg:gap-80">
+		<h1 class="inquiry__title">お問い合わせ内容の確認</h1>
+		<div class="inquiry__confirmation">
+		<dl class="description-list grid-cols-2 lg:grid-cols-8">
+			<dt class="lg:col-span-2">お問い合わせの種類</dt>
+			<dd class="lg:col-span-6" id="confirm_subject">ご注文について</dd>
+			<dt class="lg:col-span-2">お名前</dt>
+			<dd class="lg:col-span-6" id="confirm_name"></dd>
+			<dt class="lg:col-span-2">お名前（カナ）</dt>
+			<dd class="lg:col-span-6" id="confirm_kana_name"></dd>
+			<dt class="lg:col-span-2">メールアドレス</dt>
+			<dd class="lg:col-span-6" id="confirm_email">familiar-digital@familiar.co.jp</dd>
+			<dt class="lg:col-span-2">電話番号</dt>
+			<dd class="lg:col-span-6" id="confirm_tel">000-0000-0000</dd>
+		</dl>
+		<p class="inquiry__confirmation-title">お問い合わせ内容</p>
+		<div class="inquiry__confirmation-text" id="confrim_description">
+			本文が入ります。本文が入ります。本文が入ります。本文が入ります。本文が入ります。本文が入ります。本文が入ります。本文が入ります。本文が入ります。本文が入ります。本文が入ります。本文が入ります。本文が入ります。本文が入ります。本文が入ります。本文が入ります。本文が入ります。
+		</div>
+		</div>
+	</div>
+	<div class="inquiry__footer">
+		<p>上記内容でよろしければ、<br>「送信する」ボタンを押してください。</p>
+		<button type="button" id="submit_inquiry_form" class="button button--cta" >送信する</button>
+		<button class="button button--has-icon-arrow-left" data-controller="back-button" type="button">修正する</button>
+	</div>
+
+	<!-- Form Submitted -->
+	{% if request.host contains 'familiar-stg' %}
+		<form action="https://d10000000h0zbeak--takata.sandbox.my.salesforce.com/servlet/servlet.WebToCase?encoding=UTF-8" method="POST" id="FormInquiry" name="FormInquiry">
+			<input type=hidden name="orgid" value="00D5D0000001lit">
+			<input type=hidden name="retURL" value="https://{{ request.host }}/pages/inquiry-completed">
+
+			<label for="name">取引先責任者名</label><input  id="name" maxlength="80" name="name" size="20" type="text" /><br>
+			<label for="email">メール</label><input  id="email" maxlength="80" name="email" size="20" type="text" /><br>
+			<label for="phone">電話</label><input  id="phone" maxlength="40" name="phone" size="20" type="text" /><br>
+			<label for="subject">件名</label><input  id="subject" maxlength="80" name="subject" size="20" type="text" /><br>
+			<label for="description">説明</label><textarea name="description"></textarea><br>
+			<input type="hidden"  id="external" name="external" value="1" /><br>
+			<button type="submit" name="submitBtn" id="submitBtn"> Submit </button>
+		</form>
+	{% else %}
+		<form action="https://webto.salesforce.com/servlet/servlet.WebToCase?encoding=UTF-8" method="POST" id="FormInquiry" name="FormInquiry">
+			<input type=hidden name="orgid" value="00D10000000H0Zb">
+			<input type=hidden name="retURL" value="https://{{ request.host }}/pages/inquiry-completed">
+			
+			<label for="name">取引先責任者名</label><input  id="name" maxlength="80" name="name" size="20" type="text" /><br>
+			<label for="email">メール</label><input  id="email" maxlength="80" name="email" size="20" type="text" /><br>
+			<label for="phone">電話</label><input  id="phone" maxlength="40" name="phone" size="20" type="text" /><br>
+			<label for="subject">件名</label><input  id="subject" maxlength="80" name="subject" size="20" type="text" /><br>
+			<label for="description">説明</label><textarea name="description"></textarea><br>
+			<input type="hidden"  id="external" name="external" value="1" /><br>
+			<button type="submit" name="submitBtn" id="submitBtn"> Submit </button>
+		</form>
+	{% endif %}
+</div>

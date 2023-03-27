@@ -1,0 +1,372 @@
+<script>
+  const template = "{{ template }}"
+
+  // footer
+  $('.footer__sns-links').find('a').on('click', function(e) {
+    dataLayer.push({
+      'sns': $(e.currentTarget).data('sns')
+    });
+  });
+
+  $('.footer__app-badges').find('a').on('click', function(e) {
+    dataLayer.push({
+      'store': $(e.currentTarget).data('store')
+    });
+  });
+
+  // hamburger
+  $('.global-nav__sns').find('a').on('click', function(e) {
+    dataLayer.push({
+      'sns': $(e.currentTarget).data('sns')
+    })
+  });
+
+  $('.global-nav__menu').find('a').on('click', function(e) {
+    dataLayer.push({
+      'title': $(e.currentTarget).text()
+    })
+  });
+
+  // cart modal
+  $(document).on('click', '.cart-item__delete .underlined-button', function(e) {
+    dataLayer.push({
+      title: $(e.currentTarget).data('title'),
+      id: $(e.currentTarget).data('id'),
+      event: "remove_from_cart",
+      ecommerce: {
+        items: [
+          {
+            item_name:  $(e.currentTarget).data('title'), 
+            item_id: $(e.currentTarget).data('id'),
+            price: ($(e.currentTarget).data('price') * 0.01), 
+            item_variant: $(e.currentTarget).data('color'), 
+            quantity: parseInt($(e.currentTarget).parents('.cart-item').find('.item-counter__value').val())
+          }
+        ]
+      }
+    });
+  });
+
+  // PLP
+  if (window.location.href.includes('/collections') && !window.location.href.includes('style-book')) {
+    $('.js-input-subcategory').on('click', function(e) {
+      dataLayer.push({
+        'tag': $(e.currentTarget).val()
+      });
+    });
+    $('.name-gender').on('click', function(e) {
+      console.log($(e.currentTarget).val());
+      dataLayer.push({
+        'sex': $(e.currentTarget).val()
+      });
+    });
+    $('input[name="order-by"]').on('click', function(e) {
+      dataLayer.push({
+        'sort': $(e.currentTarget).parents('.radio-button').text().trim()
+      });
+    });
+    $('.product-item a').on('click', function(e) {
+      let sex = '';
+      if ($('.name-gender:checked').length) {
+        sex = $('.name-gender:checked').val()
+      }
+      let stock = false;
+      if ($('.name-stock:checked').length) {
+        stock = true;
+      }
+      const tags = [];
+      $('.js-input-subcategory:checked').each(function() {
+        tags.push(this.value);
+      })
+      dataLayer.push({
+        'sex': sex,
+        'sort': $('input[name="order-by"]:checked').parents('.radio-button').text().trim(),
+        'title': $(e.currentTarget)
+          .parents('.product-item')
+          .find('.product-item__name font:last')
+          .text()
+          .trim(),
+        'id': $(e.currentTarget).data('id'),
+        'tags': tags,
+        'stock': stock
+      });
+    });
+  }
+
+  // PDP
+  if (window.location.href.includes('/products')) {
+    $(document).on('click', '.product-size-selector .button--has-icon-cart', function(e) {
+      dataLayer.push({
+        'title': $('.product-header__name:first').text().trim(),
+        'id': $('.product-header__name').data('id'),
+        'size': $(e.currentTarget).data('size'),
+        'color': $('.js-optionColor:checked').val(),
+        event: "add_to_cart",
+        ecommerce: {
+          items: [
+            {
+              item_name: "{{ product.title }}",
+              item_id: "{{ product.id }}",
+              price: ($(e.currentTarget).data('price') * 0.01),
+              item_variant: $(e.currentTarget).data('color'),
+              quantity: 1
+            }
+          ]
+        }
+      })
+    });
+    $(document).on('click', '.product-size-selector .favorite', function(e) {
+      dataLayer.push({
+        'title': $('.product-header__name:first').text().trim(),
+        'id': $('.product-header__name').data('id'),
+        'size': $(e.currentTarget).parents('.product-size-selector__content').find('.button--has-icon-cart').data('size'),
+        'color': $('.js-optionColor:checked').val(),
+        event: "add_to_wishlist",
+        ecommerce: {
+          items: [
+            {
+              item_name: "{{ product.title }}",
+              item_id: "{{ product.id }}",
+              price: ($(e.currentTarget).parents('.product-size-selector__content').find('.button--has-icon-cart').data('price') * 0.01),
+              item_variant: $(e.currentTarget).parents('.product-size-selector__content').find('.button--has-icon-cart').data('color'),
+              quantity: 1
+            }
+          ]
+        }
+      })
+    });
+    $(document).on('click', '.js-renderRecentlyViewed a', function(e) {
+      dataLayer.push({
+        'title': $(e.currentTarget).find('.product-item__name').text(),
+        'id': $(e.currentTarget).data('id')
+      })
+    });
+    $(document).on('click', 'product-recommendations a', function(e) {
+      dataLayer.push({
+        'title': $(e.currentTarget).find('.product-item__name').text(),
+        'id': $(e.currentTarget).data('id')
+      })
+    });
+    $(document).on('click', 'section-related-product a', function(e) {
+      dataLayer.push({
+        'title': $(e.currentTarget).find('.product-item__name').text(),
+        'id': $(e.currentTarget).data('id')
+      })
+    });
+    $('.link-image a').on('click', function(e) {
+      dataLayer.push({
+        'tag': $(e.currentTarget).find('img').attr('alt')
+      });
+    })
+  }
+
+  // search modal
+  $(document).on('click', '.search .submit-button', function(e) {
+    const keyword = $('.search #search-form-items').val();
+    const sex = $('.search .js-input-gender:checked').val();
+    const size = [];
+    $('.search .js-input-size:checked').each(function() {
+      const category = $(this).parents('.checkbox-group__list').data('category');
+      size.push(category + $(this).val());
+    });
+    const item = [];
+    $('.search .js-input-item:checked').each(function() {
+      item.push($(this).val());
+    });
+    const category = [];
+    $('.search .js-input-category:checked').each(function() {
+      category.push($(this).val());
+    });
+    let stock = '';
+    $('.search .js-input-stock').is(":checked")
+      ? stock = true
+      : stock = false;
+    dataLayer.push({
+      'keyword': keyword,
+      'sex': sex,
+      'size': size,
+      'item': item,
+      'category': category,
+      'stock': stock
+    });
+  });
+
+  // search page
+  if (window.location.href.includes('/pages/onlineshop')) {
+    $(document).on('click', '#modal-container .submit-button', function(e) {
+      const keyword = $('#modal-container #search-form-items').val();
+      const sex = $('#modal-container .js-input-gender:checked').val();
+      const size = [];
+      $('#modal-container .js-input-size:checked').each(function() {
+        const category = $(this).parents('.checkbox-group__list').data('category');
+        size.push($(this).val());
+      });
+      const item = [];
+      $('#modal-container .js-input-item:checked').each(function() {
+        item.push($(this).val());
+      });
+      const category = [];
+      $('#modal-container .js-input-category:checked').each(function() {
+        category.push($(this).val());
+      });
+      let stock = '';
+      $('#modal-container .js-input-stock').is(":checked")
+        ? stock = true
+        : stock = false;
+      dataLayer.push({
+        'keyword': keyword,
+        'sex': sex,
+        'size': size,
+        'item': item,
+        'category': category,
+        'stock': stock
+      });
+    });
+  }
+
+  // top page
+  if (template == "index") {
+    $('.article-list__list').find('a').on('click', function(e) {
+      dataLayer.push({
+        'date': $(e.currentTarget).find('.article-item__date').text(),
+        'title': $(e.currentTarget).find('.article-item__body').text().trim()
+      });
+    });
+  };
+
+  // gift page
+  if (window.location.href.includes('/pages/gift')) {
+    $('#gift-submit').on('click', function(e) {
+      dataLayer.push({'sex': $('.input-gender-gift:checked').val(), 'value_min': $('#labelLow').text(), 'value_max': $('#labelHigh').text(), 'category': $('.input-category-gift:checked').val()});
+    })
+  }
+
+  // news blog
+  if (window.location.href.includes('/blogs/news')) {
+    $('#searchForm').on('submit', function(e) {
+      dataLayer.push({'keyword': $('.search-form').val()});
+    });
+
+    $('.category-tab__item').on('click', function(e) {
+      dataLayer.push({
+        'filter': $(e.currentTarget).find('span').text()
+      });
+    });
+
+    $('.item-list--article').find('li').on('click', function(e) {
+      dataLayer.push({
+        'date': $(e.currentTarget).find('.article-item__date').text(),
+        'title': $(e.currentTarget).find('.article-item__body').text().trim()
+      });
+    });
+  }
+
+  // /a/shops
+  if (window.location.pathname == '/a/shops') {
+    $('.store-item').on('click', function(e) {
+      const name = $(e.currentTarget).find('.store-item__name').find('font')[1].innerHTML;
+      dataLayer.push({'shop': name});
+    });
+    $('button[type=submit]').on('click', function() {
+      const keyword = $('.search-form').val();
+      const area = $('#region-select').val();
+      const tags = [];
+      $('.store__tag-list input:checked').each((i, v) => {
+        tags.push($(v).val())
+      });
+      dataLayer.push({'keyword': keyword, 'area': area, 'tag': tags});
+    })
+  }
+
+  // /a/shops/list
+  if (window.location.href.includes('/a/shops/list')) {
+    $('.store-item').on('click', function(e) {
+      const name = $(e.currentTarget).find('.store-item__name').find('font')[1].innerHTML;
+      dataLayer.push({'shop': name});
+    });
+  }
+
+  // /a/shops/details
+  if (window.location.href.includes('/a/shops/detail')) {
+    $(document).on('click', '.article-item', function(e) {
+      dataLayer.push({
+        'date': $(e.currentTarget).find('.article-item__date').text().trim(),
+        'title': $(e.currentTarget).find('.article-item__body').text().trim()
+      })
+    })
+  }
+
+  // /collections/style-book
+  if (window.location.href.includes('/collections/style-book')) {
+    $('.stylebook__tagged-content').find('li').each((i, v) => {
+      $(v).attr('data-id', `${i}`);
+    })
+    $('input[name="gender"]').on('click', function(e) {
+      dataLayer.push({
+        'sex': $(e.currentTarget).val()
+      });
+    });
+    $('input[name="category"]').on('click', function() {
+      const tags = [];
+      $('input[name="category"]:checked').each((i, v) => {
+        tags.push($(v).val());
+      });
+      dataLayer.push({'tag': tags});
+    });
+    $('.stylebook__tagged-content li').on('click', function(e) {
+      dataLayer.push({
+        'position': $(e.currentTarget).data('id'),
+        'id': $(e.currentTarget).data('category')
+      });
+    });
+  }
+
+  // /pages/event
+  if (window.location.pathname == '/pages/event') {
+    $('.submit-button button').on('click', function(e) {
+      dataLayer.push({'date': $('#date-picker').text().trim(), 'area': $('#area-picker').text().trim(), 'contents': $('#category-picker').find(':selected').val()})
+    });
+    $('.event-item a').on('click', function(e) {
+      dataLayer.push({
+        'title': $(e.currentTarget).data('title'),
+        'id': $(e.currentTarget).data('id')
+      })
+    })
+    $('.article-list__list a').on('click', function(e) {
+      dataLayer.push({
+        'date': $(e.currentTarget).find('.article-item__date').text().trim(),
+        'title': $(e.currentTarget).find('.article-item__body').text().trim()
+      })
+    })
+  }
+
+  // /pages/event_id
+  if (template == "collection.event") {
+    $(document).on('click', '#to-customer-modal-button', function() {
+      dataLayer.push({'title': $('#to-date-modal-button').data('title'), 'id': $('#to-date-modal-button').data('id'), 'shop': $('#store-select').find(':selected').val()})
+    });
+    $(document).on('click', '#to-complete-modal-button', function() {
+      dataLayer.push({'title': $('#to-date-modal-button').data('title'), 'id': $('#to-date-modal-button').data('id'), 'shop': $('#store-select').find(':selected').val(), 'date': $('input[name="date"]:checked').data('date')})
+    })
+  }
+
+  // /account/view?=reserved-events
+  if (window.location.search.includes('reserved-events')) {
+    $(document).on('click', '.cancel_event', function(e) {
+      dataLayer.push({
+        'title': $(e.currentTarget).parents('.mypage-reserved-events__item').data('title'),
+        'id': $(e.currentTarget).parents('.mypage-reserved-events__item').data('id'),
+        'date': $(e.currentTarget)
+          .parents('.mypage-reserved-events__item')
+          .find('.event-date')
+          .text()
+          .trim(),
+        'shop': $(e.currentTarget)
+          .parents('.mypage-reserved-events__item')
+          .find('.event-venue')
+          .text()
+          .trim()
+      })
+    })
+  }
+</script>

@@ -1,0 +1,503 @@
+{% assign mark_stage_used = '' %}
+
+<div class="container gap-50 lg:gap-80 pb-70 lg:pb-120">
+  {%- if section.settings.banner != blank or section.settings.banner_en != blank -%}
+    <div class="thousand-days__hero-image">
+      <img class="lazy animated" data-src="{%- if request.locale.iso_code contains 'ja' -%}{{ section.settings.banner | image_url: width: 1900 }}{%- else -%}{{ section.settings.banner_en | image_url: width: 1900 }}{% endif %}" loading="lazy">
+    </div>
+  {%- endif -%}
+
+  {%- if section.settings.heading != blank or section.settings.heading_en != blank -%}
+    <h2 class="thousand-days__title">
+      {%- if request.locale.iso_code contains 'ja' -%}
+        {{ section.settings.heading }}
+      {%- else -%}
+        {{ section.settings.heading_en }}
+      {% endif %}
+    </h2>
+  {%- endif -%}
+
+  {%- if section.settings.description != blank -%}
+    
+    <div class="thousand-days__body">
+      <div class="container gap-30 lg:gap-60">
+        {%- if request.locale.iso_code contains 'ja' -%}
+          {%- if section.settings.description contains '||' -%}
+            {% assign description_array = section.settings.description | split: "||" %}
+
+            {%- for description in description_array -%}
+              <div class="thousand-days__description">{{ description }}</div>
+            {%- endfor -%}
+          {%- else -%}
+            <div class="thousand-days__description">{{ section.settings.description }}</div>
+          {%- endif -%}
+        {%- else -%}
+            {%- if section.settings.description_en contains '||' -%}
+            {% assign description_array = section.settings.description_en | split: "||" %}
+
+            {%- for description in description_array -%}
+              <div class="thousand-days__description">{{ description }}</div>
+            {%- endfor -%}
+          {%- else -%}
+            <div class="thousand-days__description">{{ section.settings.description_en }}</div>
+          {%- endif -%}
+        {%- endif -%}
+
+        <div class="thousand-days__button-container">
+          <a href="{{ section.settings.link_btn }}" class="button button--has-icon-arrow-right" type="button">
+            {%- if request.locale.iso_code contains 'ja' -%}
+              1000days サービス
+            {%- else -%}
+              1000 days Services
+            {% endif %}
+          </a>
+        </div>
+      </div>
+    </div>
+  {%- endif -%}
+
+  <hr>
+
+  <div class="thousand-days__body">
+    <div class="container gap-30 lg:gap-40">
+      {%- if section.settings.title != blank -%}
+        <h2 class="thousand-days__1000days-title">{{ section.settings.title }}</h2>
+      {%- endif -%}
+
+      {%- if section.settings.description_timeline != blank or section.settings.description_timeline_en != blank -%}
+        <div class="thousand-days__1000days-description">
+          {%- if request.locale.iso_code contains 'ja' -%}
+            {{ section.settings.description_timeline }}
+          {%- else -%}
+            {{ section.settings.description_timeline_en }}
+          {% endif %}
+        </div>
+      {%- endif -%}
+
+      <div class="date-selector grid-cols-3">
+        <div>
+          <select data-action="change->thousand-days#onChangeYearSelect" data-thousand-days-target="yearSelect"></select>
+          {%- if request.locale.iso_code contains 'ja' -%}
+            <span>年</span>
+          {%- endif -%}
+        </div>
+        <div>
+          <select data-action="change->thousand-days#onChangeMonthSelect" data-thousand-days-target="monthSelect"></select>
+          {%- if request.locale.iso_code contains 'ja' -%}
+            <span>月</span>
+          {%- endif -%}
+        </div>
+        <div>
+          <select data-thousand-days-target="daySelect"></select>
+          {%- if request.locale.iso_code contains 'ja' -%}
+            <span>日</span>
+          {%- endif -%}
+        </div>
+      </div>
+      <button class="button button--cta thousand-days__count-button" data-action="thousand-days#count" type="button">COUNT</button>
+    </div>
+  </div>
+
+  <div class="thousand-days__body">
+    <div class="container gap-30">
+      <div class="thousand-days__1000days">
+        today is
+        <strong data-thousand-days-target="counter">___</strong>
+        days!
+      </div>
+      <div class="thousand-days__button-container">
+        <button class="button button--light button--has-icon-arrow-bottom" data-action="thousand-days#scroll" type="button">check!</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="thousand-days-timeline">
+    <span class="thousand-days-timeline__ruler" data-thousand-days-target="ruler"></span>
+    <div class="thousand-days-timeline__image-column pc">
+      {%- for block in section.blocks -%}
+        {%- if block.settings.image_stage != blank or block.settings.image_stage_en != blank -%}
+          <div class="thousand-days-timeline__image">
+            <img class="lazy animated" data-src="{%- if request.locale.iso_code contains 'ja' -%}{{ block.settings.image_stage | image_url: width: 700 }}{%- else -%}{{ block.settings.image_stage_en | image_url: width: 700 }}{% endif %}">
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+
+    {%- for block in section.blocks -%}
+      {% assign stage_value = block.settings.stage | plus: 0 | minus: 1 %}
+      {% assign number_days = page.metafields.global.stage_1000days.value[stage_value] %}
+      {% assign note_stage = '' %}
+      {% assign is_new_state = false %}
+
+      {%- unless mark_stage_used contains number_days -%}
+        {% assign is_new_state = true %}
+        {% assign mark_stage_used = mark_stage_used | append: number_days %}
+      {%- endunless -%}
+
+      <div class="thousand-days-timeline__container">
+        {%- if block.settings.image_stage != blank and block.settings.img_bottom == false -%}
+          <div class="thousand-days-timeline__image-container sp">
+            <div class="thousand-days-timeline__image">
+              <img class="lazy animated" data-src="{%- if request.locale.iso_code contains 'ja' -%}{{ block.settings.image_stage | image_url: width: 700 }}{%- else -%}{{ block.settings.image_stage_en | image_url: width: 700 }}{% endif %}">
+            </div>
+          </div>
+        {%- endif -%}
+
+        <div class="thousand-days-timeline__body-container">
+          {%- if is_new_state -%}
+            {%- if number_days contains '|' -%}
+              {%- assign info = number_days | split: '|' -%}
+              {%- if info.size < 3 -%}
+                {% assign days = number_days | split: '|' | first %}
+                {% assign note_stage = number_days | split: '|' | last %}
+              {%- else -%}
+                {% assign days = number_days | split: '|' | first %}
+                {%- if request.locale.iso_code contains 'ja' -%}
+                  {% assign note_stage = info[1] %}
+                {%- else -%}
+                  {% assign note_stage = number_days | split: '|' | last %}
+                {%- endif -%}
+              {%- endif -%}
+            {%- else -%}
+              {% assign days = number_days %}
+            {%- endif -%}
+
+            {% if note_stage != blank %}
+              <style media="screen">
+                .thousand-days-timeline__date[data-days="{{ days }}"]:before {
+                  content: '{{ note_stage }}';
+                }
+              </style>
+            {% endif %}
+
+            <div class="thousand-days-timeline__date{% if note_stage != blank %} thousand-days-timeline__date--with-text{% endif %}{% if note_stage.size > 3 %} thousand-days-timeline__date--with-text-large{% endif %}" data-days="{{ days }}" {% if note_stage != blank %}data-text="{{ note_stage }}"{% endif %}>
+              <p>{{ days }}</p>
+              <p>days</p>
+            </div>
+          {%- else -%}
+            <div class="thousand-days-timeline__circle"></div>
+          {%- endif -%}
+
+          {%- if block.settings.list_text != blank or block.settings.multiple_link != blank or block.settings.text_under != blank -%}
+            <div class="thousand-days-timeline__content">
+              {%- if block.settings.list_text != blank or block.settings.list_text_en != blank -%}
+                {%- if request.locale.iso_code contains 'ja' -%}
+                  {% assign texts = block.settings.list_text | split: ',' %}
+
+                  <ul class="thousand-days-timeline__list">
+                    {%- for text in texts -%}
+                      <li>{{ text | strip }}</li>
+                    {%- endfor -%}
+                  </ul>
+                {%- else -%}
+                  {% assign texts = block.settings.list_text_en | split: ',' %}
+
+                  <ul class="thousand-days-timeline__list">
+                    {%- for text in texts -%}
+                      <li>{{ text | strip }}</li>
+                    {%- endfor -%}
+                  </ul>
+                {%- endif -%}
+              {%- endif -%}
+
+              <div class="thousand-days-timeline__underlined-button">
+                {%- if block.settings.text_under != blank or block.settings.text_under_en != blank -%}
+                  <p>{%- if request.locale.iso_code contains 'ja' -%}{{ block.settings.text_under }}{%- else -%}{{ block.settings.text_under_en }}{%- endif -%}</p>
+                {%- endif -%}
+
+                {%- if block.settings.multiple_link != blank or block.settings.multiple_link_en != blank -%}
+                  {%- if request.locale.iso_code contains 'ja' -%}
+                    {% assign links = block.settings.multiple_link | remove: '<p>' | remove: '</p>' | split: '</a>' %}
+
+                    {%- for link in links -%}
+                      {%- if link != blank -%}
+                        <div class="">
+                          {{ link | strip | append: '</a>' | remove: ',' | replace: 'href', 'class="underlined-button" href' }}
+                        </div>
+                      {%- endif -%}
+                    {%- endfor -%}
+                  {%- else -%}
+                    {% assign links = block.settings.multiple_link_en | remove: '<p>' | remove: '</p>' | split: '</a>' %}
+
+                      {%- for link in links -%}
+                        {%- if link != blank -%}
+                          <div class="">
+                            {{ link | strip | append: '</a>' | remove: ',' | replace: 'href', 'class="underlined-button" href' }}
+                          </div>
+                        {%- endif -%}
+                      {%- endfor -%}
+                  {%- endif -%} 
+                {%- endif -%}
+              </div>
+
+              {%- if block.settings.image_stage != blank and block.settings.img_bottom -%}
+                <div class="thousand-days-timeline__image mt-20 sp">
+                  <img class="lazy animated" data-src="{{ block.settings.image_stage | image_url: width: 700 }}">
+                </div>
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+        </div>
+      </div>
+    {%- endfor -%}
+  </div>
+
+  <hr class="lg:mt-40 lg:mb-40">
+
+  <div class="thousand-days__banner">
+    {%- if section.settings.gift_1 != blank or section.settings.gift_en_1 != blank -%}
+      <a href="{{ section.settings.link_gift_1 }}">
+        <div class="tagged-image">
+          {%- if request.locale.iso_code contains 'ja' -%}
+            <img alt="#ギフト" class="lazy animated" data-src="{{ section.settings.gift_1 | image_url: width: 1000 }}">
+            <span class="tag tag--small">{{ section.settings.hashtag_gift_1 }}</span>
+          {%- else -%}
+            <img alt="#ギフト" class="lazy animated" data-src="{{ section.settings.gift_en_1 | image_url: width: 1000 }}">
+            <span class="tag tag--small">{{ section.settings.hashtag_gift_en_1 }}</span>    
+          {%- endif -%}
+        </div>
+      </a>
+    {%- endif -%}
+
+
+    {%- if section.settings.gift_2 != blank or section.settings.gift_en_2 != blank -%}
+      <a href="{{ section.settings.link_gift_2 }}">
+        <div class="tagged-image">
+          {%- if request.locale.iso_code contains 'ja' -%}
+            <img alt="#ギフト" class="lazy animated" data-src="{{ section.settings.gift_2 | image_url: width: 1000 }}">
+            <span class="tag tag--small">{{ section.settings.hashtag_gift_2 }}</span>
+          {%- else -%}
+            <img alt="#ギフト" class="lazy animated" data-src="{{ section.settings.gift_en_2 | image_url: width: 1000 }}">
+            <span class="tag tag--small">{{ section.settings.hashtag_gift_en_2 }}</span>
+          {%- endif -%}
+        </div>
+      </a>
+    {%- endif -%}
+
+  </div>
+</div>
+
+{% schema %}
+  {
+    "name": "1000 days",
+    "class": "section-1000days",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Header"
+      },
+      {
+        "type": "image_picker",
+        "id": "banner",
+        "label": "Banner"
+      },
+      {
+        "type": "image_picker",
+        "id": "banner_en",
+        "label": "Banner in English"
+      },
+      {
+        "type": "text",
+        "id": "heading",
+        "label": "Heading"
+      },
+      {
+        "type": "text",
+        "id": "heading_en",
+        "label": "Heading in English"
+      },
+      {
+        "type": "textarea",
+        "id": "description",
+        "label": "Description"
+      },
+      {
+        "type": "textarea",
+        "id": "description_en",
+        "label": "Description in English"
+      },
+      {
+        "type": "url",
+        "id": "link_btn",
+        "label": "Link button"
+      },
+      {
+        "type": "header",
+        "content": "Timeline"
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title"
+      },
+      {
+        "type": "textarea",
+        "id": "description_timeline",
+        "label": "Description"
+      },
+      {
+        "type": "textarea",
+        "id": "description_timeline_en",
+        "label": "Description in English"
+      },
+      {
+        "type": "header",
+        "content": "Gift"
+      },
+      {
+        "type": "image_picker",
+        "id": "gift_1",
+        "label": "Gift 1"
+      },
+      {
+        "type": "image_picker",
+        "id": "gift_en_1",
+        "label": "Gift Image In English"
+      },
+      {
+        "type": "text",
+        "id": "hashtag_gift_1",
+        "label": "Hash tag gift in english 1"
+      },
+      {
+        "type": "text",
+        "id": "hashtag_gift_en_1",
+        "label": "Hash tag gift in english 1"
+      },
+      {
+        "type": "url",
+        "id": "link_gift_1",
+        "label": "Link gift 1"
+      },
+      {
+        "type": "image_picker",
+        "id": "gift_2",
+        "label": "Gift 2"
+      },
+      {
+        "type": "image_picker",
+        "id": "gift_en_2",
+        "label": "Gift in english 2"
+      },
+      {
+        "type": "text",
+        "id": "hashtag_gift_2",
+        "label": "Hash tag gift 2"
+      },
+      {
+        "type": "text",
+        "id": "hashtag_gift_en_2",
+        "label": "Hash tag gift in english 2"
+      },
+      {
+        "type": "url",
+        "id": "link_gift_2",
+        "label": "Link gift 2"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "Text",
+        "name": "Text",
+        "settings": [
+          {
+            "type": "select",
+            "id": "stage",
+            "label": "Stage",
+            "options": [
+              {
+                "value": "1",
+                "label": "1"
+              },
+              {
+                "value": "2",
+                "label": "2"
+              },
+              {
+                "value": "3",
+                "label": "3"
+              },
+              {
+                "value": "4",
+                "label": "4"
+              },
+              {
+                "value": "5",
+                "label": "5"
+              },
+              {
+                "value": "6",
+                "label": "6"
+              },
+              {
+                "value": "7",
+                "label": "7"
+              },
+              {
+                "value": "8",
+                "label": "8"
+              },
+              {
+                "value": "9",
+                "label": "9"
+              },
+              {
+                "value": "10",
+                "label": "10"
+              }
+            ],
+            "default": "1"
+          },
+          {
+            "type": "checkbox",
+            "id": "img_bottom",
+            "label": "Show image on bottom",
+            "default": false
+          },
+          {
+            "type": "image_picker",
+            "id": "image_stage",
+            "label": "Image"
+          },
+          {
+            "type": "image_picker",
+            "id": "image_stage_en",
+            "label": "Image in English"
+          },
+          {
+            "type": "textarea",
+            "id": "list_text",
+            "label": "List text",
+            "info": "Splited by mark ,. Exam: A, B, C, D"
+          },
+          {
+            "type": "textarea",
+            "id": "list_text_en",
+            "label": "List text in English",
+            "info": "Splited by mark ,. Exam: A, B, C, D"
+          },
+          {
+            "type": "text",
+            "id": "text_under",
+            "label": "Text under list"
+          },
+          {
+            "type": "text",
+            "id": "text_under_en",
+            "label": "Text under list in English"
+          },
+          {
+            "type": "richtext",
+            "id": "multiple_link",
+            "label": "Link"
+          },
+          {
+            "type": "richtext",
+            "id": "multiple_link_en",
+            "label": "Link in English"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

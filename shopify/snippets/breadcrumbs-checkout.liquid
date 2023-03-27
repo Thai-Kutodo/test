@@ -1,0 +1,74 @@
+{% assign breadcrumbs_shipping = "配送先指定, 包装・日時指定, お支払い, 完了" | split: ',' %}
+{% assign breadcrumbs_pickup = "受取選択, 受取店舗, 完了" | split: ',' %}
+
+<div class="{{ class }}" data-checkout-target="stepper">
+  <ul class="stepper step-shipping{% if template == 'cart.pickup' or template == 'cart.pickup_confirm' or hide_online_store %} hidden{% endif %}">
+    {% for item in breadcrumbs_shipping %}
+      {% capture class_active_step %}
+        {%- if template.suffix == "contact_information" -%}
+          {%- if forloop.first -%}
+            stepper__item--current
+          {%- endif -%}
+        {%- elsif template.suffix == "delivery_date" or template.suffix == "confirm" -%}
+          {%- if forloop.first -%}
+            stepper__item--done
+          {%- elsif forloop.index == 2 -%}
+            stepper__item--current
+          {%- endif -%}
+        {%- elsif order.order_number != blank -%}
+          {%- if forloop.first -%}
+            stepper__item--done
+          {%- elsif forloop.index == 2 -%}
+            stepper__item--done
+          {%- elsif forloop.index == 3 -%}
+            stepper__item--done
+          {%- elsif forloop.index == 4 -%}
+            stepper__item--current
+          {%- endif -%}
+        {%- else -%}
+          {%- if forloop.first -%}
+            stepper__item--done
+          {%- elsif forloop.index == 2 -%}
+            stepper__item--done
+          {%- elsif forloop.index == 3 -%}
+            stepper__item--current
+          {%- endif -%}
+        {%- endif -%}
+      {% endcapture %}
+
+      <li class="stepper__item {{ class_active_step }}">
+        <span class="stepper__title">{{ item }}</span>
+      </li>
+    {% endfor %}
+  </ul>
+
+  <ul class="stepper step-pickup{% if template != 'cart.pickup' and template != 'cart.pickup_confirm' and hide_online_store == false %} hidden{% endif %}">
+    {% for item in breadcrumbs_pickup %}
+      {% capture class_active_pickup_step %}
+        {%- if template.suffix == "pickup" or template.suffix == "pickup_confirm" -%}
+          {%- if forloop.first -%}
+            stepper__item--done
+          {%- elsif forloop.index == 2 -%}
+            stepper__item--current
+          {%- endif -%}
+        {%- elsif template.suffix == "contact_information" -%}
+          {%- if forloop.first -%}
+            stepper__item--current
+          {%- endif -%}
+        {%- else -%}
+          {%- if forloop.first -%}
+            stepper__item--done
+          {%- elsif forloop.index == 2 -%}
+            stepper__item--done
+          {%- elsif forloop.index == 3 -%}
+            stepper__item--current
+          {%- endif -%}
+        {%- endif -%}
+      {% endcapture %}
+
+      <li class="stepper__item {{ class_active_pickup_step }}">
+        <span class="stepper__title">{{ item }}</span>
+      </li>
+    {% endfor %}
+  </ul>
+</div>

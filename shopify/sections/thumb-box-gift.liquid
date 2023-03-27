@@ -1,0 +1,154 @@
+
+<section>
+    {% assign  block = section.blocks %}
+{% render 'gallery', block: block %}
+</section>
+{% schema %}
+{
+    "name": "Gallery Gift",
+    "tag": "section",
+    "class": "section-gallery-gift",
+    "max_blocks": 4,
+    "blocks": [
+      {
+        "type": "gallery_gift",
+        "name": "Gallery gift",
+        "settings": [
+            {
+            "type": "select",
+            "id": "type_style",
+            "options": [
+              {
+                "value": "type_1",
+                "label": "Type 1"
+              },
+              {
+                "value": "type_2",
+                "label": "Type 2"
+              },
+              {
+                "value": "type_3",
+                "label": "Type 3"
+              }
+            ],
+            "default": "type_1",
+            "label": "Type 1"
+          },
+
+
+          {
+            "type": "select",
+            "id": "revise_style",
+            "options": [
+              {
+                "value": "left",
+                "label": "Left with Large image"
+              },
+              {
+                "value": "right",
+                "label": "Right with Large image"
+              }
+            ],
+            "default": "left",
+            "label": "Left with Large image"
+          },
+
+          {
+			"type": "header",
+			"content": "画像 1"
+		},
+            {
+                "type": "image_picker",
+                "id": "image1",
+                "label": "Choose Image"
+            },
+
+            {
+            "type": "text",
+            "id": "tag_1",
+            "label": "Tag"
+            },
+            {
+                "type": "url",
+                "id": "url_1",
+                "label": "Url"
+            },
+            {
+                "type": "header",
+                "content": "画像 2"
+            },
+            {
+                "type": "image_picker",
+                "id": "image2",
+                "label": "Choose Image"
+            },
+
+            {
+            "type": "text",
+            "id": "tag_2",
+            "label": "Tag"
+            },
+            {
+                "type": "url",
+                "id": "url_2",
+                "label": "Url"
+            },
+            {
+                "type": "header",
+                "content": "画像 3"
+            },
+            {
+                "type": "image_picker",
+                "id": "image3",
+                "label": "Choose Image"
+            },
+
+            {
+            "type": "text",
+            "id": "tag_3",
+            "label": "Tag "
+            },
+            {
+                "type": "url",
+                "id": "url_3",
+                "label": "Url"
+            },
+            {
+                "type": "header",
+                "content": "画像 4"
+            },
+            {
+                "type": "image_picker",
+                "id": "image4",
+                "label": "Choose Image"
+            },
+
+            {
+            "type": "text",
+            "id": "tag_4",
+            "label": "Tag"
+            },
+            {
+                "type": "url",
+                "id": "url_4",
+                "label": "Url"
+            }
+
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "About thumb",
+        "blocks": [
+          {
+            "type": "gallery_gift"
+          },
+          {
+            "type": "gallery_gift"
+          }
+        ]
+      }
+    ]
+  }
+  {% endschema %}

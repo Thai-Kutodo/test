@@ -1,0 +1,147 @@
+<link rel="stylesheet" href="{{ 'section-main-page.css' | asset_url }}" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="{{ 'component-rte.css' | asset_url }}" media="print" onload="this.media='all'">
+
+<noscript>{{ 'section-main-page.css' | asset_url | stylesheet_tag }}</noscript>
+<noscript>{{ 'component-rte.css' | asset_url | stylesheet_tag }}</noscript>
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+<div class="company-history section-{{ section.id }}-padding">
+	<div class="container gap-40 lg:gap-80 pt-40">
+		{%- if section.settings.title -%}
+			<h1 class="company-history__title">{{ section.settings.title }}</h1>
+		{%- endif -%}
+		{%- if section.settings.description -%}
+		<div class="company-history__description"> {{ section.settings.description }}</div>
+		{%- endif -%}
+		<hr>
+
+
+		<div class="timeline" data-controller="timeline">
+
+		  <span class="timeline__ruler" data-timeline-target="ruler"></span>
+
+		  {% if section.blocks.size > 0 -%}
+				<span class="timeline__ruler" data-timeline-target="ruler"></span>
+				{%- for block in section.blocks -%}
+
+						{% case block.type %}
+							{% when "timeline" %}
+
+								{%- if block.settings.position -%}
+									<div class="timeline__container timeline__container--left timeline__container-item-{{ forloop.index }}">
+								{%- else -%}
+									<div class="timeline__container timeline__container--right timeline__container-item-{{ forloop.index }}">
+								{%- endif -%}
+										<div class="timeline__content">
+											{%- if block.settings.timeline -%}
+												<div class="timeline__date">{{ block.settings.timeline }}</div>
+											{%- endif -%}
+											{%- if block.settings.image -%}
+												<div class="timeline__image">
+													<img class="lazy animated" data-src="{{ block.settings.image | img_url: 'master' }}" alt="{{ block.settings.image.alt | default: 'Company-History' }}">
+												</div>
+											{%- endif -%}
+											{%- if block.settings.info_text -%}
+												<div class="timeline__body">
+													{{ block.settings.info_text }}
+												</div>
+											{%- endif -%}
+										</div>
+									</div>
+						{% endcase %}
+				{%- endfor -%}
+		  {% endif %}
+
+
+		</div>
+
+
+	</div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.history_page.section_name",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+		"type": "text",
+		"id": "title",
+		"default": "社史沿革",
+		"label": "t:sections.history_page.section_title"
+	},
+	{
+		"type": "richtext",
+		"id": "description",
+		"default": "<p>1948年12月、坂野惇子をはじめとする4人の女性たちが「ベビーショップ・モトヤ」を神戸市でオープンしました。<br>1950年4月、「子どものためにより良いものを」という情熱に燃えて、わずか3坪という小さなお店からスタートしました。</p>",
+		"label": "t:sections.history_page.section_description"
+	},
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 36
+    }
+  ],
+  "blocks": [
+		{
+			"type": "timeline",
+			"name": "t:sections.history_page.blocks.block_name",
+			"settings": [
+				{
+					"type": "checkbox",
+					"id": "position",
+					"label": "t:sections.history_page.blocks.block_position"
+				},
+				{
+					"type": "text",
+					"id": "timeline",
+					"label": "t:sections.history_page.blocks.block_item"
+				},
+				{
+					"type": "image_picker",
+					"id": "image",
+					"label": "画像"
+				},
+				{
+					"type": "richtext",
+					"id": "info_text",
+					"label": "t:sections.history_page.blocks.block_info"
+				}
+			]
+		}
+  ]
+}
+{% endschema %}

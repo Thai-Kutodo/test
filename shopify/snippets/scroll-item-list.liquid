@@ -1,0 +1,34 @@
+{% comment %}
+Params:
+  - title: {String}
+  - description: {String}
+  - has_divider: {Boolean}
+  - has_header_link: {Boolean}
+{% endcomment %}
+
+<section class="scroll-item-list{% if has_divider %} scroll-item-list--has-divider{% endif %}{% if has_header_link %} scroll-item-list--has-header-link{% endif %}">
+  {% if title %}
+    <h2 class="scroll-item-list__title">
+      {{ title }}
+      {% if has_header_link %}
+        <a class="scroll-item-list__view-all" href="{% if link %}{{ link }} {% else %}{{ collections[collection_gift].url }}{% endif %}">一覧</a>
+      {% endif %}
+    </h2>
+  {% endif %}
+  {% if description %}
+    <p class="scroll-item-list__description">{{ description | newline_to_br }}</p>
+  {% endif %}
+  <div class="scroll-item-list__images" data-controller="scrollable">
+    <button aria-label="左にスクロールする" class="scroll-item-list__button scroll-item-list__button--left" data-action="scrollable#scrollLeft" data-scrollable-target="leftButton" type="button"></button>
+    <ul class="scroll-image-list" data-scrollable-target="content">
+      {%for product in collections[collection_gift].products limit: 10 %}
+        <li>
+          <a href="{{ product.url }}">
+            {% render 'product-item', card_product: product, name: product.title, new: false, preorder: false %}
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+    <button aria-label="右にスクロールする" class="scroll-item-list__button scroll-item-list__button--right" data-action="scrollable#scrollRight" data-scrollable-target="rightButton" type="button"></button>
+  </div>
+</section>

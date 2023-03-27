@@ -1,0 +1,403 @@
+{% assign shopping_bag = all_products["998002"] %}
+{% assign qty_shopping_bag = 0 %}
+{% assign list_sku = '' %}
+{% assign total_gift_wrap = '' %}
+{% assign count_normal_packaging = 0 %}
+{% assign special_shipping_large_furniture = false %}
+{% assign qty_large_furniture = 0 %}
+{% assign fee_shipping = 0 %}
+{% assign is_hide_datetime = false %}
+{% assign is_hide_date = false %}
+{% assign large_furniture = false %}
+{% assign discount_staff_account = 1 %}
+{% assign tag_sale_staff_discount = false %}
+{% assign heading_confirm_step = '包装指定・お届け日時指定' %}
+{% assign total_price = 0 %}
+{% assign total_tax = 0 %}
+
+{%- liquid
+  assign easypoint_metafield = shop.metafields.loyalty.easy_points_attributes
+  assign easypoint_metafield = easypoint_metafield.value | default: easypoint_metafield
+  assign point_cost_pdp = 0
+  assign point_cost_pdp_count = 0
+  assign line_items = cart.items | default: checkout.line_items
+
+  for line_item in line_items
+    assign product_ep_metafield = line_item.product.metafields.loyalty.easy_points_attributes
+    assign unit_point_cost_pdp = product_ep_metafield.value.point_exchange.point_cost
+    assign unit_point_cost_pdp = product_ep_metafield.point_exchange.point_cost | default: unit_point_cost_pdp
+
+    if unit_point_cost_pdp
+      assign line_item_point_cost_pdp = unit_point_cost_pdp | times: line_item.quantity
+      assign point_cost_pdp = point_cost_pdp | plus: line_item_point_cost_pdp
+      assign point_cost_pdp_count = point_cost_pdp_count | plus: 1
+    endif
+  endfor
+-%}
+
+{% assign point_cost_pdp = point_cost_pdp | times: 100 %}
+
+{%- for line_item in cart.items -%}
+  {%- for tag in line_item.product.tags -%}
+    {%- if tag contains '社販セール品' -%}
+      {% assign tag_sale_staff_discount = true %}
+    {%- endif -%}
+  {%- endfor -%}
+{%- endfor -%}
+
+{%- if customer.tags contains '社員' and customer -%}
+  {%- if tag_sale_staff_discount -%}
+    {% assign discount_staff_account = 0.5 %}
+  {%- else -%}
+    {% assign discount_staff_account = 0.65 %}
+  {%- endif -%}
+{%- endif -%}
+
+{%- for _item in cart.items -%}
+  {%- if _item.product.handle == '998002' -%}
+    {% assign qty_shopping_bag = _item.quantity %}
+  {%- endif -%}
+
+  {%- unless list_sku contains _item.variant.sku -%}
+    {% assign list_sku = list_sku | append: _item.variant.sku | append: ',' %}
+  {%- endunless -%}
+
+  {%- if _item.product.type == '大型家具' or _item.product.type == 'メーカー直送' or _item.product.type == 'セール品' or _item.product.tags contains 'ギフト包装不可' -%}
+    {% assign heading_confirm_step = 'お届け日時指定' %}
+  {%- endif -%}
+
+  {%- if _item.product.type == '大型家具' -%}
+    {% assign key_order_attribute = '大型商品' %}
+  {%- elsif _item.product.type == 'メーカー直送' -%}
+    {% assign key_order_attribute = 'メーカー直送' %}
+  {%- elsif _item.product.type == '予約品' -%}
+    {% assign key_order_attribute = '予約商品' %}
+  {%- elsif _item.product.type == 'オーダー品' -%}
+    {% assign key_order_attribute = 'オーダー商品' %}
+  {%- elsif _item.product.type == 'セール品' -%}
+    {% assign key_order_attribute = 'セール' %}
+  {%- elsif _item.product.type == '通常品' -%}
+    {% assign key_order_attribute = '通常' %}
+  {%- endif -%}
+
+  {% assign properties_gift_wrap = _item.properties['梱包区分'] | plus: 0 %}
+
+  {%- if properties_gift_wrap != 0 -%}
+    {%- unless total_gift_wrap contains _item.properties['梱包区分'] -%}
+      {%- if _item.properties['梱包区分'] == '10' -%}
+        {% assign item_10 = _item.properties['梱包区分'] | append: ',' %}
+      {%- else -%}
+        {% assign total_gift_wrap = total_gift_wrap | append: _item.properties['梱包区分'] | append: ',' %}
+      {%- endif -%}
+    {%- endunless -%}
+  {%- else -%}
+    {% assign count_normal_packaging = count_normal_packaging | plus: 1 %}
+  {%- endif -%}
+
+  {%- if _item.product.type == '大型家具' -%}
+    {% assign special_shipping_large_furniture = true %}
+    {% assign qty_large_furniture = qty_large_furniture | plus: _item.quantity %}
+  {%- endif -%}
+
+  {%- if _item.product.type == 'メーカー直送' -%}
+    {% assign is_hide_datetime = true %}
+  {%- endif -%}
+
+  {%- if _item.product.type == 'オーダー品' or _item.product.type == '予約品' -%}
+    {% assign is_hide_date = true %}
+  {%- endif -%}
+
+  {%- if point_cost_pdp > 0 -%}
+    {%- if item.product.tags contains '軽減税率対象' -%}
+      {% assign origin_price_line_item = item.final_line_price | times: discount_staff_account | divided_by: 1.08  %}
+      {% assign tax_line_item = item.final_line_price | times: discount_staff_account | minus: origin_price_line_item %}
+      {% assign total_tax = total_tax | plus: tax_line_item %}
+    {%- else -%}
+      {% assign origin_price_line_item = item.final_line_price | times: discount_staff_account | divided_by: 1.1 %}
+      {% assign tax_line_item = item.final_line_price | times: discount_staff_account | minus: origin_price_line_item %}
+      {% assign total_tax = total_tax | plus: tax_line_item %}
+    {%- endif -%}
+  {%- endif -%}
+{%- endfor -%}
+
+{%- capture array_items -%}
+  {%- for item in cart.items -%}
+    {%- assign rate_tax = 1.1 -%}
+    {%- if item.product.tags contains '軽減税率対象' -%}
+      {%- assign rate_tax = 1.08 -%}
+    {%- endif -%}
+    {%- assign origin_price = item.variant.price | divided_by: 100 | divided_by: rate_tax | round -%}
+    {%- assign tax_line = item.variant.price | divided_by: 100 | minus: origin_price | round -%}
+    {% assign price_line_item = item.variant.price | times: discount_staff_account | divided_by: 100 | ceil | times: item.quantity %}
+    {% assign total_price = total_price | plus: price_line_item %}
+
+    {
+      "variant_id": {{ item.variant_id }},
+      "product_id": {{ item.product.id }},
+      "quantity": {{ item.quantity }},
+      "price": {{ item.variant.price | times: discount_staff_account | divided_by: 100 | ceil }},
+      "properties": [
+        {%- for property in item.properties -%}
+          {
+            "name": "{{ property.first }}",
+            "value": "{{ property.last }}"
+          }{%- unless forloop.last -%},{%- endunless -%}
+        {%- endfor -%}
+      ],
+      "tax_lines": [
+        {
+          "price": {{ tax_line }},
+          "rate":  {{ rate_tax | minus: 1}},
+          "title": "消費税"
+        }
+      ]
+    }{%- unless forloop.last -%},{%- endunless -%}
+  {%- endfor -%}
+{%- endcapture -%}
+
+{% assign convert_array_item_10 = item_10 | split: ',' %}
+{% assign item_properties = total_gift_wrap | remove_last: ',' | split: ',' | sort %}
+
+{%- if item_10 != blank -%}
+  {% assign list_properties = item_properties | concat: convert_array_item_10 %}
+{%- else -%}
+  {% assign list_properties = item_properties %}
+{%- endif -%}
+
+{%- if special_shipping_large_furniture -%}
+  {%- if qty_large_furniture == 1 -%}
+    {% assign fee_shipping = 8800 %}
+  {%- else -%}
+    {% assign qty_large_furniture_2 = qty_large_furniture | minus: 1 %}
+    {% assign fee_shipping = 5500 | times: qty_large_furniture_2 | plus: 8800 %}
+  {%- endif -%}
+{%- else -%}
+  {% assign cart_total_price = cart.total_price | minus: total_tax | plus: point_cost_pdp | times: discount_staff_account  %}
+
+  {%- if point_cost_pdp > 0 -%}
+    {% assign maximum_shipping_fee = 1000000 %}
+  {%- else -%}
+    {% assign maximum_shipping_fee = 1100000 %}
+  {%- endif -%}
+
+  {%- if cart_total_price < maximum_shipping_fee -%}
+    {% assign fee_shipping = 770 %}
+  {%- else -%}
+    {% assign fee_shipping = 0 %}
+  {%- endif -%}
+{%- endif -%}
+
+<div class="header header--simplified">
+  <div class="header__left">
+    <a aria-label="戻る" href="/cart?view=delivery_date&method=shipping&packaging={%- if list_properties.size > 0 -%}gift{%- else -%}normal{%- endif -%}" class="header__left-button" id="nav-button">{% render 'icon-arrow-left' %}</a>
+  </div>
+  <div class="header__logo">
+    <a href="/">
+      {% render 'icon-logo' %}
+    </a>
+  </div>
+  <div class="header__right"></div>
+</div>
+
+{%- render 'breadcrumbs-checkout', class: "mt-20 lg:mt-30", hide_online_store: false -%}
+
+<div class="checkout__single-column mt-50 lg:mt-80" data-controller="checkout-confirm" data-cart_null="{% if cart.item_count > 0 %}false{% else %}true{% endif %}">
+  <div class="hidden" data-controller="alert-trigger">
+    <button data-checkout-confirm-target="messageError" data-action="alert-trigger#open" type="button"></button>
+    <template data-alert-trigger-target="template">
+      <div class="alert" data-alert-close-modal-value="true" data-controller="alert">
+        <div class="alert__title">問題が発生しました。 <br>しばらくしてからもう一度実行してください。</div>
+        <button class="button button--cta" data-action="alert#close" type="button">閉じる</button>
+      </div>
+    </template>
+  </div>
+  <div class="hidden" data-controller="alert-trigger">
+    <button data-checkout-confirm-target="messageErrorOrder" data-action="alert-trigger#open" type="button"></button>
+    <template data-alert-trigger-target="template">
+      <div class="alert" data-alert-close-modal-value="true" data-controller="alert">
+        <div class="alert__title">本カートは既にご注文が成立しておりますため、追加で購入いただけません。</div>
+        <button class="button button--cta" data-action="alert#close" type="button">閉じる</button>
+      </div>
+    </template>
+  </div>
+  <div class="hidden" data-controller="alert-trigger">
+    <button data-checkout-confirm-target="messageErrorOutOfStock" data-action="alert-trigger#open" type="button"></button>
+    <template data-alert-trigger-target="template">
+      <div class="alert" data-alert-close-modal-value="true" data-controller="alert">
+        <div class="alert__title"><div class="product-name"></div> はお買い物中に在庫切れとなりました。<br>お手数をおかけいたしますが、カートより在庫切れの商品を削除の上、改めてのご注文をお願いいたします。</div>
+        <a href="/cart" class="button button--cta">カートに戻る</a>
+      </div>
+    </template>
+  </div>
+  <div class="info-checkout hidden"
+      data-checkout-confirm-target="infoCheckout"
+      data-hide_datetime="{{ is_hide_datetime }}"
+      data-hide_date="{{ is_hide_date }}"
+      data-large_furniture="{{ special_shipping_large_furniture }}"
+      data-count_gift_wrap="{{ list_properties | size }}"
+      data-logged_in="{% if customer %}true{% else %}false{% endif %}"
+      data-total="{%- if discount_staff_account == 1 -%}{{  cart.total_price }}{%- else -%}{{ total_price | times: 100 }}{%- endif -%}"
+      data-subtotal="{%- if discount_staff_account == 1 -%}{{ cart.items_subtotal_price }}{%- else -%}{{ total_price | times: 100 }}{%- endif -%}"
+      data-shipping_price="{{ fee_shipping }}"
+      data-note="{{ cart.note }}"
+      data-list_sku="{{ list_sku | remove_last: ','}}"
+      data-key_attritbute="{{ key_order_attribute }}"
+      data-number_packaging="{{ total_gift_wrap | remove_last: ',' }}"
+      data-gwp="{{ cart.attributes['GWP_OFFER'] }}"
+    ></div>
+  <div class="hidden" data-checkout-confirm-target="itemsCart" data-items='[{{- array_items -}}]'></div>
+  <div class="container gap-50 lg:gap-80">
+    <h1 class="text-center">{{ heading_confirm_step }}</h1>
+    <div class="container gap-50 lg:gap-40">
+      <h2 class="has-divider has-button">
+        ご注文商品
+        <div data-controller="alert-trigger">
+          <button data-action="alert-trigger#open" type="button">カートに戻って修正する</button>
+          <template data-alert-trigger-target="template">
+            <div class="alert" data-controller="alert">
+              <div class="alert__title">入力内容が消えますが<br>よろしいでしょうか？</div>
+              <a class="button button--cta" href="/cart">内容削除してカートを修正</a>
+              <button class="button button--light" data-action="alert#close" type="button">購入フローに戻る</button>
+            </div>
+          </template>
+        </div>
+      </h2>
+
+      <div class="container gap-15 lg:gap-40{% if count_normal_packaging == 0 %} hidden{% endif %}">
+        <h3 class="has-icon has-icon--normal-wrapping">通常包装</h3>
+        <ul class="checkout-order-item-list">
+          {%- for item in cart.items -%}
+            {% assign properties_gift_wrap = item.properties['梱包区分'] | plus: 0 %}
+            {%- if properties_gift_wrap == 0 -%}
+              {%- if item.product.handle != '998002' and item.product.handle != 'ラッピング' -%}
+                <li>{% render 'order-item-checkout', item: item, tag_sale_staff_discount: tag_sale_staff_discount %}</li>
+              {%- endif -%}
+            {%- endif -%}
+          {%- endfor -%}
+        </ul>
+      </div>
+
+      <!-- show product gift wrapping -->
+      {% if list_properties.size > 0 %}
+        {%- for _item_property in list_properties -%}
+          <div class="container gap-15 lg:gap-40">
+            <h3 class="has-button has-icon has-icon--gift-wrapping">
+              <span>ギフト包装{{ _item_property }}</span>
+              <p>
+                ¥165<span>税込</span>
+              </p>
+            </h3>
+
+            <ul class="checkout-order-item-list">
+              {%- for _item in cart.items -%}
+                {%- if _item.properties['梱包区分'] == _item_property and _item.product.handle != '998002' and _item.product.handle != 'ラッピング' -%}
+                  <li>{% render 'order-item-checkout', item: _item %}</li>
+                {%- endif -%}
+              {%- endfor -%}
+            </ul>
+
+            {% assign type_card = '種類_' | append: _item_property %}
+            {% assign content_card = 'メッセージ_' | append: _item_property %}
+            {% assign name_card = '送り主_' | append: _item_property %}
+
+            <div class="expander" data-checkout-confirm-target="messageCard" data-index="{{ _item_property }}" data-controller="expander">
+              <button class="expander__content1 button button--has-icon-plus button--small expander__content1" data-action="expander#toggle" data-expander-target="content1" type="button">メッセージカードを同封する</button>
+              <div class="expander__content2" data-controller="message-card" data-expander-target="content2">
+                <div class="container gap-20 lg:gap-30">
+                  <hr>
+                  <div class="container gap-10">
+                    <h4 class="has-button lg:small">
+                      ギフトの種類
+                      <div data-controller="modal-trigger">
+                        <button data-action="modal-trigger#open" type="button">メッセージカード例</button>
+                        <template data-modal-trigger-target="template">
+                          <div class="modal modal-center lg:modal-center modal-message-card-example" data-controller="modal">
+                            <div class="modal__header">
+                              <button aria-label="閉じる" class="modal__close-button" data-action="modal#close" type="button">{% render 'icon-close' %}</button>
+                            </div>
+                            <div class="container gap-50 lg:gap-80 pb-50 lg:pb-100">
+                              <h1 class="modal__title">メッセージカード例</h1>
+                              <div class="modal__content checkout-message-card-example">
+                                <div class="container gap-20">
+                                  <h4>表面</h4>
+                                  <div class="checkout-message-card-example__image">
+                                    <img alt="表面" height="200" src="{{ 'message-card-01.jpg' | asset_url }}" width="330">
+                                  </div>
+                                </div>
+                                <div class="container gap-20">
+                                  <h4>イメージ</h4>
+                                  <div class="checkout-message-card-example__image">
+                                    <img alt="イメージ" height="200" src="{{ 'message-card-02.jpg' | asset_url }}" width="330">
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </template>
+                      </div>
+                    </h4>
+                    <select data-message-card-target="select" class="type-message">
+                      <option>ご出産御祝</option>
+                      <option>お誕生日御祝</option>
+                      <option>内祝</option>
+                      <option>御祝</option>
+                      <option>無地</option>
+                    </select>
+                  </div>
+                  <div class="container gap-10">
+                    <h4 class="lg:small">メッセージ内容（60文字以内）メッセージカードの構成上、1行は12文字以内でお願いします。</h4>
+                    <textarea data-message-card-target="input" maxlength="64" class="content-message" placeholder="絵文字、環境依存文字は入力いただけません" rows="3"></textarea>
+                  </div>
+                  <div class="container gap-10">
+                    <h4 class="lg:small">贈り主のお名前（12文字以内）</h4>
+                    <input data-message-card-target="input" maxlength="12" class="name-message" placeholder="連名の場合はスペースをお入れください" type="text">
+                  </div>
+                  <div class="error-card-format hidden">使用できない記号が含まれています。</div>
+                  <div class="error-invalid-message hidden">メッセージカードの構成上、<br>1行は12文字以内でお願いいたします。</div>
+                  <button class="expander__close-button pt-5" data-action="expander#toggle message-card#reset" type="button">メッセージカードを削除する</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        {%- endfor -%}
+      {% endif %}
+
+      <!-- show product shopping bag -->
+      <div class="container gap-15 lg:gap-20">
+        <h3 class="lg:h2">ショッピングバッグ</h3>
+        <div class="checkout-shopping-bag">
+          <span data-checkout-target="shoppingBag">{{ qty_shopping_bag }}枚</span>
+          <span class="checkout-shopping-bag__price">{{ shopping_bag.price | money }}</span>
+          <span class="checkout-shopping-bag__tax-in">税込 / 1枚</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- show dds cart -->
+    <div class="container gap-15 lg:gap-20">
+      <h3 class="lg:h2">お届け日時</h3>
+      <dl class="description-list grid-cols-3 lg:grid-cols-8">
+        <dt class="lg:col-span-2">お届け希望日</dt>
+        <dd class="col-span-2 lg:col-span-6 js-deliveryDate">読み込み中...</dd>
+        <dt class="lg:col-span-2">お届け希望時間</dt>
+        <dd class="col-span-2 lg:col-span-6 js-deliveryTime">読み込み中...</dd>
+      </dl>
+    </div>
+
+    <!-- show note cart -->
+    {%- if cart.note != blank -%}
+      <div class="container gap-15 lg:gap-20">
+        <h3 class="lg:h2">ご要望</h3>
+        <div class="checkout__body">{{ cart.note | newline_to_br }}</div>
+      </div>
+    {%- endif -%}
+
+    <hr class="full-width">
+    <button class="button button--has-icon-arrow-left sp" data-action="back-button#goBack" data-controller="back-button">もどる</button>
+  </div>
+
+  <div class="checkout__footer">
+    <a class="button button--has-icon-arrow-left pc lg:col-span-3" href="/cart?view=delivery_date&method=shipping&packaging={%- if list_properties.size > 0 -%}gift{%- else -%}normal{%- endif -%}">もどる</a>
+    <a class="button button--cta lg:col-span-5" href="../payment/" data-action="checkout-confirm#createDraftOrder">お支払いへ</a>
+  </div>
+</div>

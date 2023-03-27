@@ -1,0 +1,68 @@
+{%- comment %}
+  998002: This is the handle product shopping bag
+{% endcomment -%}
+
+{% assign array_collection = '' %}
+{% assign count_item = 0 %}
+
+{%- for collection in product.collections -%}
+  {% assign array_collection = array_collection | append: collection.handle %}
+
+  {%- unless forloop.last -%}
+    {% assign array_collection = array_collection | append: "," %}
+  {%- endunless -%}
+{%- endfor -%}
+
+<div class="container gap-50 lg:gap-80">
+  <hr>
+  <div class="scroll-item-list">
+    <h2 class="scroll-item-list__title">{{ section.settings.heading }}</h2>
+    <div class="scroll-item-list__images" data-controller="scrollable">
+      <button aria-label="左にスクロールする" class="scroll-item-list__button scroll-item-list__button--left" data-action="scrollable#scrollLeft" data-scrollable-target="leftButton" type="button"></button>
+      <ul class="scroll-image-list" data-scrollable-target="content">
+        {%- for _product in collections.all.products -%}
+          {% assign vip_company_sale = false %}
+
+          {%- for tag in _product.tags -%}
+            {%- if tag contains '社販セール品' or tag contains 'VIP' -%}
+              {% assign vip_company_sale = true %}
+            {%- endif -%}
+          {%- endfor -%}
+
+          {%- unless vip_company_sale -%}
+            {%- for _collection in _product.collections -%}
+              {%- if array_collection contains _collection.handle and count_item < 11 and product.handle != _product.handle and _product.available and _product.handle != '998002' -%}
+                {% assign count_item = count_item | plus : 1 %}
+
+                <li{% if count_item < 4 %} class="max-width"{% endif %}>{% render 'item-product' card_product: _product %}</li>
+                {% break %}
+              {%- endif -%}
+            {%- endfor -%}
+          {%- endunless -%}    
+        {%- endfor -%}
+      </ul>
+      <button aria-label="右にスクロールする" class="scroll-item-list__button scroll-item-list__button--right" data-action="scrollable#scrollRight" data-scrollable-target="rightButton" type="button"></button>
+    </div>
+  </div>
+  <hr>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.related_viewed.name",
+  "class": "section-related-product",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "default": "関連アイテム",
+      "label": "t:sections.related_viewed.settings.heading.label"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.related_viewed.name"
+    }
+  ]
+}
+{% endschema %}

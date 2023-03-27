@@ -1,0 +1,32 @@
+<div class="container gap-50 lg:gap-80 section-recently-viewed">
+  <input type="hidden" class="js-productRecently" name="" value="{{ product.handle }}">
+  <hr>
+  <div class="scroll-item-list">
+    <h2 class="scroll-item-list__title">{{ section.settings.heading }}</h2>
+    <div class="scroll-item-list__images" data-controller="recently-viewed scrollable">
+      <button aria-label="左にスクロールする" class="scroll-item-list__button scroll-item-list__button--left hidden" data-action="scrollable#scrollLeft" data-scrollable-target="leftButton" type="button"></button>
+      <ul class="scroll-image-list js-renderRecentlyViewed" data-scrollable-target="content">
+
+      </ul>
+      <button aria-label="右にスクロールする" class="scroll-item-list__button scroll-item-list__button--right hidden" data-action="scrollable#scrollRight" data-scrollable-target="rightButton" type="button"></button>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.recently_viewed.name",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "t:sections.recently_viewed.settings.heading.label"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.recently_viewed.name"
+    }
+  ]
+}
+{% endschema %}

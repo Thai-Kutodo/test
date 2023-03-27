@@ -1,0 +1,95 @@
+<form data-action="submit->search#submitFormWithCondition"  class="container gap-30 lg:gap-50 pt-30 lg:pt-0">
+    <input class="search-form js-search-input-product {{ type_form }}" id="search-form-items" data-type="{{ type_form }}" value="" placeholder="アイテムキーワード" type="search">
+    <hr>
+    <div class="toggle-button-group">
+      <p class="toggle-button-group__title">性別</p>
+      <ul class="toggle-button-group__list">
+        {% assign items = "すべて,男の子,女の子" | split: ',' %}
+        {% for item in items %}
+          <li class="toggle-button">
+            <input class="toggle-button__button js-input-gender" name="sex" type="radio" value="{{ item }}" {% if forloop.first %} checked {% endif %}>
+            <label class="toggle-button__label">{{ item }}</label>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+    <hr>
+    <div class="checkbox-group" data-controller="tab">
+      <p class="checkbox-group__title">サイズ</p>
+      <ul class="tab mb-30">
+        {% assign items = "お洋服,靴 / ソックス,帽子" | split: "," %}
+        {% for item in items %}
+          <li class="tab__item{% if forloop.first %} tab__item--active{% endif %}" data-tab-target="tab" data-action="click->tab#switch" data-tab-index-param="{{ forloop.index0 }}">
+            <span>{{ item }}</span>
+          </li>
+        {% endfor %}
+      </ul>
+      <div class="tab__container">
+        <div class="tab__content tab__content--active" data-tab-target="content">
+          <ul class="checkbox-group__list grid-cols-3" data-category="お洋服">
+            {% assign sizes = settings.tag_size1 | split: ',' %}
+            {% render 'item-checkbox-search', sizes: sizes, valueAll: settings.tag_size1, tabNumber: 1 %}
+          </ul>
+        </div>
+        <div class="tab__content" data-tab-target="content">
+          <ul class="checkbox-group__list grid-cols-3" data-category="靴 / ソックス">
+            {% assign sizes = settings.tag_size2 | split: ',' %}
+            {% render 'item-checkbox-search', sizes: sizes, valueAll: settings.tag_size2, tabNumber: 2 %}
+          </ul>
+        </div>
+        <div class="tab__content" data-tab-target="content">
+          <ul class="checkbox-group__list grid-cols-3" data-category="帽子">
+            {% assign sizes = settings.tag_size3 | split: ',' %}
+            {% render 'item-checkbox-search', sizes: sizes, valueAll: settings.tag_size3, tabNumber: 3 %}
+          </ul>
+        </div>
+      </div>
+    </div>
+    <hr>
+    <div class="checkbox-group">
+      <p class="checkbox-group__title">アイテム</p>
+      <ul class="checkbox-group__list grid-cols-2 ">
+        {% assign itemSearchs = settings.item_select | split: ',' %}
+        {% for item in itemSearchs %}
+        {% assign item_f  = item |  split: '/' | first %}
+        {% assign item_l  = item |  split: '/' | last %}
+
+          <li class="filter-category-item" data-value="{{ item_l }}">
+            <label class="checkbox">
+              <input class="checkbox-category {% if item_f == 'すべて' %}js-input-all-item{% endif %} js-input-item js-{{ type_form }}" data-action="input->search#clickInputItem" value="{{ item_f }}" name="{{ item_f }}"  type="checkbox">
+              <span>{% render 'icon-checkbox' %}</span>
+              {{ item_f }}
+            </label>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+    <hr>
+    <div class="checkbox-group">
+      <p class="checkbox-group__title">カテゴリ</p>
+      <ul class="checkbox-group__list grid-cols-2">
+        {% assign categories = settings.category_select | split: ',' %}
+        {% for category in categories %}
+          <li>
+            <label class="checkbox">
+              <input name="{{ category }}"  value="{{ category }}" class="{% if category == 'すべて' %}js-input-all-category{% endif %} js-input-category" data-action="input->search#clickInputCategory" type="checkbox">
+              <span>{% render 'icon-checkbox' %}</span>
+              {{ category }}
+            </label>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+    <hr>
+    <div class="text-center">
+      <label class="checkbox">
+        <input name="{{ category }}" type="checkbox" class="js-input-stock">
+        <span>{% render 'icon-checkbox' %}</span>
+        在庫があるもののみ表示
+      </label>
+    </div>
+    <div class="submit-button submit-button--stickable grid-cols-3">
+      <input class="button button--light col-span-1" type="reset" value="リセット">
+      <button class="button button--cta col-span-2" type="submit">絞り込む</button>
+    </div>
+  </form>

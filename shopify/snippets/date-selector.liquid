@@ -1,0 +1,61 @@
+{% comment %}
+Params:
+  - year_min: {Number}
+  - year_default: {Number}
+  - year_max: {Number}
+  - initial_values_blank: {Boolean} - adds blank inital options for registering children
+{% endcomment %}
+
+{% if year_max == blank %}
+  {% assign next_year = 'now' | date: '%Y' | plus: 1 %}
+  {% assign year_max = next_year %}
+{% endif %}
+<div class="date-selector grid-cols-3">
+  <div>
+    <select name="year">
+    {% if initial_values_blank == true %}
+      <option selected></option>
+    {% endif %}
+    {% if birth_date == true %}
+      {% for i in (year_min..year_max) reversed %}
+        {% if year_default == i %}
+          <option>{{ i }}</option>
+        {% else %}
+          <option>{{ i }}</option>
+        {% endif %}
+      {% endfor %}
+    {% else %}
+      {% for i in (year_min..year_max) %}
+        {% if year_default == i %}
+          <option>{{ i }}</option>
+        {% else %}
+          <option>{{ i }}</option>
+        {% endif %}
+      {% endfor %}
+    {% endif %}
+    </select>
+    <span>年</span>
+  </div>
+  <div>
+    <select name="month">
+      {% if initial_values_blank == true %}
+        <option selected></option>
+      {% endif %}
+      {% for i in (1..12) %}
+        <option>{{ i }}</option>
+      {% endfor %}
+    </select>
+    <span>月</span>
+  </div>
+  <div>
+    <select name="day">
+      {% if initial_values_blank == true %}
+        <option selected></option>
+      {% endif %}
+      {% for i in (1..31) %}
+        <option>{{ i }}</option>
+      {% endfor %}
+    </select>
+    <span>日</span>
+  </div>
+</div>

@@ -1,0 +1,55 @@
+<div data-lang="{% if section.settings.language %}en{% else %}ja{% endif %}" class="section-link-images">
+	<div class="container gap-10 lg:gap-20">
+		<div class="link-image">
+			<ul>
+				{% for block in section.blocks %}
+					{% case block.type %}
+						{% when "images" %}
+							<li>
+								<a href="{{ block.settings.link | default: "void:javascript(0)" }}">
+									<img class="lazy animated entered loaded" data-src="{{ block.settings.image | img_url: "master" }}" data-ll-status="loaded" src="{{ block.settings.image | img_url: "master" }}" alt="{{ block.settings.image.alt }}" />
+								</a>
+							</li>
+					{% endcase %}
+				{% endfor %}
+			</ul>
+		</div>
+	</div>
+</div>
+
+{% schema %}
+{
+  "name": "Link images",
+  "class": "section-default-book",
+  "settings": [
+    {
+      "type":"checkbox",
+      "id": "language",
+      "label": "Show Page In English"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "images",
+      "name": "image",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "画像"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "画像のリンク"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Link images"
+    }
+  ]
+}
+{% endschema %}

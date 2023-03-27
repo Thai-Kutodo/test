@@ -1,0 +1,48 @@
+<div class="input-form" {% if customer == blank %}data-packaging-target="form"{% else %}data-contact-information-target="form"{% endif %}>
+  <div class="grid-cols-2">
+    <label class="input-form__label col-span-2">お名前*</label>
+    <input autocomplete="family-name" class="col-span-1 field" name="family-name" maxlength="5" placeholder="姓" required type="text" value="">
+    <input autocomplete="given-name" class="col-span-1 field" name="given-name" maxlength="10" placeholder="名" required type="text" value="">
+    <span class="error hide col-span-1 hide" id="error-family-name">お名前をを入力してください</span>
+    <span class="error hide col-span-1 hide" id="error-given-name">お名前をを入力してください</span>
+  </div>
+  <div class="grid-cols-2">
+    <label class="input-form__label col-span-2">お名前（カナ）*</label>
+    <input class="col-span-1 field" name="family-name-kana" placeholder="セイ" maxlength="10" required type="text" value="">
+    <input class="col-span-1 field" name="given-name-kana" placeholder="メイ" maxlength="10" required type="text" value="">
+    <span class="error hide col-span-1 hide" id="error-family-kana">お名前（カナ）をを入力してください</span>
+    <span class="error hide col-span-1 hide" id="error-given-kana">お名前（カナ）をを入力してください</span>
+    <p class="input-form__caption col-span-2">全角で入力してください。</p>
+  </div>
+  <div class="grid-cols-2" data-controller="address">
+    <label class="input-form__label col-span-2">ご住所*</label>
+    <input autocomplete="postal-code" class="col-span-1 field" data-address-target="postalCode" onkeyup="this.value=this.value.replace(/[^\d]/g,'')" name="postal-code" maxlength="7" placeholder="郵便番号" value="" required type="text">
+    <button class="col-span-1 button button--small" data-action="address#fetch" type="button">住所自動入力</button>
+    <span class="error hide col-span-1 hide" id="error-postal-code">郵便番号を入力してください</span>
+    <select autocomplete="address-level1" class="col-span-2 field" disabled data-address-target="prefecture" name="prefecture" placeholder="都道府県" required>
+      {% render 'prefecture-list', province: customer.province %}
+    </select>
+    <span class="error hide col-span-1 hide" id="error-prefecture">お問い合わせタイプを選択してください</span>
+    <input autocomplete="address-level2" class="col-span-2 field" data-address-target="address" value="" maxlength="16" name="address-line1" placeholder="市区町村" required type="text">
+    <span class="error hide col-span-1 hide" id="error-city">市区町村を入力してください</span>
+    <input autocomplete="address-level3" class="col-span-2 field" name="address-line2" value="" maxlength="16" placeholder="番地" required type="text">
+    <span class="error hide col-span-1 hide" id="error-address-1">番地をを入力してください</span>
+    <input autocomplete="address-level3" class="col-span-2 field" name="building" maxlength="16" value="" placeholder="建物名・部屋番号" type="text">
+    <span class="error hide col-span-1 hide" id="error-building">建物名・部屋番号を入力してください</span>
+  </div>
+  <div class="grid-cols-2">
+    <label class="input-form__label col-span-2">電話番号*</label>
+    <input autocomplete="tel" class="col-span-2 field" name="tel" maxlength="14" value="" placeholder="電話番号" required type="text">
+    <span class="error hide col-span-1 hide" id="error-tel">電話番号を入力してください</span>
+  </div>
+  <div class="error col-span-1" {% if customer == blank %}data-packaging-target="messageError"{% else %}data-contact-information-target="messageError"{% endif %}>
+    <div class="col-span-1 error-null hidden">入力必須項目です。</div>
+    <div class="col-span-1 error-katakana-name hidden">全角カタカナで入力してください。</div>
+    <div class="col-span-1 error-format hidden">全角で入力してください。</div>
+    <div class="col-span-1 error-postcode hidden">郵便番号に該当する住所情報が存在しません。</div>
+    <div class="col-span-1 error-format-phone hidden">10桁から14桁以内で入力してください。</div>
+    <div class="col-span-1 error-phone-number hidden">半角数字で入力してください。</div>
+    <div class="col-span-1 error-city hidden">入力された郵便番号と住所が一致していません。正しく入力してください。</div>
+    <div class="col-span-1 error-prefecture hidden">入力された郵便番号と都道府県が一致していません。正しく入力してください。</div>
+  </div>
+</div>

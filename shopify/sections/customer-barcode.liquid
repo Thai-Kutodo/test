@@ -1,0 +1,123 @@
+{%- if customer -%}
+  {%- assign customer_code = customer.metafields.smaregi.customer_code.value | default: '' -%}
+  <div
+    class="mycard_barcode_container"
+    data-code="{{ customer_code }}"
+    data-code-truncated="{{ customer_code | truncate: 7, "" }}"
+  >
+    {%- if customer_code == '' -%}
+      <div class="customer-barcode__progress">
+        バーコード読み込み中<span class="progress-indicator"></span>
+      </div>
+    {%- endif -%}
+
+    <svg id="barcode" class="customer-barcode__image"></svg>
+  </div>
+
+  <style>
+    @keyframes dots { 0% { content: '.'; } 33% { content: '..'; } 66% { content: '...'; } }
+
+    .mycard_barcode_container[data-code=""] > .customer-barcode__progress {
+      display: block;
+    }
+
+    .customer-barcode__progress {
+      display: none;
+      text-align: center;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translateX(-50%);
+      color: #000;
+    }
+
+    .progress-indicator::after {
+      display: inline-block;
+      content: '...';
+      min-width: 15px;
+      text-align: left;
+      animation: dots 2s ease infinite;
+    }
+  </style>
+
+  {% comment %} <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/barcodes/JsBarcode.code128.min.js" defer></script> {% endcomment %}
+  <script type="text/javascript">
+    const getContainerEl = (dom = document) => {
+      return dom.querySelector('.mycard_barcode_container');
+    };
+
+    const getCustomerCode = (containerEl) => {
+      const { code } = containerEl.dataset;
+      return code && code.length > 1 ? code : null;
+    };
+
+    const renderErrorMessage = () => {
+      const progressEl = getContainerEl().querySelector('.customer-barcode__progress');
+      progressEl.innerHTML = 'バーコード読み込みエラー'
+      progressEl.style = 'color: red;';
+    };
+
+    const renderBarcode = (attempt = 0) => {
+      if (attempt > 20) return;
+
+      const data = getContainerEl().dataset;
+
+      const cardNumberEl = document.querySelector('.mycard__number');
+      if (cardNumberEl) {
+        cardNumberEl.innerHTML = `No. ${data.codeTruncated}`;
+      }
+
+      if (JsBarcode) {
+        JsBarcode('.customer-barcode__image', data.code, { height: 16, displayValue: false});
+      } else {
+        setTimeout(() => renderBarcode(attempt + 1), 150);
+      }
+    };
+
+    const refetch = async (attempt = 0) => {
+      if (attempt > 15) {
+        renderErrorMessage();
+        return;
+      }
+
+      const resp = await fetch(`${window.Shopify.routes.root}?sections=customer-barcode`);
+      const data = await resp.json();
+
+      const parser = new DOMParser();
+      const dom = parser.parseFromString(data['customer-barcode'], 'text/html');
+
+      const containerEl = getContainerEl(dom);
+      if (!containerEl) return;
+
+      const code = getCustomerCode(containerEl);
+      if (code) {
+        // update currently rendered conainer
+        getContainerEl().dataset.code = code;
+        getContainerEl().dataset.codeTruncated = code.substring(0, 7);
+
+        renderBarcode();
+      } else {
+        setTimeout(() => refetch(attempt + 1), 2000);
+      }
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const containerEl = getContainerEl();
+      if (!containerEl) return;
+
+      if (containerEl.dataset.code.length === 0) {
+        setTimeout(() => refetch(), 500);
+      } else {
+        renderBarcode();
+      }
+    });
+  </script>
+{%- endif -%}
+
+{% schema %}
+  {
+    "name": "Customer barcode",
+    "class": "customer-barcode",
+    "settings": []
+  }
+{% endschema %}

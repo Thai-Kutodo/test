@@ -1,0 +1,46 @@
+{%- if order.attributes['店舗受取'] != blank -%}
+  {% assign hide_online_store = true %}
+{%- else -%}
+  {% assign hide_online_store = false %}
+{%- endif -%}
+
+<div class="mt-20 lg:mt-30">
+  {%- render 'breadcrumbs-checkout', hide_online_store: hide_online_store -%}
+
+  <div class="checkout-thanks">
+    <div class="container gap-70 lg:gap-80 pt-70 lg:pt-120 pb-70 lg:pb-160">
+      <div>
+        <img alt="" class="checkout-thanks__icon" src="{{ 'icon_completed.svg' | asset_url }}" height="70" width="70">
+        <div class="checkout-thanks__order-no">ご注文番号 {{ order.order_number }}</div>
+        <h1 class="checkout-thanks__header">ご注文ありがとうございます</h1>
+        <div class="checkout-thanks__body">
+          ご登録のメールアドレスに注文確認メールを<br class="sp">お送りいたしましたのでご確認ください。
+          {% if customer %}
+            <br>
+            ご注文内容や配送状況は<br class="sp">マイページからもご確認いたただけます。
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="checkout-thanks__buttons">
+        <a class="button button--cta" href="/">TOPへ</a>
+        {% if customer %}
+          <a class="button" href="/account">マイページへ</a>
+        {% endif %}
+      </div>
+
+      {%- if settings.banner_thankyou != blank -%}
+        <section class="link-image">
+          {%- if settings.link != blank -%}<a href="{{ settings.link }}">{%- endif -%}
+            <div class="tagged-image">
+              <img alt="" class="animated checkout-thanks__banner" src="{{ settings.banner_thankyou | image_url: width: 1200 }}">
+              {%- if settings.tag != blank -%}
+                <span class="tag tag--small">#{{ settings.tag }}</span>
+              {%- endif -%}
+            </div>
+          {%- if settings.link != blank -%}</a>{%- endif -%}
+        </section>
+      {%- endif -%}
+    </div>
+  </div>
+</div>

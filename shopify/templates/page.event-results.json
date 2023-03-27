@@ -1,0 +1,24 @@
+{
+    "sections": {
+        "event-top-search": {
+            "type": "event-top-search",
+            "settings": {}
+        },
+        "event-search-results": {
+            "type": "event-results-list",
+            "settings": {}
+        },
+        "event-articles": {
+            "type": "news-topics",
+            "settings": {
+                "heading": "News & Topics",
+                "link": "shopify:\/\/blogs\/ニュース"
+            }
+        }
+    },
+    "order": [
+        "event-top-search",
+        "event-search-results",
+        "event-articles"
+    ]
+}

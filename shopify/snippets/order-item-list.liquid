@@ -1,0 +1,44 @@
+{% comment %} 
+Params:
+- list_title: {String}
+- wrapping_group_number: {Integer}
+- gift_wrapping_line_item: {Object}
+{% endcomment %}
+
+{% assign wrapping_item_count = 0 %}
+
+<h4>{{list_title}}</h4>
+<ul class="order-item-list">
+{% for line_item in order.line_items %}
+    {% comment %} hide shoppingbag item {% endcomment %}
+    {%- if line_item.product.handle == '998002' -%}
+        {% continue %}
+    {% endif %}
+    {% comment %} hide item if quantity is zero{% endcomment %}
+    {% assign item_qty = line_item.quantity | minus: line_item.refunded_quantity %}
+    {% if item_qty == 0 %}
+        {% continue %}
+    {% endif %}
+
+    {% comment %} display items based on wrapping group param {% endcomment %}
+    {% if wrapping_group_number == blank and line_item.properties["梱包区分"] == blank %}
+        {%- if line_item.product.handle == 'ラッピング' -%}
+            {% continue %}
+        {% endif %}
+        {% render 'order-item', item:line_item %}
+        {% continue %}
+    {% endif %}
+
+    {% assign wrapping_number = line_item.properties["梱包区分"]| plus: 0 %}
+    {% if wrapping_number  == wrapping_group_number %}
+        {% assign wrapping_item_count = wrapping_item_count | plus: 1 %}
+        {% render 'order-item', item:line_item %}
+    {% endif %}
+{% endfor %}
+{% comment %} if this is a wrapping group add a gift wrap item with a qty to match the number o items in the group  {% endcomment %}
+{% if gift_wrapping_item %}
+    {% if wrapping_group_number %}
+        {% render 'order-item', item:gift_wrapping_item, force_item_qty: wrapping_item_count %}
+    {% endif %}
+{% endif %}
+</ul>

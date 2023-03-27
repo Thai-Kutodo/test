@@ -1,0 +1,18 @@
+<section class="search-product" data-controller="modal-trigger">
+    <input class="search-form search-form-input{% if large %} search-form--large{% endif %}" data-action="click->modal-trigger#open" placeholder="条件を指定して探す" readonly type="search" value="">
+    <template data-modal-trigger-target="template">
+      <div class="modal modal-nav-bar lg:modal-full" data-controller="modal">
+        <div class="modal__header">
+          <button class="modal__nav-button sp" data-action="modal#close" type="button">
+            {% render 'icon-arrow-left' %}
+            アイテム一覧に戻る
+          </button>
+          <button aria-label="閉じる" class="modal__close-button pc" data-action="modal#close" type="button">{% render 'icon-close' %}</button>
+        </div>
+        <div class="modal__content modal-search" data-search-target="search">
+          {% render 'search-with-conditional-form', type_form: 'search_sider_bar' %}
+        </div>
+      </div>
+    </template>
+  </section>
+  

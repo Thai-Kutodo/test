@@ -1,0 +1,146 @@
+<section>
+  <form action="/event/results" class="search-event">
+    <div class="search-event__form">
+      <div data-controller="modal-trigger">
+        <label class="search-event__label">日程</label>
+        <input hidden id="selected-dates" name="date">
+        <button class="button button--select" data-action="click->modal-trigger#open" type="button">
+          {% if has_default_value %}
+            2022/9/4
+          {% else %}
+            すべて
+          {% endif %}
+        </button>
+        <template data-modal-trigger-target="template">
+          <div class="modal modal-center lg:modal-center modal-calendar" data-controller="modal">
+            <div class="modal__header">イベント日程を選択</div>
+            <div class="modal__content">
+              <div class="calendar calendar--multiple-dates" data-calendar-multiple-dates-value="true" data-controller="calendar"></div>
+            </div>
+          </div>
+        </template>
+      </div>
+      <div data-controller="modal-trigger">
+        <label class="search-event__label">店舗エリア</label>
+        <input hidden id="selected-areas" name="area">
+        <input hidden id="selected-stores" name="store">
+        <button class="button button--select" data-action="click->modal-trigger#open" type="button">
+          {% if has_default_value %}
+            関東
+          {% else %}
+            エリア選択なし
+          {% endif %}
+        </button>
+        <template data-modal-trigger-target="template">
+          <div class="modal modal-full lg:modal-full modal-store-list" data-controller="modal">
+            <div class="modal__header">
+              <button aria-label="閉じる" class="modal__close-button" data-action="modal#close" type="button">{% render 'icon-close' %}</button>
+            </div>
+            <div class="container gap-30 lg:gap-60">
+              <h1 class="modal__title">エリア・店舗を選択</h1>
+              <div class="modal__content">
+                <form>
+                  {% assign items = "北海道・東北,甲信越・北陸,関東,関西,中国,四国,九州" | split: ',' %}
+                  <ul class="store-list" id="store-list">
+                    <li class="accordion" data-controller="store-list">
+                      <div class="accordion__button accordion__button--has-icon accordion__button--has-no-arrow">
+                        <label class="radio-button radio-button--full-width" data-action="click->store-list#reset">
+                          <input checked name="area" type="radio" value="">
+                          <span></span>
+                        </label>
+                        <span>エリア選択なし</span>
+                      </div>
+                    </li>
+                    {% for item in items %}
+                      <li class="accordion" data-controller="accordion store-list">
+                        <button aria-expanded="false" class="accordion__button accordion__button--has-icon" data-accordion-target="trigger" data-action="accordion#toggle" type="button">
+                          <label class="radio-button" data-action="click->store-list#checkArea">
+                            <input data-store-list-target="areaButton" name="area" value="{{ item }}" type="radio">
+                            <span></span>
+                          </label>
+                          <span>{{ item }}</span>
+                        </button>
+                        <div class="accordion__content" data-accordion-target="content">
+                          <div class="container gap-30 lg:gap-40 mt-20 lg:mt-30 pb-20 lg:pb-50">
+                            {% if item == '関東' or item == '関西' %}
+                              <ul class="category-tab">
+                                {% if item == '関東' %}
+                                  {% assign items = "東京,埼玉,千葉,神奈川,茨城" | split: ',' %}
+                                  {% for item in items %}
+                                    <li class="category-tab__item">
+                                      <label>
+                                        <input name="kanto" type="radio" value="{{ item }}" {% if forloop.first %} checked {% endif %}>
+                                        <span>{{ item }}</span>
+                                      </label>
+                                    </li>
+                                  {% endfor %}
+                                {% elsif item == '関西' %}
+                                  {% assign items = "大阪,京都,兵庫,奈良,和歌山" | split: ',' %}
+                                  {% for item in items %}
+                                    <li class="category-tab__item">
+                                      <label>
+                                        <input name="kansai" type="radio" value="{{ item }}" {% if forloop.first %} checked {% endif %}>
+                                        <span>{{ item }}</span>
+                                      </label>
+                                    </li>
+                                  {% endfor %}
+                                {% endif %}
+                              </ul>
+                            {% endif %}
+                            <ul class="store-list__list">
+                              {% for i in (1..3) %}
+                                <li class="store-list__item">
+                                  <label class="checkbox">
+                                    <input data-action="store-list#checkStore" data-store-list-target="storeCheckbox" name="三井アウトレットパーク 横浜ベイサイドファミリアショップ" type="checkbox">
+                                    <span>{% render 'icon-checkbox' %}</span>
+                                  </label>
+                                  <div class="store-list__info">
+                                    <p class="store-list__name">三井アウトレットパーク<br>横浜ベイサイドファミリアショップ</p>
+                                    <p class="store-list__address">〒236-8666 神奈川県横浜市金沢区白帆5-2　Aブロック1F</p>
+                                  </div>
+                                  <div class="store-list__image">
+                                    <img alt="三井アウトレットパーク 横浜ベイサイドファミリアショップ" class="lazy animated" data-src="">
+                                  </div>
+                                </li>
+                              {% endfor %}
+                            </ul>
+                          </div>
+                        </div>
+                      </li>
+                    {% endfor %}
+                  </ul>
+                  <div class="submit-button submit-button--stickable grid-cols-3">
+                    <input class="button button--light col-span-1" type="reset" value="リセット">
+                    <button class="button button--cta col-span-2" data-action="modal#close" type="button">決定する</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </template>
+      </div>
+      <div>
+        <label class="search-event__label">イベント内容</label>
+        <select name="category">
+          <option>すべて</option>
+          <option>マタニティセミナー</option>
+          <option>オンラインマタニティセミナー</option>
+          <option>英語・中国語マタニティセミナー</option>
+          <option {% if has_default_value %} selected {% endif %}>1000daysプログラム</option>
+          <option>ワークショップ</option>
+          <option>カスタマイズイベント</option>
+          <option>お受験パーソナル接客サービス</option>
+        </select>
+      </div>
+    </div>
+    <label class="checkbox text-center">
+      <input name="available" type="checkbox">
+      <span>{% render 'icon-checkbox' %}</span>
+      予約可能なイベントのみ表示
+    </label>
+    <div class="submit-button grid-cols-4">
+      <input class="button button--light col-span-1" onclick="document.getElementById('selected-dates').nextElementSibling.innerText = 'すべて'; document.getElementById('selected-stores').nextElementSibling.innerText = 'エリア選択なし'" type="reset" value="リセット">
+      <button class="button button--cta col-span-3" type="submit">この条件で検索</button>
+    </div>
+  </form>
+</section>

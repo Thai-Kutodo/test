@@ -1,0 +1,256 @@
+<div class="stylebook__content" data-stylebook-collection-target="defaultContent">
+  <div class="container gap-10 lg:gap-20" data-controller="gallery">
+    {% for block in section.blocks %}
+
+      {% case block.type %}
+        {% when "type_1" %}
+        {% if block.settings.reverse_block_1 == false %}
+          <div class="stylebook-gallery stylebook-gallery__grid-a">
+            <ul>
+              {% if block.settings.img_1_1 %}
+                <li>
+                  <a href="{{ block.settings.link_1_1 | default: '#' }}" alt="{{ block.settings.link_1_1 | split: "/" | last | handle }}">
+                    <div class="gallery__image">
+                      <img alt="{{  block.settings.img_1_1.alt | default: 'STYLEBOOK' }}" data-src="{{ block.settings.img_1_1 | img_url: 'master' }}">
+                    </div>
+                  </a>
+                </li>
+              {% endif %}
+              {% if block.settings.img_1_2 %}
+                <li>
+                  <a href="{{ block.settings.link_1_2 | default: '#' }}" alt="{{ block.settings.link_1_2 | split: "/" | last | handle }}">
+                    <div class="gallery__image">
+                      <img alt="{{  block.settings.img_1_2.alt | default: 'STYLEBOOK' }}" data-src="{{ block.settings.img_1_2 | img_url: 'master' }}">
+                    </div>
+                  </a>
+                </li>
+              {% endif %}
+              {% if block.settings.img_1_3 %}
+                <li>
+                  <a href="{{ block.settings.link_1_3 | default: '#' }}" alt="{{ block.settings.link_1_3 | split: "/" | last | handle }}">
+                    <div class="gallery__image">
+                      <img alt="{{  block.settings.img_1_3.alt | default: 'STYLEBOOK' }}" data-src="{{ block.settings.img_1_3 | img_url: 'master' }}">
+                    </div>
+                  </a>
+                </li>
+              {% endif %}
+            </ul>
+          </div>
+        {% else %}
+          <div class="stylebook-gallery stylebook-gallery__grid-a-reverse">
+            <ul>
+              {% if block.settings.img_1_1 %}
+                <li>
+                  <a href="{{ block.settings.link_1_1 | default: '#' }}" alt="{{ block.settings.link_1_1 | split: "/" | last | handle }}">
+                    <div class="gallery__image">
+                      <img alt="{{  block.settings.img_1_1.alt | default: 'STYLEBOOK' }}" data-src="{{ block.settings.img_1_1 | img_url: 'master' }}">
+                    </div>
+                  </a>
+                </li>
+              {% endif %}
+              {% if block.settings.img_1_2 %}
+                <li>
+                  <a href="{{ block.settings.link_1_2 | default: '#' }}" alt="{{ block.settings.link_1_2 | split: "/" | last | handle }}">
+                    <div class="gallery__image">
+                      <img alt="{{  block.settings.img_1_2.alt | default: 'STYLEBOOK' }}" data-src="{{ block.settings.img_1_2 | img_url: 'master' }}">
+                    </div>
+                  </a>
+                </li>
+              {% endif %}
+              {% if block.settings.img_1_3 %}
+                <li>
+                  <a href="{{ block.settings.link_1_3 | default: '#' }}" alt="{{ block.settings.link_1_3 | split: "/" | last | handle }}">
+                    <div class="gallery__image">
+                      <img alt="{{  block.settings.img_1_3.alt | default: 'STYLEBOOK' }}" data-src="{{ block.settings.img_1_3 | img_url: 'master' }}">
+                    </div>
+                  </a>
+                </li>
+              {% endif %}
+            </ul>
+          </div>
+        {% endif %}
+
+        {% when "type_2" %}
+        {% if block.settings.reverse_block_2 == false %}
+          <div class="stylebook-gallery stylebook-gallery__grid-b">
+            <ul>
+              {% if block.settings.img_2_1 %}
+                <li>
+                  <a href="{{ block.settings.link_2_1 | default: '#' }}" alt="{{ block.settings.link_2_1 | split: "/" | last | handle }}">
+                    <div class="gallery__image">
+                      <img alt="{{  block.settings.img_2_1.alt | default: 'STYLEBOOK' }}" data-src="{{ block.settings.img_2_1 | img_url: 'master' }}">
+                    </div>
+                  </a>
+                </li>
+              {% endif %}
+              {% if block.settings.img_2_2 %}
+                <li>
+                  <a href="{{ block.settings.link_2_2 | default: '#' }}" alt="{{ block.settings.link_2_2 | split: "/" | last | handle }}">
+                    <div class="gallery__image">
+                      <img alt="{{  block.settings.img_2_2.alt | default: 'STYLEBOOK' }}" data-src="{{ block.settings.img_2_2 | img_url: 'master' }}">
+                    </div>
+                  </a>
+                </li>
+              {% endif %}
+              {% if block.settings.img_2_3 %}
+                <li>
+                  <a href="{{ block.settings.link_2_3 | default: '#' }}" alt="{{ block.settings.link_2_3 | split: "/" | last | handle }}">
+                    <div class="gallery__image">
+                      <img alt="{{  block.settings.img_2_3.alt | default: 'STYLEBOOK' }}" data-src="{{ block.settings.img_2_3 | img_url: 'master' }}">
+                    </div>
+                  </a>
+                </li>
+              {% endif %}
+              {% if block.settings.img_2_4 %}
+                <li>
+                  <a href="{{ block.settings.link_2_4 | default: '#' }}" alt="{{ block.settings.link_2_4 | split: "/" | last | handle }}">
+                    <div class="gallery__image">
+                      <img alt="{{  block.settings.img_2_4.alt | default: 'STYLEBOOK' }}" data-src="{{ block.settings.img_2_4 | img_url: 'master' }}">
+                    </div>
+                  </a>
+                </li>
+              {% endif %}
+            </ul>
+          </div>
+        {% else %}
+          <div class="stylebook-gallery stylebook-gallery__grid-b-reverse">
+            <ul>
+              {% if block.settings.img_2_1 %}
+                <li>
+                  <a href="{{ block.settings.link_2_1 | default: '#' }}" alt="{{ block.settings.link_2_1 | split: "/" | last | handle }}">
+                    <div class="gallery__image">
+                      <img alt="{{  block.settings.img_2_1.alt | default: 'STYLEBOOK' }}" data-src="{{ block.settings.img_2_1 | img_url: 'master' }}">
+                    </div>
+                  </a>
+                </li>
+              {% endif %}
+              {% if block.settings.img_2_2 %}
+                <li>
+                  <a href="{{ block.settings.link_2_2 | default: '#' }}" alt="{{ block.settings.link_2_2 | split: "/" | last | handle }}">
+                    <div class="gallery__image">
+                      <img alt="{{  block.settings.img_2_2.alt | default: 'STYLEBOOK' }}" data-src="{{ block.settings.img_2_2 | img_url: 'master' }}">
+                    </div>
+                  </a>
+                </li>
+              {% endif %}
+              {% if block.settings.img_2_3 %}
+                <li>
+                  <a href="{{ block.settings.link_2_3 | default: '#' }}" alt="{{ block.settings.link_2_3 | split: "/" | last | handle }}">
+                    <div class="gallery__image">
+                      <img alt="{{  block.settings.img_2_3.alt | default: 'STYLEBOOK' }}" data-src="{{ block.settings.img_2_3 | img_url: 'master' }}">
+                    </div>
+                  </a>
+                </li>
+              {% endif %}
+              {% if block.settings.img_2_4 %}
+                <li>
+                  <a href="{{ block.settings.link_2_4 | default: '#' }}" alt="{{ block.settings.link_2_4 | split: "/" | last | handle }}">
+                    <div class="gallery__image">
+                      <img alt="{{  block.settings.img_2_4.alt | default: 'STYLEBOOK' }}" data-src="{{ block.settings.img_2_4 | img_url: 'master' }}">
+                    </div>
+                  </a>
+                </li>
+              {% endif %}
+            </ul>
+          </div>
+        {% endif %}
+
+      {% endcase %}
+    {% endfor %}
+  </div>
+</div>
+
+{% schema %}
+  {
+    "name": "t:sections.styleboook.detail.name",
+    "class": "section-default-book",
+    "settings": [],
+    "blocks": [
+      {
+        "type": "type_1",
+        "name": "Type 1",
+        "settings": [
+          {
+            "type": "checkbox",
+            "id": "reverse_block_1",
+            "label": "Reverse block",
+            "default": false
+          },
+          {
+            "type": "image_picker",
+            "id": "img_1_1",
+            "label": "画像"
+          },
+          {
+            "type": "url",
+            "id": "link_1_1",
+            "label": "画像のリンク"
+          },
+          {
+            "type": "image_picker",
+            "id": "img_1_2",
+            "label": "画像"
+          }, {
+            "type": "url",
+            "id": "link_1_2",
+            "label": "画像のリンク"
+          }, {
+            "type": "image_picker",
+            "id": "img_1_3",
+            "label": "画像"
+          }, {
+            "type": "url",
+            "id": "link_1_3",
+            "label": "画像のリンク"
+          }
+        ]
+      }, {
+        "type": "type_2",
+        "name": "Type 2",
+        "settings": [
+          {
+            "type": "checkbox",
+            "id": "reverse_block_2",
+            "label": "Reverse block",
+            "default": false
+          },
+          {
+            "type": "image_picker",
+            "id": "img_2_1",
+            "label": "画像"
+          },
+          {
+            "type": "url",
+            "id": "link_2_1",
+            "label": "画像のリンク"
+          },
+          {
+            "type": "image_picker",
+            "id": "img_2_2",
+            "label": "画像"
+          }, {
+            "type": "url",
+            "id": "link_2_2",
+            "label": "画像のリンク"
+          }, {
+            "type": "image_picker",
+            "id": "img_2_3",
+            "label": "画像"
+          }, {
+            "type": "url",
+            "id": "link_2_3",
+            "label": "画像のリンク"
+          }, {
+            "type": "image_picker",
+            "id": "img_2_4",
+            "label": "画像"
+          }, {
+            "type": "url",
+            "id": "link_2_4",
+            "label": "画像のリンク"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

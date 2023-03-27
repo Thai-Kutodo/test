@@ -1,0 +1,85 @@
+{{ 'component-price.css' | asset_url | stylesheet_tag }}
+<div class="stylebook-detail" data-controller="stickable" data-stickable-column-left-offset-value="16" data-stickable-column-right-offset-value="80">
+	<div class="stylebook-detail__column-left">
+		<div data-stickable-target="columnLeft">
+		<div class="stylebook-detail-hero swiper" data-carousel-current-index-value="0" data-controller="carousel">
+		<button class="stylebook-detail-hero__left-button swiper-button-prev" type="button"></button>
+		<ul class="stylebook-detail-hero__image-list swiper-wrapper" data-carousel-target="imageList">
+			{% if collection.metafields.custom.media.value != blank %}
+			    {% for media in collection.metafields.custom.media.value %}
+					<li class="stylebook-detail-hero__image swiper-slide" data-action="click->carousel#onClickImage" data-pswp-height="2400" data-pswp-src="{{ media | img_url: 'master' }}" data-pswp-width="1800">
+					{{ media | image_url: width: "1400" | image_tag }}
+					</li>
+				{% endfor %}
+			{%- else -%}
+				<li class="stylebook-detail-hero__image swiper-slide" data-action="click->carousel#onClickImage" data-pswp-height="2400" data-pswp-src="{{ "stylebook-placeholder.svg" | asset_url }}" data-pswp-width="1800">
+					{{ 'product-1' | placeholder_svg_tag }}
+					</li>
+			{%- endif -%}
+		</ul>
+		<button class="stylebook-detail-hero__right-button swiper-button-next" type="button"></button>
+		<button class="stylebook-detail-hero__zoom-button" data-action="carousel#onClickZoomButton" type="button"></button>
+		</div>
+		<div class="stylebook-detail-hero__pagination swiper-pagination"></div>
+		</div>
+	</div>
+	<div class="stylebook-detail__column-right">
+		<div data-stickable-target="columnRight">
+			{%- if collection.title != blank -%}
+				<h1 class="stylebook-detail__title">{{ collection.title }}</h1>
+			{%- endif -%}
+			<ul class="stylebook-detail__item-list">
+				{%- for product in collection.products limit: 12 -%}
+					{% assign lazy_load = false %}
+					{%- if forloop.index > 2 -%}
+						{%- assign lazy_load = true -%}
+					{%- endif -%}
+					<li>
+						{% render 'product-item',
+							card_product: product,
+							media_aspect_ratio: section.settings.image_ratio,
+							show_secondary_image: section.settings.show_secondary_image,
+							lazy_load: lazy_load
+						%}
+					</li>
+				{% endfor %}
+			</ul>
+			<!-- {%- comment -%} <hr> {%- endcomment -%} -->
+			<div class="stylebook-detail__tag-list">
+			{%- if collection.all_tags.size > 0 -%}	
+				<h4>タグ</h4>
+				<ul>
+					{% for tag in collection.all_tags limit: 15 %}
+					<li>
+						<span class="tag tag--large">{{ tag | link_to_tag: tag }}</span>
+					</li>
+					{% endfor %}
+				</ul>
+				<button id="loadmore" style="opacity: 0;">Load More...</button>
+			{%- endif -%}
+			</div>
+		</div>
+	</div>
+</div>
+
+{% assign count_items = 0 | times: 1 %}
+{% assign current_categoty = collection.metafields.custom.category | handleize %}
+{% assign current_id = collection.id %}
+{%- for collection in collections -%}
+	{%- assign collection_category = collection.metafields.custom.category | handleize -%}
+	{% if collection.metafields.custom.parent == 'stylebook' and collection_category contains current_categoty and collection.id != current_id %}
+		{% assign count_items = 0 | plus: 1 %}
+	{% endif %}	
+{%- endfor -%}	
+
+{%- if count_items != 0 -%}
+{%- render 'collection-stylebook-related', collection_current: current_id, category: current_categoty, count_items: count_items -%}
+{%- endif -%}
+
+{% schema %}
+{
+	"name": "Stylebook Details",
+	"class": "section-main-details",
+	"settings": []
+}
+{% endschema %}

@@ -1,0 +1,43 @@
+<section data-lang="{% if section.settings.language %}en{% else %}ja{% endif %}" class="link-image" >
+  <a href="{{ section.settings.link }}">
+    <div class="tagged-image">
+      <img alt="#{{ section.settings.hashtag }}" class="lazy animated" data-src="{{ section.settings.banner | image_url: width: 1500 }}">
+      {%- if section.settings.hashtag != blank -%}
+        <span class="tag tag--small">#{{ section.settings.hashtag }}</span>
+      {%- endif -%}
+    </div>
+  </a>
+</section>
+
+{% schema %}
+{
+  "name": "t:sections.banner_with_hashtag.name",
+  "settings": [
+    {
+      "type":"checkbox",
+      "id": "language",
+      "label": "t:sections.banner_with_hashtag.settings.language.label"
+    },
+    {
+      "type": "image_picker",
+      "id": "banner",
+      "label": "t:sections.banner_with_hashtag.settings.banner.label"
+    },
+    {
+      "type": "text",
+      "id": "hashtag",
+      "label": "t:sections.banner_with_hashtag.settings.hashtag.label"
+    },
+    {
+      "type": "url",
+      "id": "link",
+      "label": "t:sections.banner_with_hashtag.settings.link.label"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.banner_with_hashtag.name"
+    }
+  ]
+}
+{% endschema %}

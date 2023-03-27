@@ -1,0 +1,29 @@
+{% for size in sizes %}
+{% if size contains 'すべて' %}
+<li>
+    <label class="checkbox">
+      <input class="checkbox-input js-input-all-size js-input-size" value='{{ valueAll | remove: 'mm' }}' name="{{ size }}" type="checkbox" data-action="input->search#clickInputSize" data-tab="{{ tabNumber }}" data-search-target="checkboxClick">
+      <span>{% render 'icon-checkbox' %}</span>
+      {% assign getFirstTxt = size | slice: 0  %}
+      {% if getFirstTxt == '0' %}
+        {{ size | remove_first: '0' }}
+      {% else %}
+        {{ size }}
+      {% endif %}
+    </label>
+  </li>
+  {% else %}
+  <li>
+    <label class="checkbox">
+      <input class="checkbox-input js-input-size" value="{{ size | remove: 'mm' }}" name="{{ size }}" type="checkbox" data-action="input->search#clickInputSize" data-tab="{{ tabNumber }}" data-search-target="checkboxClick">
+      <span>{% render 'icon-checkbox' %}</span>
+      {% assign getFirstTxt = size | slice: 0  %}
+      {% if getFirstTxt == '0' %}
+        {{ size | remove_first: '0' }}
+      {% else %}
+        {{ size }}
+      {% endif %}
+    </label>
+  </li>
+  {% endif %}
+{% endfor %}

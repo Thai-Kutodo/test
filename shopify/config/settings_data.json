@@ -1,0 +1,1813 @@
+{
+  "current": {
+    "show_video": true,
+    "multishipping_salt": "hu2Gcjk3P9",
+    "receipt_app_url": "\/apps\/receipt",
+    "receipt_app_salt": "pEs88[)Gg+;vwRXb",
+    "main-menu": "main-menu",
+    "guest_checkout_enabled": true,
+    "key_public": "pubkey-hwG1a43xh45X523qD5cCtHLMnTi623",
+    "key_private": "key-8H77UM8776Uk4YcFy27oC03od3104F",
+    "store_hash": "184523",
+    "domestic_store_link": "https:\/\/ippododev.myshopify.com",
+    "global_store_link": "https:\/\/ippodotea-global-stg.myshopify.com",
+    "usca_store_link": "https:\/\/ippodotea.com",
+    "enable_dds": true,
+    "dsiabled_dds_text": "・9\/20(月)までお届け日時ご指定サービスを一時停止しております。\n・ご注文のお品は9\/22(水)に京都本店を出荷いたします。",
+    "color_text": "#3a3a3a",
+    "color_body_text": "#333232",
+    "color_sale_text": "#ea0606",
+    "color_button": "#3a3a3a",
+    "color_button_text": "#ffffff",
+    "color_small_button_text_border": "#3a3a3a",
+    "color_text_field_text": "#000000",
+    "color_text_field_border": "#cccccc",
+    "color_text_field": "#ffffff",
+    "color_image_overlay_text": "#ffffff",
+    "color_image_overlay": "#685858",
+    "image_overlay_opacity": 40,
+    "color_borders": "#ebebeb",
+    "color_body_bg": "#ffffff",
+    "type_header_font": "helvetica_n7",
+    "type_header_base_size": 26,
+    "type_base_font": "helvetica_n4",
+    "type_base_size": 15,
+    "predictive_search_enabled": true,
+    "predictive_search_show_vendor": false,
+    "predictive_search_show_price": false,
+    "share_facebook": true,
+    "share_twitter": true,
+    "share_pinterest": true,
+    "social_twitter_link": "",
+    "social_facebook_link": "",
+    "social_pinterest_link": "",
+    "social_instagram_link": "",
+    "social_tumblr_link": "",
+    "social_snapchat_link": "",
+    "social_youtube_link": "",
+    "social_vimeo_link": "",
+    "favicon": "shopify:\/\/shop_images\/apple-icon-180x180_dab1078d-cfe7-46eb-b16b-a90390e9ef79.png",
+    "enable_ajax": true,
+    "checkout_header_image": "",
+    "checkout_logo_image": "shopify:\/\/shop_images\/ippodo_jp_logo.png",
+    "checkout_logo_position": "left",
+    "checkout_logo_size": "small",
+    "checkout_body_background_image": "",
+    "checkout_body_background_color": "#fff",
+    "checkout_input_background_color_mode": "white",
+    "checkout_sidebar_background_image": "",
+    "checkout_sidebar_background_color": "#fafafa",
+    "checkout_heading_font": "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'",
+    "checkout_body_font": "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'",
+    "checkout_accent_color": "#93806f",
+    "checkout_button_color": "#93806f",
+    "checkout_error_color": "#e32c2b",
+    "sections": {
+      "footer": {
+        "type": "footer",
+        "blocks": {
+          "ba78a52e-aca1-435e-b56b-9b9d1bbbbeec": {
+            "type": "menu",
+            "settings": {
+              "title": "リンク",
+              "menu": "footer-1"
+            }
+          },
+          "6f772e6f-48f4-45c3-a281-7c36c04f970a": {
+            "type": "menu",
+            "settings": {
+              "title": "リンク",
+              "menu": "collections-menu"
+            }
+          },
+          "317cd762-6a20-4149-8745-bbde99c225ce": {
+            "type": "menu",
+            "settings": {
+              "title": "リンク",
+              "menu": "footer-3"
+            }
+          },
+          "707731aa-4a30-4864-82cb-a5c7c92464cb": {
+            "type": "menu",
+            "settings": {
+              "title": "リンク",
+              "menu": ""
+            }
+          }
+        },
+        "block_order": [
+          "ba78a52e-aca1-435e-b56b-9b9d1bbbbeec",
+          "6f772e6f-48f4-45c3-a281-7c36c04f970a",
+          "317cd762-6a20-4149-8745-bbde99c225ce",
+          "707731aa-4a30-4864-82cb-a5c7c92464cb"
+        ],
+        "settings": {
+          "show_payment_icons": true,
+          "bottom_footer_menu": "link-list",
+          "business_link": "shopify:\/\/pages\/business",
+          "about_link": "shopify:\/\/pages\/一保堂のこと",
+          "privacy-policy_link": "https:\/\/support.ippodo-tea.co.jp\/hc\/ja\/articles\/360003702155",
+          "terms_link": "https:\/\/support.ippodo-tea.co.jp\/hc\/ja\/articles\/360003655216",
+          "law_link": "https:\/\/support.ippodo-tea.co.jp\/hc\/ja\/articles\/360003702135",
+          "global_link": "https:\/\/ippodotea-global-stg.myshopify.com\/",
+          "domestic_link": "https:\/\/ippododev.myshopify.com\/",
+          "usca_link": "https:\/\/ippodotea.com"
+        }
+      },
+      "pages-about-events": {
+        "type": "pages-about-events",
+        "blocks": {
+          "31efcd37-ee00-4b0b-8b68-f7c5e3506a84": {
+            "type": "section",
+            "settings": {
+              "section_anchor": "event",
+              "section_title": "お茶の淹れ方教室・<br> イベント",
+              "section_image": "shopify:\/\/shop_images\/jumbotron01_b4a9f618-ec6e-4aeb-b0ac-19ccfe234470.png",
+              "title_reverse": false,
+              "section_about": "淹れ方でいかようにも変わるお茶の味わい。味づくりの「基本の“キ”」を中心にお伝えします。コースは抹茶、玉露、煎茶、番茶の4つ。お好きなお茶のコースをお選びください。",
+              "section_image1": "shopify:\/\/shop_images\/img_event01-01.png",
+              "section_image2": "shopify:\/\/shop_images\/img_event01-02.png",
+              "about_list1": "<p><strong>開催場所<\/strong><\/p><p>京都本店、東京丸の内店<\/p>",
+              "about_list2": "<p><strong>コース<\/strong><\/p><p>抹茶の会、玉露の会、煎茶の会、番茶の会 英語の会、各種イベント<\/p>",
+              "about_list3": "<p><strong>参加費<\/strong><\/p><p>2,750 円(税込)〜<\/p>",
+              "about_list4": "<p><strong>時間<\/strong><\/p><p>60分〜<\/p>",
+              "additional_text": "ほかにも、季節やテーマに合わせて色々なイベントを開催しています。お茶×お料理、お茶×器、お茶×音楽などなど...。楽しみ方はイロイロ。バリエーション豊かに日本茶をお届けします。",
+              "cta_text": "開催スケジュール",
+              "cta_url": "shopify:\/\/collections\/events"
+            }
+          },
+          "1c486326-2d1d-4a4e-a5f2-2e127d8ed52f": {
+            "type": "section",
+            "settings": {
+              "section_anchor": "online",
+              "section_title": "オンライン教室",
+              "section_image": "shopify:\/\/shop_images\/jumbotron02_97e41c00-fc1c-4176-b6a2-43396d7bf298.png",
+              "title_reverse": true,
+              "section_about": "お客さまの受講したい場所で一保堂の教室を受けることができます。お茶の淹れ方を中心にした基本の内容からお料理や器と組合わせた内容までさまざまな教室を予定しています。当日受講することができない場合でも見逃し配信があるので、安心です!",
+              "section_image1": "shopify:\/\/shop_images\/img_event02-01.png",
+              "section_image2": "shopify:\/\/shop_images\/img_event02-02.png",
+              "about_list1": "<p><strong>開催場所<\/strong><\/p><p>オンライン(zoom を使用)<\/p>",
+              "about_list2": "<p><strong>参加費<\/strong><\/p><p>¥4,950円（税込）〜（アーカイブ配信あり）<\/p>",
+              "about_list3": "<p><strong>時間<\/strong><\/p><p>60分〜<\/p>",
+              "about_list4": "",
+              "additional_text": "",
+              "cta_text": "開催スケジュール",
+              "cta_url": "shopify:\/\/collections\/events"
+            }
+          },
+          "98b15a26-42fa-4a37-8c16-9b0cde883881": {
+            "type": "section",
+            "settings": {
+              "section_anchor": "order",
+              "section_title": "オーダー教室",
+              "section_image": "shopify:\/\/shop_images\/jumbotron03_a472eec8-9e78-490c-9242-b04634a6bd21.png",
+              "title_reverse": false,
+              "section_about": "会社や店舗の“研修”として、またご友人などお仲間を集めてお茶の時間を楽しむための“教室”も承っております。教室の内容は、ご依頼主さまのご要望をお聞きしながら、オーダーメイドでお作りいたします。まずは気軽にご相談くださいませ。",
+              "section_image1": "shopify:\/\/shop_images\/img_event03-01_9a2ed933-8207-48d7-aa45-3fe3ccd7b4f3.png",
+              "section_image2": "shopify:\/\/shop_images\/img_event03-02.png",
+              "about_list1": "<p><strong>開催場所<\/strong><\/p><p>京都本店、東京丸の内店、その他<\/p>",
+              "about_list2": "<p><strong>最少催行人数<\/strong><\/p><p>10名様<\/p>",
+              "about_list3": "<p><strong>開催費<\/strong><\/p><p>企画開催費 55,000円〜、レクチャー費 3,300円〜\/1人<br\/>※出張で開催する場合は、別途出張費をお見積りいたします。<\/p>",
+              "about_list4": "",
+              "additional_text": "",
+              "cta_text": "お問い合わせ",
+              "cta_url": "https:\/\/support.ippodo-tea.co.jp\/hc\/ja\/articles\/360003598935"
+            }
+          },
+          "dbddbe49-bf9d-43b5-b726-28d142d744a9": {
+            "type": "section",
+            "settings": {
+              "section_anchor": "catering",
+              "section_title": "お茶のケータリング どこでも一保堂",
+              "section_image": "shopify:\/\/shop_images\/jumbotron04_c224aa78-1f9e-4af5-affb-b0a59972ef13.png",
+              "title_reverse": true,
+              "section_about": "会社や店舗などで開かれるパーティやイベントに一保堂のスタッフが赴き、淹れたてのお茶でおもてなしをいたします。淹れるところからゲストの皆さまがご覧になれるよう、キッチンとなるスペースのしつらいまでご用意いたします。まずは、パーティやイベントのテーマをお聞かせください。テーマに合わせたメニューをご提案いたします。",
+              "section_image1": "shopify:\/\/shop_images\/img_event04-01.png",
+              "section_image2": "shopify:\/\/shop_images\/img_event04-02.png",
+              "about_list1": "<p><strong>開催費<\/strong><\/p><p>企画開催費 110,000 円+お茶のメニュー+スタッフ派遣代など。<br\/>※出張で開催する場合は、別途出張費をお見積りいたします。<\/p>",
+              "about_list2": "",
+              "about_list3": "",
+              "about_list4": "",
+              "additional_text": "",
+              "cta_text": "お問い合わせ",
+              "cta_url": "https:\/\/support.ippodo-tea.co.jp\/hc\/ja\/articles\/360003598935"
+            }
+          }
+        },
+        "block_order": [
+          "31efcd37-ee00-4b0b-8b68-f7c5e3506a84",
+          "1c486326-2d1d-4a4e-a5f2-2e127d8ed52f",
+          "98b15a26-42fa-4a37-8c16-9b0cde883881",
+          "dbddbe49-bf9d-43b5-b726-28d142d744a9"
+        ],
+        "settings": {
+          "header_title": "教室・イベント",
+          "hero_image": "shopify:\/\/shop_images\/event-hero_3b6efc98-3280-46aa-99c0-30bee27147af.png",
+          "header_text": "一保堂スタッフがお茶の魅力をお伝えする淹れ方教室や、お茶をお届けするケータリングサービスをおこなっています。"
+        }
+      },
+      "announcement": {
+        "type": "announcement",
+        "settings": {
+          "show_announcement": true,
+          "home_page_only": true,
+          "announcement_text": "お届け先1件の商品金額が税抜10,000円(京都市内は税抜5,000円)以上で送料無料",
+          "announcement_link": ""
+        }
+      },
+      "product-details-template": {
+        "type": "product-details-template",
+        "settings": {
+        }
+      },
+      "product-recommendations": {
+        "type": "product-recommendations",
+        "settings": {
+          "show_product_recommendations": true,
+          "heading": "関連商品",
+          "vendor_show": false,
+          "column": "4"
+        }
+      },
+      "blog-story-template": {
+        "type": "blog-story-template",
+        "settings": {
+          "heading": "お茶の<br>\n暮らし<br>\nイロイロ<br>",
+          "content": "ちょっと気になるひとのお茶生活。<br>\nどの銘柄が好き? どう楽しむ?<br>\nお茶との付き合い方は人によってイロイロ。<br>\nひとのお茶の暮らしを知れば、<br>\nいつものお茶も違って見えてくるはず!?"
+        }
+      },
+      "blog-template": {
+        "type": "blog-template",
+        "settings": {
+          "img": "shopify:\/\/shop_images\/news-hero_22e7c3c9-7885-40f3-861e-8e7c54b135ee.png",
+          "title": "お知らせ",
+          "item_per_page": 10
+        }
+      },
+      "tea-recipe-header": {
+        "type": "tea-recipe-header",
+        "settings": {
+          "heading": "レシピ早見帖",
+          "description": "１つのお茶から広がるいろんな味わい、<br>\n楽しみ方は１つではありません。"
+        }
+      },
+      "tea-recipe-list-category": {
+        "type": "tea-recipe-list-category",
+        "blocks": {
+          "b519e15c-080c-4224-a774-433e22dd00de": {
+            "type": "category",
+            "settings": {
+              "img": "shopify:\/\/shop_images\/category-standard.png",
+              "title_category": "淹れ方で探す",
+              "list": "基本の淹れ方| ササッと簡単に| 時間をかけて| たっぷり作る"
+            }
+          },
+          "20b2d79b-551e-4587-bb61-115903380395": {
+            "type": "category",
+            "settings": {
+              "img": "shopify:\/\/shop_images\/category-temperature.png",
+              "title_category": "飲む温度から探す",
+              "list": "熱いお茶| 冷たいお茶"
+            }
+          },
+          "d5776e5e-0cdd-4209-9715-21b89d5cd61b": {
+            "type": "category",
+            "settings": {
+              "img": "shopify:\/\/shop_images\/category-advanced.png",
+              "title_category": "応用編",
+              "list": "ラテ| 水出し| 急冷| そのほか"
+            }
+          },
+          "7b1e20d4-f5b7-43bd-840d-b873e5c51cbb": {
+            "type": "category",
+            "settings": {
+              "img": "shopify:\/\/shop_images\/category-variety.png",
+              "title_category": "茶葉から探す",
+              "list": "抹茶| 玉露| 煎茶| 番茶類| むぎ茶| ティーバッグ"
+            }
+          }
+        },
+        "block_order": [
+          "b519e15c-080c-4224-a774-433e22dd00de",
+          "20b2d79b-551e-4587-bb61-115903380395",
+          "d5776e5e-0cdd-4209-9715-21b89d5cd61b",
+          "7b1e20d4-f5b7-43bd-840d-b873e5c51cbb"
+        ],
+        "settings": {
+          "intro": "お茶の個性を引き出す基本の淹れ方から、お好みの味や用途に合わせた淹れ方など、暮らしで役立つ実用的な淹れ方いろいろをご紹介しています。自分なりにコツや調子をつかんで、まずは、淹れるところから楽しみましょう!"
+        }
+      },
+      "how-to-use-tea": {
+        "type": "how-to-use-tea",
+        "blocks": {
+          "c9c5eb1a-509f-4df7-8c17-2e6b92b2546d": {
+            "type": "example",
+            "settings": {
+              "choose_article": "shopify:\/\/blogs\/tea-recipe\/たっぷりの抹茶をつくる-片くち",
+              "img": "shopify:\/\/shop_images\/recipe-21-parering_d1eb845c-cd57-4bd0-b10c-58f46dc71fdf.jpg",
+              "title": "みんなのティータイムに",
+              "content": "できたてほやほや、手作りスイーツに抹茶を添えて。"
+            }
+          },
+          "a09dc974-f19a-40e0-b593-d12238f8566b": {
+            "type": "example",
+            "settings": {
+              "choose_article": "shopify:\/\/blogs\/tea-recipe\/基本の濃茶-抹茶",
+              "img": "shopify:\/\/shop_images\/recipe-2-parering.jpg",
+              "title": "気分転換に",
+              "content": "自然の恵み、茶葉のチカラ強さに驚きます。"
+            }
+          },
+          "23ea0374-3c3f-4ca3-88d1-679fd1893500": {
+            "type": "example",
+            "settings": {
+              "choose_article": "shopify:\/\/blogs\/tea-recipe\/基本の玉露",
+              "img": "shopify:\/\/shop_images\/recipe-3-parering.jpg",
+              "title": "気分転換に",
+              "content": "溢れる旨みには、自然の甘さがよく合います。"
+            }
+          },
+          "92dedb5b-5b55-41cb-9e06-750ab1ed07ae": {
+            "type": "example",
+            "settings": {
+              "choose_article": "shopify:\/\/blogs\/tea-recipe\/基本の濃茶-抹茶-1",
+              "img": "shopify:\/\/shop_images\/recipe-4-parering.jpg",
+              "title": "お気に入りのお菓子と",
+              "content": "茶葉から甘みと渋みを絶妙に引き出せたときの気分は最高です。"
+            }
+          },
+          "0f436618-3508-472e-890d-51c71a636f94": {
+            "type": "example",
+            "settings": {
+              "choose_article": "shopify:\/\/blogs\/tea-recipe\/基本の番茶類-ほうじ茶-玄米茶等",
+              "img": "shopify:\/\/shop_images\/recipe-5-parering.jpg",
+              "title": "お食事と一緒に",
+              "content": "軽やかな味だから場面問わず使いやすく、お家に１つあるととっても便利。"
+            }
+          },
+          "76b3d02e-3d77-4eec-9e24-95fca4c933d3": {
+            "type": "example",
+            "settings": {
+              "choose_article": "shopify:\/\/blogs\/tea-recipe\/6熱々の玉露と煎茶",
+              "img": "shopify:\/\/shop_images\/recipe-6-parering.jpg",
+              "title": "お食事と一緒に",
+              "content": "お茶の風味は充分に楽しめつつ、飲み口はとっても軽やか。"
+            }
+          },
+          "59323341-2840-471e-b006-1b94b1cce6e0": {
+            "type": "example",
+            "settings": {
+              "choose_article": "shopify:\/\/blogs\/tea-recipe\/7水点て抹茶",
+              "img": "shopify:\/\/shop_images\/recipe-7-parering.jpg",
+              "title": "ティータイムに",
+              "content": "抹茶本来の繊細な甘みには、ドライフルーツや干菓子もよく合います。"
+            }
+          },
+          "d8f6aecc-cf16-4a15-b745-8d55630af30d": {
+            "type": "example",
+            "settings": {
+              "choose_article": "shopify:\/\/blogs\/tea-recipe\/8急冷抹茶",
+              "img": "shopify:\/\/shop_images\/recipe-8-parering.jpg",
+              "title": "スッキリしたいとき",
+              "content": "点てる時から特別な気分に浸れる抹茶。気分盛り上がる一服です。"
+            }
+          },
+          "2c82c842-e270-4253-b256-1a88447ff304": {
+            "type": "example",
+            "settings": {
+              "choose_article": "shopify:\/\/blogs\/tea-recipe\/9水出し玉露",
+              "img": "shopify:\/\/shop_images\/recipe-9-parering.jpg",
+              "title": "ゆったり流れる時間のお伴に",
+              "content": "口に含んだ瞬間の旨みギュウの一服は、幸せをギュゥッと感じます。"
+            }
+          },
+          "46469dc7-bee3-4ef2-9c57-c810e7fe968a": {
+            "type": "example",
+            "settings": {
+              "choose_article": "shopify:\/\/blogs\/tea-recipe\/10急冷玉露-煎茶",
+              "img": "shopify:\/\/shop_images\/recipe-10-parering.jpg",
+              "title": "冷たくて上品な味が欲しいとき",
+              "content": "清らかな味わいは、喉の渇きはもちろん気分も癒す効果あり。"
+            }
+          },
+          "52d816fa-97a1-4130-8147-65193c33060b": {
+            "type": "example",
+            "settings": {
+              "choose_article": "shopify:\/\/blogs\/tea-recipe\/11たっぷりのお茶を作る-玉露-煎茶-番茶類",
+              "img": "shopify:\/\/shop_images\/recipe-11-parering.jpg",
+              "title": "食卓のお茶に。",
+              "content": "たくさんお茶が必要なシーンで活躍間違いなし。"
+            }
+          },
+          "2ec7ae0b-92d7-49c7-9c26-c28b71aa3eaf": {
+            "type": "example",
+            "settings": {
+              "choose_article": "shopify:\/\/blogs\/tea-recipe\/12たっぷりのむぎ茶を作る-やかん",
+              "img": "shopify:\/\/shop_images\/recipe-12-parering_15fa2355-3049-4f07-b265-7ed07e54985e.jpg",
+              "title": "お食事時や携帯用に",
+              "content": "水分補給のお茶の定番。おやすみ前の一杯にも。"
+            }
+          },
+          "d7c2a4d4-d8d2-42c6-9001-ce609dcbbc02": {
+            "type": "example",
+            "settings": {
+              "choose_article": "shopify:\/\/blogs\/tea-recipe\/13たっぷりのむぎ茶を作る-なべ",
+              "img": "shopify:\/\/shop_images\/recipe-13-parering_b72d15bd-f8b4-4c17-98bf-6d4ca6e3787e.jpg",
+              "title": "子どもから大人まで一緒に",
+              "content": "ノンカフェインのお茶は、人を選ばず楽しめるので、お集まりの時に便利です。"
+            }
+          },
+          "c95b8187-e228-4a0c-9b1b-c3a33a86bd07": {
+            "type": "example",
+            "settings": {
+              "choose_article": "shopify:\/\/blogs\/tea-recipe\/14たっぷりのいり番茶を作る",
+              "img": "shopify:\/\/shop_images\/recipe-14-parering.jpg",
+              "title": "スモーキーな香りがお好みの方に",
+              "content": "小さな子どもから大人まで。いろんなシーンに寄り添います。"
+            }
+          },
+          "5fee8d32-e230-4000-a157-aba496735c2b": {
+            "type": "example",
+            "settings": {
+              "choose_article": "shopify:\/\/blogs\/tea-recipe\/15シャカシャカ抹茶",
+              "img": "shopify:\/\/shop_images\/recipe-15-parering.jpg",
+              "title": "持ち歩きやドライブに",
+              "content": "保冷水筒に氷水で仕込めば、いつでも、どこでも嬉しい清涼感！"
+            }
+          },
+          "03653d4d-7413-496c-b740-3ce73cb0032c": {
+            "type": "example",
+            "settings": {
+              "choose_article": "shopify:\/\/blogs\/tea-recipe\/16ドリップティー",
+              "img": "shopify:\/\/shop_images\/recipe-16-parering.jpg",
+              "title": "仕事の合間に",
+              "content": "後片付けも簡単。オフィスのパントリーやキッチンでもラークラク！"
+            }
+          },
+          "2b9cdd50-bd9d-4268-95c6-828a2494a00b": {
+            "type": "example",
+            "settings": {
+              "choose_article": "shopify:\/\/blogs\/tea-recipe\/17-1カップティーバッグ",
+              "img": "shopify:\/\/shop_images\/recipe-17-parering.jpg",
+              "title": "ご自身はもちろん、ご来客時にも",
+              "content": "いつ、誰がどこで淹れても、1分半で完成する上質の味わい。"
+            }
+          },
+          "3ae87a3b-a3d8-4443-8135-67305914b598": {
+            "type": "example",
+            "settings": {
+              "choose_article": "shopify:\/\/blogs\/tea-recipe\/18大容量ティーバッグ",
+              "img": "shopify:\/\/shop_images\/recipe-18-parering.jpg",
+              "title": "食卓や、バーベキュー、キャンプに",
+              "content": "おいしい水さえあれば、あっという間にできあがり！"
+            }
+          },
+          "c4f53242-08ce-477e-ad24-7f00990dc4b3": {
+            "type": "example",
+            "settings": {
+              "choose_article": "shopify:\/\/blogs\/tea-recipe\/19抹茶ラテ",
+              "img": "shopify:\/\/shop_images\/recipe-19-parering.jpg",
+              "title": "朝食、おやつに",
+              "content": "ミルクや豆乳の自然な甘みにホッと和むアレンジ抹茶。"
+            }
+          },
+          "343f7a9b-dd5a-4356-a824-57f182e0a162": {
+            "type": "example",
+            "settings": {
+              "choose_article": "shopify:\/\/blogs\/tea-recipe\/片くちで-いろんなお茶を楽しむ",
+              "img": "shopify:\/\/shop_images\/recipe-20-parering_1e987a78-7023-4fe7-b764-46da6073ca27.jpg",
+              "title": "休日のランチタイムに",
+              "content": "準備はカンタン、食事タイムをゆったり楽しんで。"
+            }
+          },
+          "63a73ad9-c044-46db-997d-2e5ef64b80f4": {
+            "type": "example",
+            "settings": {
+              "choose_article": "shopify:\/\/blogs\/tea-recipe\/基本の薄茶-抹茶",
+              "img": "shopify:\/\/shop_images\/recipe-1-parering_e3286388-5f99-4552-979a-86693c15b090.png",
+              "title": "ティータイムに",
+              "content": "和菓子はもちろん、チョコレートやケーキなど洋菓子にもよくあいます。"
+            }
+          }
+        },
+        "block_order": [
+          "c9c5eb1a-509f-4df7-8c17-2e6b92b2546d",
+          "a09dc974-f19a-40e0-b593-d12238f8566b",
+          "23ea0374-3c3f-4ca3-88d1-679fd1893500",
+          "92dedb5b-5b55-41cb-9e06-750ab1ed07ae",
+          "0f436618-3508-472e-890d-51c71a636f94",
+          "76b3d02e-3d77-4eec-9e24-95fca4c933d3",
+          "59323341-2840-471e-b006-1b94b1cce6e0",
+          "d8f6aecc-cf16-4a15-b745-8d55630af30d",
+          "2c82c842-e270-4253-b256-1a88447ff304",
+          "46469dc7-bee3-4ef2-9c57-c810e7fe968a",
+          "52d816fa-97a1-4130-8147-65193c33060b",
+          "2ec7ae0b-92d7-49c7-9c26-c28b71aa3eaf",
+          "d7c2a4d4-d8d2-42c6-9001-ce609dcbbc02",
+          "c95b8187-e228-4a0c-9b1b-c3a33a86bd07",
+          "5fee8d32-e230-4000-a157-aba496735c2b",
+          "03653d4d-7413-496c-b740-3ce73cb0032c",
+          "2b9cdd50-bd9d-4268-95c6-828a2494a00b",
+          "3ae87a3b-a3d8-4443-8135-67305914b598",
+          "c4f53242-08ce-477e-ad24-7f00990dc4b3",
+          "343f7a9b-dd5a-4356-a824-57f182e0a162",
+          "63a73ad9-c044-46db-997d-2e5ef64b80f4"
+        ],
+        "settings": {
+        }
+      },
+      "1614674049f0f55d42": {
+        "type": "banner-with-animation",
+        "blocks": {
+          "d2b9069f-5298-423b-ba36-ca187e788bc8": {
+            "type": "image",
+            "settings": {
+              "logo": "shopify:\/\/shop_images\/mainvisual-back_69f0fd3b-0f57-4b43-87d6-32c4ba8d4c80.png",
+              "logo_mb": "shopify:\/\/shop_images\/mainvisual-back-sp_1000x_f92ecd8b-3466-401d-9606-159feaa58bec.png"
+            }
+          },
+          "6ece5047-a8f6-463c-bb97-731ffdbbd6fa": {
+            "type": "image",
+            "settings": {
+              "logo": "shopify:\/\/shop_images\/mainvisual-ippodo_f0ec9842-b747-499d-89cc-e62a02994d21.png",
+              "logo_mb": "shopify:\/\/shop_images\/mainvisual-sp-shincha_eeb75cbb-4a34-4393-846e-319a1aa295e3.png"
+            }
+          },
+          "66861d64-dd8e-4b4c-aac2-c4a2b2f13f06": {
+            "type": "image",
+            "settings": {
+              "logo": "shopify:\/\/shop_images\/mainvisual-front01_18c286df-33ea-449b-b632-3c2d981a8a38.png",
+              "logo_mb": "shopify:\/\/shop_images\/mainvisual-front-sp_12077122-96be-47ad-8d03-4ad634234485.png"
+            }
+          },
+          "61d4b6a8-acfa-4335-9c99-d1926b0d85bb": {
+            "type": "image",
+            "settings": {
+              "logo": "shopify:\/\/shop_images\/mainvisual-front02_57766361-4af6-405c-a8c9-19df82c7f637.png"
+            }
+          }
+        },
+        "block_order": [
+          "d2b9069f-5298-423b-ba36-ca187e788bc8",
+          "6ece5047-a8f6-463c-bb97-731ffdbbd6fa",
+          "66861d64-dd8e-4b4c-aac2-c4a2b2f13f06",
+          "61d4b6a8-acfa-4335-9c99-d1926b0d85bb"
+        ],
+        "settings": {
+        }
+      },
+      "1614674375ca588405": {
+        "type": "image-with-link",
+        "blocks": {
+          "463d2b8d-33e1-47d5-9a11-b3795393a126": {
+            "type": "item",
+            "settings": {
+              "img": "shopify:\/\/shop_images\/head-img_tsukikage.png",
+              "title": "秋限定抹茶「月影」",
+              "link": ""
+            }
+          },
+          "4387fb9e-c95a-4536-b11d-7812a7b63241": {
+            "type": "item",
+            "settings": {
+              "img": "shopify:\/\/shop_images\/feature_coldbrew_202106.png",
+              "title": "冷たいお茶を作ろう！",
+              "link": "https:\/\/ippododev.myshopify.com\/blogs\/tea-recipe\/tagged\/%E5%86%B7%E3%81%9F%E3%81%84%E3%81%8A%E8%8C%B6"
+            }
+          },
+          "c99b8510-34c5-435c-b355-26c7939ffdf9": {
+            "type": "item",
+            "settings": {
+              "img": "shopify:\/\/shop_images\/ippodo-feature-shopping.jpg",
+              "title": "はじめての一保堂、まずはこれ。",
+              "link": "shopify:\/\/collections\/first-ippodo"
+            }
+          },
+          "5d55eb26-fdb3-480a-a894-3033905a860b": {
+            "type": "item",
+            "settings": {
+              "img": "shopify:\/\/shop_images\/ippodo-feature-hajimeno.jpg",
+              "title": "抹茶スターターキット",
+              "link": "https:\/\/ippododev.myshopify.com\/collections\/all\/%E6%8A%B9%E8%8C%B6%E3%82%B9%E3%82%BF%E3%83%BC%E3%82%BF%E3%83%BC%E3%82%AD%E3%83%83%E3%83%88"
+            }
+          },
+          "acb2a8ac-80a5-4390-9210-1e2b3d1c700c": {
+            "type": "item",
+            "settings": {
+              "img": "shopify:\/\/shop_images\/feature_gift_summer_202106.png",
+              "title": "夏の贈りもの",
+              "link": "shopify:\/\/collections\/gift-summer-2021"
+            }
+          },
+          "ed95ffce-577a-4fc1-8f73-501231bd104b": {
+            "type": "item",
+            "settings": {
+              "img": "shopify:\/\/shop_images\/ippodo-feature-freshers.jpg",
+              "title": "新生活におすすめ",
+              "link": "https:\/\/ippododev.myshopify.com\/collections\/gift\/%E6%96%B0%E7%94%9F%E6%B4%BB"
+            }
+          },
+          "247929b8-737f-4fa2-93d7-2f141ab971ad": {
+            "type": "item",
+            "settings": {
+              "img": "shopify:\/\/shop_images\/feature_mugicha_202106.png",
+              "title": "オンライン限定 むぎ茶1㎏缶",
+              "link": "https:\/\/ippododev.myshopify.com\/products\/mugicha643624"
+            }
+          },
+          "01e42c91-ca53-41d6-938f-a88f16048605": {
+            "type": "item",
+            "settings": {
+              "img": "shopify:\/\/shop_images\/feature_limited_summer_202106.png",
+              "title": "夏限定のお茶",
+              "link": "https:\/\/ippododev.myshopify.com\/collections\/all\/%E5%A4%8F%E9%99%90%E5%AE%9A%E3%81%AE%E3%81%8A%E8%8C%B6"
+            }
+          }
+        },
+        "block_order": [
+          "463d2b8d-33e1-47d5-9a11-b3795393a126",
+          "4387fb9e-c95a-4536-b11d-7812a7b63241",
+          "c99b8510-34c5-435c-b355-26c7939ffdf9",
+          "5d55eb26-fdb3-480a-a894-3033905a860b",
+          "acb2a8ac-80a5-4390-9210-1e2b3d1c700c",
+          "ed95ffce-577a-4fc1-8f73-501231bd104b",
+          "247929b8-737f-4fa2-93d7-2f141ab971ad",
+          "01e42c91-ca53-41d6-938f-a88f16048605"
+        ],
+        "settings": {
+        }
+      },
+      "16146745824f88f3e1": {
+        "type": "ranking-product",
+        "blocks": {
+          "198c6e3b-053e-4a53-af73-29dc012b138a": {
+            "type": "item",
+            "settings": {
+              "feature_product": "bancha601202"
+            }
+          },
+          "3609fbda-98b5-4b46-8c7a-a21f5414d81e": {
+            "type": "item",
+            "settings": {
+              "feature_product": "mugicha643624"
+            }
+          },
+          "886255b2-5111-4080-a5d2-660b15df9f95": {
+            "type": "item",
+            "settings": {
+              "feature_product": "utensils651607"
+            }
+          },
+          "0e63a9bb-aa9b-40d6-8659-5706365fbbfa": {
+            "type": "item",
+            "settings": {
+              "feature_product": "gyokuro403052"
+            }
+          },
+          "19f26b2e-805d-4fd7-8eca-eb28343be7f7": {
+            "type": "item",
+            "settings": {
+              "feature_product": "gift895641"
+            }
+          },
+          "11eb3230-02c8-4e96-b0b2-991aae22752b": {
+            "type": "item",
+            "settings": {
+              "feature_product": "sencha503612"
+            }
+          },
+          "c324ca6a-a47b-4da0-acac-77f9fe7ed20f": {
+            "type": "item",
+            "settings": {
+              "feature_product": "gift894503"
+            }
+          },
+          "61731b6f-4044-404b-ad0a-472432bede81": {
+            "type": "item",
+            "settings": {
+              "feature_product": "gift812263"
+            }
+          }
+        },
+        "block_order": [
+          "198c6e3b-053e-4a53-af73-29dc012b138a",
+          "3609fbda-98b5-4b46-8c7a-a21f5414d81e",
+          "886255b2-5111-4080-a5d2-660b15df9f95",
+          "0e63a9bb-aa9b-40d6-8659-5706365fbbfa",
+          "19f26b2e-805d-4fd7-8eca-eb28343be7f7",
+          "11eb3230-02c8-4e96-b0b2-991aae22752b",
+          "c324ca6a-a47b-4da0-acac-77f9fe7ed20f",
+          "61731b6f-4044-404b-ad0a-472432bede81"
+        ],
+        "settings": {
+          "title": "今週の人気もの"
+        }
+      },
+      "16146747097c2d4e64": {
+        "type": "section-top-recipe",
+        "settings": {
+          "title": "食卓ノート",
+          "description": "日々の食卓に並びそうなお食事やお菓子に合わせて“一保堂のお茶”を選んでみました。「淹れ方」も一緒にご紹介しています。",
+          "number_article": 3
+        }
+      },
+      "16146747558b85a33f": {
+        "type": "section-top-story",
+        "settings": {
+          "title": "お茶の暮らしイロイロ",
+          "description": "一保堂のお茶で繋がる“茶飲み仲間たち”。<br>\n一保堂スタッフはもちろん、その周りの仲間たちのお茶の暮らしも覗いてみましょう。",
+          "number_article": 3
+        }
+      },
+      "16146747803d6058d7": {
+        "type": "section-top-buy",
+        "blocks": {
+          "2b54335f-5205-4d29-8d5b-c48dd073af08": {
+            "type": "collection",
+            "settings": {
+              "icon": "shopify:\/\/shop_images\/img-category01_8737e760-c1d9-470d-b3e7-e03e6b03804c.png",
+              "title_category": "抹茶・宇治清水",
+              "link": "shopify:\/\/collections\/matcha"
+            }
+          },
+          "096cbf9e-3897-4a0f-994a-0b042413ec33": {
+            "type": "collection",
+            "settings": {
+              "icon": "shopify:\/\/shop_images\/img-category02_6769daa1-f1a7-4311-97d7-2b284d561afb.png",
+              "title_category": "玉露",
+              "link": "shopify:\/\/collections\/gyokuro"
+            }
+          },
+          "98610439-77dd-4e08-9b77-0228bc43ab2f": {
+            "type": "collection",
+            "settings": {
+              "icon": "shopify:\/\/shop_images\/img-category03_db6ff3f4-1c0f-48fd-b932-cd97f942d075.png",
+              "title_category": "煎茶",
+              "link": "shopify:\/\/collections\/sencha"
+            }
+          },
+          "e42bca71-2c3e-48c0-8c6c-dd31fb5a9d38": {
+            "type": "collection",
+            "settings": {
+              "icon": "shopify:\/\/shop_images\/img-category04_56b09933-b801-4794-9976-3920c7781af5.png",
+              "title_category": "番茶類<br>[caption]ほうじ茶・玄米茶など[\/caption]",
+              "link": "shopify:\/\/collections\/bancha"
+            }
+          },
+          "160c6ac2-1ad3-4b21-9afc-e3d230784145": {
+            "type": "collection",
+            "settings": {
+              "icon": "shopify:\/\/shop_images\/img-category05_39fbe67a-edb9-4645-af73-bb484b21b65a.png",
+              "title_category": "ティーバッグ",
+              "link": "shopify:\/\/collections\/teabag"
+            }
+          },
+          "266381fb-87a6-4cc3-bbdc-a490c04cf817": {
+            "type": "collection",
+            "settings": {
+              "icon": "shopify:\/\/shop_images\/img-category06_1e7d30ee-e942-4f3a-a365-aba95abcde32.png",
+              "title_category": "むぎ茶・<br>オーガニック",
+              "link": "shopify:\/\/collections\/mugicha"
+            }
+          },
+          "030338a7-df19-45ce-a31b-df63e51d6fd9": {
+            "type": "collection",
+            "settings": {
+              "icon": "shopify:\/\/shop_images\/img-category07_0222e9eb-0942-4c1e-916e-f8e4a3df36e9.png",
+              "title_category": "茶器類",
+              "link": "shopify:\/\/collections\/utensils"
+            }
+          },
+          "bd9737e7-d478-4de5-a140-ba6a26da6972": {
+            "type": "collection",
+            "settings": {
+              "icon": "shopify:\/\/shop_images\/img-category08_0062e87a-9b69-4340-91da-ecac27efb996.png",
+              "title_category": "贈りもの",
+              "link": "shopify:\/\/collections\/gift"
+            }
+          },
+          "a6bf8d0b-5d0c-419c-a2a8-07cf9bf36407": {
+            "type": "collection",
+            "settings": {
+              "icon": "shopify:\/\/shop_images\/img-category10_72ca4f8a-dce0-44ec-bdf9-f7b3487f3432.png",
+              "title_category": "書籍・そのほか",
+              "link": "shopify:\/\/collections\/shu-ji-sofalsehoka"
+            }
+          },
+          "9b0f4845-ee9b-4c94-a801-a9293d62d20f": {
+            "type": "collection",
+            "settings": {
+              "icon": "shopify:\/\/shop_images\/img-category11_0f8be1ed-7fe5-46ad-b17f-1ecccfbdaaa6.png",
+              "title_category": "特集",
+              "link": "shopify:\/\/pages\/feature-list"
+            }
+          },
+          "7afbf236-2266-4540-8341-5b0f93b30134": {
+            "type": "collection",
+            "settings": {
+              "icon": "shopify:\/\/shop_images\/img-category12_2aaf5d64-7a74-482a-a5f0-0f23de780660.png",
+              "title_category": "教室・イベント",
+              "link": "shopify:\/\/collections\/events"
+            }
+          },
+          "41bccdcb-24c2-4d35-8e8b-54a5c9da6c47": {
+            "type": "collection",
+            "settings": {
+              "icon": "shopify:\/\/shop_images\/img-category-shincha_18ba7359-3edf-4c9e-b8fe-0bf714622d50.png",
+              "title_category": "新茶",
+              "link": "shopify:\/\/collections\/shincha"
+            }
+          }
+        },
+        "block_order": [
+          "2b54335f-5205-4d29-8d5b-c48dd073af08",
+          "096cbf9e-3897-4a0f-994a-0b042413ec33",
+          "98610439-77dd-4e08-9b77-0228bc43ab2f",
+          "e42bca71-2c3e-48c0-8c6c-dd31fb5a9d38",
+          "160c6ac2-1ad3-4b21-9afc-e3d230784145",
+          "266381fb-87a6-4cc3-bbdc-a490c04cf817",
+          "030338a7-df19-45ce-a31b-df63e51d6fd9",
+          "bd9737e7-d478-4de5-a140-ba6a26da6972",
+          "a6bf8d0b-5d0c-419c-a2a8-07cf9bf36407",
+          "9b0f4845-ee9b-4c94-a801-a9293d62d20f",
+          "7afbf236-2266-4540-8341-5b0f93b30134",
+          "41bccdcb-24c2-4d35-8e8b-54a5c9da6c47"
+        ],
+        "settings": {
+          "banner": "shopify:\/\/shop_images\/hero-buy_9f76b8f8-8199-4d8d-9621-d4620dd96949.png",
+          "title": "買う",
+          "description": "銘柄ごとの味わいに仕立てあげて作られる一保堂のお茶は店主好みの“ハウスブレンド”。お気に入りが見つかりますように。"
+        }
+      },
+      "1614675064d8a28782": {
+        "type": "section-other",
+        "blocks": {
+          "b7b7d8fe-3f99-4e1a-a07f-082337848360": {
+            "type": "item",
+            "settings": {
+              "img": "shopify:\/\/shop_images\/img-nav-about_bd609064-0eb1-4ece-acb4-9830d8060d30.png",
+              "title": "一保堂のこと",
+              "link": "shopify:\/\/pages\/一保堂のこと"
+            }
+          },
+          "ba6486a3-8bfc-43b9-92ce-eda5cd918cc3": {
+            "type": "item",
+            "settings": {
+              "img": "shopify:\/\/shop_images\/img-nav-tea_03ed38a9-6b58-4e8f-81e6-28ad372e7b45.png",
+              "title": "お茶のこと",
+              "link": "shopify:\/\/pages\/お茶のこと"
+            }
+          },
+          "e9a1d7e6-dbae-4af5-bbd7-309eff570e6d": {
+            "type": "item",
+            "settings": {
+              "img": "shopify:\/\/shop_images\/img-nav-event_f5a83268-27ad-445e-a0fa-826681872d53.png",
+              "title": "教室・イベント",
+              "link": "shopify:\/\/pages\/教室-イベント"
+            }
+          }
+        },
+        "block_order": [
+          "b7b7d8fe-3f99-4e1a-a07f-082337848360",
+          "ba6486a3-8bfc-43b9-92ce-eda5cd918cc3",
+          "e9a1d7e6-dbae-4af5-bbd7-309eff570e6d"
+        ],
+        "settings": {
+          "banner": "shopify:\/\/shop_images\/bg-others_65b4d7a0-12f6-441e-a8b4-1f79ff365a27.png",
+          "banner_mb": "shopify:\/\/shop_images\/bg-others_sp_3c342953-eaad-4217-871f-feca674e3d3a.png"
+        }
+      },
+      "16146751869b981e68": {
+        "type": "section-top-news",
+        "settings": {
+          "title": "お知らせ",
+          "number_article": 4
+        }
+      },
+      "page-about-template": {
+        "type": "page-about-template",
+        "settings": {
+          "page_title": "一保堂のこと",
+          "hero_image": "shopify:\/\/shop_images\/about-hero_8507503a-90ca-48e0-b319-37a25fd2d863.png",
+          "tokyo_store": "https:\/\/ippododev.myshopify.com\/pages\/store-marunouchi",
+          "kyoto_store": "https:\/\/ippododev.myshopify.com\/pages\/store-kyoto",
+          "about_ippodo": "",
+          "about_tea": "",
+          "about_events": "https:\/\/ippododev.myshopify.com\/pages\/教室-イベント"
+        }
+      },
+      "gift-top": {
+        "type": "gift-top",
+        "blocks": {
+          "05d203c6-02f9-4f5f-af8c-4bb8fefaae01": {
+            "type": "item",
+            "settings": {
+              "img": "shopify:\/\/shop_images\/feature_gift_summer_202106.png",
+              "heading": "夏の贈りもの",
+              "link": "https:\/\/ippododev.myshopify.com\/collections\/gift-summer-2021"
+            }
+          },
+          "53579f28-3f3d-457b-8c6d-42294b14872c": {
+            "type": "item",
+            "settings": {
+              "img": "shopify:\/\/shop_images\/ippodo-feature-freshers.jpg",
+              "heading": "新生活におすすめ",
+              "link": "\/collections\/all\/新生活"
+            }
+          },
+          "a59719a2-d08e-4452-8276-8b3891429b52": {
+            "type": "item",
+            "settings": {
+              "img": "shopify:\/\/shop_images\/ippodo-feature-hajimeno.jpg",
+              "heading": "抹茶スターターキット",
+              "link": "https:\/\/ippododev.myshopify.com\/collections\/all\/%E6%8A%B9%E8%8C%B6%E3%82%B9%E3%82%BF%E3%83%BC%E3%82%BF%E3%83%BC%E3%82%AD%E3%83%83%E3%83%88"
+            }
+          }
+        },
+        "block_order": [
+          "05d203c6-02f9-4f5f-af8c-4bb8fefaae01",
+          "53579f28-3f3d-457b-8c6d-42294b14872c",
+          "a59719a2-d08e-4452-8276-8b3891429b52"
+        ],
+        "settings": {
+          "banner": "shopify:\/\/shop_images\/gift-hero_6c8ba950-6512-476e-854a-e3c89d7e0581.png",
+          "title": "",
+          "description": "お茶のひとときをプレゼント。<br>\n気持ちを込めて選ぶ、贈る。"
+        }
+      },
+      "gift-filter-price": {
+        "type": "gift-filter-price",
+        "blocks": {
+          "0bf53281-fd2a-4b96-91fb-615cde4c0f70": {
+            "type": "item",
+            "settings": {
+              "price": "～3,000円"
+            }
+          },
+          "63ae5e1d-09db-4fc0-a691-804e1db7f8fa": {
+            "type": "item",
+            "settings": {
+              "price": "～5,000円"
+            }
+          },
+          "72f88665-0a10-45dc-9803-6bfdc834c672": {
+            "type": "item",
+            "settings": {
+              "price": "～10,000円"
+            }
+          },
+          "423d35ec-f085-40f3-8305-0fed5d986cad": {
+            "type": "item",
+            "settings": {
+              "price": "10,000円以上"
+            }
+          }
+        },
+        "block_order": [
+          "0bf53281-fd2a-4b96-91fb-615cde4c0f70",
+          "63ae5e1d-09db-4fc0-a691-804e1db7f8fa",
+          "72f88665-0a10-45dc-9803-6bfdc834c672",
+          "423d35ec-f085-40f3-8305-0fed5d986cad"
+        ],
+        "settings": {
+          "title": "価格帯で選ぶ"
+        }
+      },
+      "gift-filter-application": {
+        "type": "gift-filter-application",
+        "blocks": {
+          "aaa9a34b-ccc0-4c43-a4c5-ed86b7fb6457": {
+            "type": "item",
+            "settings": {
+              "img": "shopify:\/\/shop_images\/use01_a94efb7b-89cd-40cf-a9c0-23435587dd91.png",
+              "heading": "よろこびごと",
+              "category_name": "新生活, 内祝, ご結婚, ご出産"
+            }
+          },
+          "9e596de0-2fdf-4470-8236-f389a206300d": {
+            "type": "item",
+            "settings": {
+              "img": "shopify:\/\/shop_images\/use02_92d44549-5268-467d-b26b-2de73c3870bc.png",
+              "heading": "お仕事で",
+              "category_name": "ご挨拶・御礼 ,景品・お土産, オフィス使い"
+            }
+          },
+          "d53a681d-c438-4cee-8cfc-c1603d4bb577": {
+            "type": "item",
+            "settings": {
+              "img": "shopify:\/\/shop_images\/use03_25983b05-e971-4074-8d3b-522b4c7da253.png",
+              "heading": "プライベートで",
+              "category_name": "手土産, お配りもの"
+            }
+          },
+          "4932bb37-c595-40a5-bf27-2fd7db847c4c": {
+            "type": "item",
+            "settings": {
+              "img": "shopify:\/\/shop_images\/use04_32b6bc11-fc80-4de2-8e76-c5e85b135e9b.png",
+              "heading": "弔事・お偲びに",
+              "category_name": "弔事・お偲びに"
+            }
+          }
+        },
+        "block_order": [
+          "aaa9a34b-ccc0-4c43-a4c5-ed86b7fb6457",
+          "9e596de0-2fdf-4470-8236-f389a206300d",
+          "d53a681d-c438-4cee-8cfc-c1603d4bb577",
+          "4932bb37-c595-40a5-bf27-2fd7db847c4c"
+        ],
+        "settings": {
+          "title": "用途で選ぶ"
+        }
+      },
+      "gift-filter-package": {
+        "type": "gift-filter-package",
+        "blocks": {
+          "b74fa9e7-1b00-4bfd-b8d1-34615bafdf4a": {
+            "type": "item",
+            "settings": {
+              "img": "shopify:\/\/shop_images\/package01_017942b1-70be-4276-b606-e1b99d86e493.png",
+              "heading": "缶"
+            }
+          },
+          "a5373dc8-56f9-4eb9-9923-c9b98a6b4e32": {
+            "type": "item",
+            "settings": {
+              "img": "shopify:\/\/shop_images\/package02_2eb68ed2-3071-4df6-8289-f93c888fef5c.png",
+              "heading": "袋・ティーバッグ"
+            }
+          },
+          "d69b479f-74af-4ac6-a585-972cd0b46744": {
+            "type": "item",
+            "settings": {
+              "img": "shopify:\/\/shop_images\/package03_04497a51-ac6f-4a6e-9164-5ff2375977ec.png",
+              "heading": "お茶と道具"
+            }
+          },
+          "7c0ea8aa-04fc-4a70-af31-9f0ac854b6a3": {
+            "type": "item",
+            "settings": {
+              "img": "shopify:\/\/shop_images\/package04_53fc88dc-aaf4-418d-aa94-d811aedc4fb0.png",
+              "heading": "プレゼントボックス"
+            }
+          }
+        },
+        "block_order": [
+          "b74fa9e7-1b00-4bfd-b8d1-34615bafdf4a",
+          "a5373dc8-56f9-4eb9-9923-c9b98a6b4e32",
+          "d69b479f-74af-4ac6-a585-972cd0b46744",
+          "7c0ea8aa-04fc-4a70-af31-9f0ac854b6a3"
+        ],
+        "settings": {
+          "title": "パッケージで選ぶ"
+        }
+      },
+      "about-tea-top": {
+        "type": "about-tea-top",
+        "settings": {
+          "banner": "shopify:\/\/shop_images\/tea-hero_78fb11b5-4c4a-4fb8-b52e-3979fd6d8fa8.png",
+          "map": "shopify:\/\/shop_images\/img-01_07fc48b7-684f-4bcf-98b1-86f79b770328.png",
+          "heading": "産地について",
+          "description": "宇治川及び木津川水系の共通の気候風土(京都府・奈良県・滋賀県の県境の山間部)で栽培された茶葉を中心に取り扱っております。標高が高く、朝晩の寒暖差が大きく、川霧に包まれて育つ茶葉は、香りが高く、穏やかな旨みが特長です。<br>\n<br>\n山間部ならではの急こう配の多い茶畑は、人の手に頼る作業も多く、日々の手入れはもちろん、茶摘みも重労働の連続です。経験豊富な生産者の方々の大変な労力と情熱に支えられて、上質なお茶は出来上がります。"
+        }
+      },
+      "about-tea-video": {
+        "type": "about-tea-video",
+        "settings": {
+          "id-video": "--QVp6QEQwc"
+        }
+      },
+      "about-tea-content": {
+        "type": "about-tea-content",
+        "blocks": {
+          "075ebbb2-632b-434b-b0d5-90a6ff9df3b7": {
+            "type": "content",
+            "settings": {
+              "img_desk": "shopify:\/\/shop_images\/img-02_740f5ca0-ce19-4f6e-ba01-3875d4814db7.png",
+              "img_mb": "shopify:\/\/shop_images\/img-02_740f5ca0-ce19-4f6e-ba01-3875d4814db7.png",
+              "title": "一保堂の味",
+              "description": "抹茶、玉露、煎茶、番茶の4茶種約30銘柄を扱う一保堂。お茶はいずれも“ハウスブレンド”、複数の良質な原料茶葉を厳選して仕入れ、銘柄ごとの味や香りに仕立てます。<br>\n<br>\n一保堂の味筋に見合う茶葉を仕入れる「目利き」と複数の原料茶葉を組み合わせて一つの銘柄に仕立て上げる「合組(ごうぐみ・ブレンド)」技術こそが、一保堂の味を守る私どもの大切な仕事です。年度ごと・茶畑ごとではなく、銘柄ごとの味わいに合組(ブレンド)することで、毎年変わらぬ味わいが提供できるようになります。<br>\n<br>\nもし、好きな銘柄を見つけてくだされば、好きなタイミングでその味や香りに出会え、世代を超えて、同じ銘柄を楽しむこともできます。"
+            }
+          },
+          "d3ede6cf-eb87-48fa-951e-87f3df647c44": {
+            "type": "content",
+            "settings": {
+              "img_desk": "shopify:\/\/shop_images\/img-03_76a4089d-2a81-412d-8619-2896d0156b12.png",
+              "img_mb": "shopify:\/\/shop_images\/img-03_76a4089d-2a81-412d-8619-2896d0156b12.png",
+              "title": "味づくり",
+              "description": "それぞれに個性豊かな味わいをもつ抹茶、玉露、煎茶、番茶類。それぞれに味や香りの濃淡がつくように合組(ごうぐみ・ブレンド)をして、茶種ごとに複数銘柄を揃えている一保堂のお茶。同じ茶種でも価格が上がると重厚感が増し、価格が下がると軽やかさを楽しめます。<br>\n<br>\n重厚感のあるクラスのお茶とは、対話するように向き合って味わい、いろんな場面に寄り添いやすい軽やかなクラスのお茶とは、お食事やお菓子とともに気楽に楽しまれるのはいかがでしょう。お茶を通して、暮らしのなかのいろんな場面でお役に立てますように。"
+            }
+          },
+          "c06be31c-41ff-467a-90c0-7a9fa366b733": {
+            "type": "content",
+            "settings": {
+              "img_desk": "shopify:\/\/shop_images\/img-04_40f21d43-6e39-4d4f-8f42-9f93bfbba914.png",
+              "img_mb": "shopify:\/\/shop_images\/img-04_sp_b24312cb-b231-4666-ba1d-6cef85f0dec1.png",
+              "title": "おいしくなあれ、<br>時間の魔法",
+              "description": "川霧に包まれて育った山のお茶は、葉肉も充実して香りも豊か。自然が生み出すおいしさが逃げないうちに、急いで製茶に取り掛かります。5月頃、摘みたての葉っぱに閉じ込められたおいしさは、まだ青々しく若々しくてちょっと刺激的。その勢いのある味や香りをまろやかにさせるため、熟成させるのが一保堂流。時間が作る奥深く複雑な味わい、茶葉から淹れた豊かなおいしさをぜひお楽しみあれ。"
+            }
+          },
+          "90e4d875-cfe6-408d-9a21-4acead3da470": {
+            "type": "content",
+            "settings": {
+              "img_desk": "shopify:\/\/shop_images\/img-05.png",
+              "img_mb": "shopify:\/\/shop_images\/img-05.png",
+              "title": "茶葉のチカラと<br>湯温と味の関係",
+              "description": "茶葉の入った急須にお湯を注いで、湯のみに淹れた最初のお茶が一煎目。再び急須にお湯をさし、淹れたお茶を二煎目...と数えます。\n<br>\n<br>\n一煎目は充実した甘旨みや香りを、二煎目は落ち着いた味わいを、三煎目は軽やかさを。一煎目だけでおしまいではなく、複数煎のお茶を楽しめるのは、茶葉にチカラがあるからこそ。<br>\n<br>\nまた、同じ銘柄でも、湯温が高ければ軽やかに、低ければまろやかさが強調される味に、とお湯の温度を変化させることで定番の味に加えて複数の味を作ることもできます。ひとつの銘柄に複数の原料茶葉が含まれているため、湯温を変化させると、色んなキャラクターが顔を出し、舌を楽しませてくれます。一保堂のお茶のチカラを存分に味わってみてください。"
+            }
+          }
+        },
+        "block_order": [
+          "075ebbb2-632b-434b-b0d5-90a6ff9df3b7",
+          "d3ede6cf-eb87-48fa-951e-87f3df647c44",
+          "c06be31c-41ff-467a-90c0-7a9fa366b733",
+          "90e4d875-cfe6-408d-9a21-4acead3da470"
+        ],
+        "settings": {
+        }
+      },
+      "about-tea-other": {
+        "type": "about-tea-other",
+        "blocks": {
+          "f1967b31-c57e-4ed9-a339-282e55a1bd61": {
+            "type": "item",
+            "settings": {
+              "img": "shopify:\/\/shop_images\/img-nav-about_bd609064-0eb1-4ece-acb4-9830d8060d30.png",
+              "title": "一保堂のこと",
+              "link": "shopify:\/\/pages\/一保堂のこと"
+            }
+          },
+          "5b33e8d8-a14f-4488-bf1c-f37d000111ff": {
+            "type": "item",
+            "settings": {
+              "img": "shopify:\/\/shop_images\/img-nav-tea_03ed38a9-6b58-4e8f-81e6-28ad372e7b45.png",
+              "title": "お茶のこと",
+              "link": "shopify:\/\/pages\/お茶のこと"
+            }
+          },
+          "7a1ce26c-441e-4dfc-99cb-8d3dcd38bb57": {
+            "type": "item",
+            "settings": {
+              "img": "shopify:\/\/shop_images\/img-nav-event_f5a83268-27ad-445e-a0fa-826681872d53.png",
+              "title": "教室・イベント",
+              "link": "shopify:\/\/pages\/教室-イベント"
+            }
+          }
+        },
+        "block_order": [
+          "f1967b31-c57e-4ed9-a339-282e55a1bd61",
+          "5b33e8d8-a14f-4488-bf1c-f37d000111ff",
+          "7a1ce26c-441e-4dfc-99cb-8d3dcd38bb57"
+        ],
+        "settings": {
+          "img-bottom": "shopify:\/\/shop_images\/tea-bottom.png",
+          "list-tea": "list-about-tea"
+        }
+      },
+      "block-tea-type": {
+        "type": "block-tea-type",
+        "blocks": {
+          "ca6d7c85-b2ac-4dfc-a0e8-c242c56ea3a7": {
+            "type": "item",
+            "settings": {
+              "img": "shopify:\/\/shop_images\/category-01_4c4aa528-03e1-4e0e-a1bd-7749e728d2df.png",
+              "title": "抹茶・宇治清水",
+              "sub-title": "",
+              "description": "旨みを葉いっぱいに蓄えた茶葉を石臼で細かく挽いたもの。自然が作り出す鮮やかな緑色と力強い香り、まろやかで濃厚な味が特長です。宇治清水は、抹茶の風味とグラニュー糖の甘みがほどよく溶け合うように仕立てています。濃茶、薄茶、ラテと楽しみ方もイロイロ!",
+              "link_1": "shopify:\/\/collections\/matcha",
+              "link_2": "\/blogs\/tea-recipe\/tagged\/抹茶"
+            }
+          },
+          "dfa547e7-6582-4951-bb99-ae83f0812a2d": {
+            "type": "item",
+            "settings": {
+              "img": "shopify:\/\/shop_images\/category-02.png",
+              "title": "玉露",
+              "sub-title": "",
+              "description": "独特の香りと甘み、いつまでも余韻の残る旨みが心を和ませてくれます。ゆったりとした時間のなかでじっくりと味わっていただきたいお茶です。熱湯、適温、水出し抽出と色んな淹れ方で楽しんでみてください。",
+              "link_1": "shopify:\/\/collections\/gyokuro",
+              "link_2": "\/blogs\/tea-recipe\/tagged\/%E7%8E%89%E9%9C%B2"
+            }
+          },
+          "63311459-e02d-4d98-ad38-5761161b2f6b": {
+            "type": "item",
+            "settings": {
+              "img": "shopify:\/\/shop_images\/category-03.png",
+              "title": "煎茶",
+              "sub-title": "",
+              "description": "ほどよい渋みと甘み、あと味の爽やかさは格別です。朝のお目覚めに、食事の後に、おやつのひと時になど時や場面を選びません。熱湯、適温、水出し抽出と色んな淹れ方で楽しんでみてください。",
+              "link_1": "shopify:\/\/collections\/sencha",
+              "link_2": "\/blogs\/tea-recipe\/tagged\/%E7%85%8E%E8%8C%B6"
+            }
+          },
+          "e29389c2-a2ea-404d-a837-3ed1a4d5b511": {
+            "type": "item",
+            "settings": {
+              "img": "shopify:\/\/shop_images\/category-04.png",
+              "title": "ほうじ茶・玄米茶",
+              "sub-title": "",
+              "description": "あっさりと軽やかな風味が特長です。熱湯を注ぐとふわりと焙煎した香りが漂うほうじ茶、炒ったお米の穏やかな香りが心地よい玄米茶。日々のお茶としてオススメです。特にほうじ茶は、水筒につめてお出かけなど持ち運びにも適したお茶です。",
+              "link_1": "\/collections\/all\/ほうじ茶・玄米茶",
+              "link_2": "\/blogs\/tea-recipe\/%E5%9F%BA%E6%9C%AC%E3%81%AE%E7%95%AA%E8%8C%B6%E9%A1%9E-%E3%81%BB%E3%81%86%E3%81%98%E8%8C%B6-%E7%8E%84%E7%B1%B3%E8%8C%B6%E7%AD%89"
+            }
+          },
+          "7e225002-5197-4bc4-998c-392790288fd5": {
+            "type": "item",
+            "settings": {
+              "img": "shopify:\/\/shop_images\/category-05.png",
+              "title": "1カップティーバッグ",
+              "sub-title": "",
+              "description": "仕上げ工程で選別された芽の部分が原料です。見た目はコロコロとしていて、味は少しほろ苦くて旨みが充実しているのが特長。玉露、煎茶、ほうじ茶と 3 種の味わい。旅先やオフィス、時間がない朝などにとっても便利。",
+              "link_1": "\/collections\/all\/1カップ用",
+              "link_2": "\/blogs\/tea-recipe\/17-1%E3%82%AB%E3%83%83%E3%83%97%E3%83%86%E3%82%A3%E3%83%BC%E3%83%90%E3%83%83%E3%82%B0"
+            }
+          },
+          "4e9d9181-d975-4c15-a739-f22044f90251": {
+            "type": "item",
+            "settings": {
+              "img": "shopify:\/\/shop_images\/category-06.png",
+              "title": "三角茶袋ティーバッグ",
+              "sub-title": "(大容量ティーバッグ)",
+              "description": "大きめマグカップや急須、ピッチャーでお茶を淹れたいときに大活躍の三角茶袋ティーバッグ。味のバリエーションも豊富、慌ただしいときに簡単に淹れられて大助かりです。",
+              "link_1": "\/collections\/all\/三角茶袋",
+              "link_2": "\/blogs\/tea-recipe\/18%E5%A4%A7%E5%AE%B9%E9%87%8F%E3%83%86%E3%82%A3%E3%83%BC%E3%83%90%E3%83%83%E3%82%B0"
+            }
+          },
+          "c54092c7-7d72-4105-bcfc-1a3d6034baad": {
+            "type": "item",
+            "settings": {
+              "img": "shopify:\/\/shop_images\/category-07.png",
+              "title": "むぎ茶",
+              "sub-title": "",
+              "description": "むぎ茶は、むぎならではのやさしくてふくよかな味や香りが楽しめるように微調整しながら焙煎しています。温かいままでも冷たくしてもどちらもおいしくいただけます。少量欲しいときは急須で、大量に作りたい時は鍋ややかんを使うと便利。水筒につめて持ち運びもしやすいお茶です。",
+              "link_1": "\/collections\/all\/むぎ茶",
+              "link_2": "\/blogs\/tea-recipe\/tagged\/%E3%82%80%E3%81%8E%E8%8C%B6"
+            }
+          },
+          "460363a0-d5d2-4821-ab57-d0096fcc6d95": {
+            "type": "item",
+            "settings": {
+              "img": "shopify:\/\/shop_images\/category-08.png",
+              "title": "いり番茶",
+              "sub-title": "",
+              "description": "京都独特のお茶。燻して仕上げた大きくて硬い葉や小枝が原料です。燻されたときに生まれるスモーキーな香りが特長。粗々しい見た目とはうらはらに、味はほのかに甘くさっぱりと飲みやすい。少量欲しいときは急須で、大量に作りたい時は鍋ややかんを使うと便利です。水筒につめて持ち運びしやすいお茶です。スモーキーな香りが強いため、お好みがでやすいお茶です。贈りもののときには 気を付けて!",
+              "link_1": "\/collections\/all\/いり番茶",
+              "link_2": "\/blogs\/tea-recipe\/14%E3%81%9F%E3%81%A3%E3%81%B7%E3%82%8A%E3%81%AE%E3%81%84%E3%82%8A%E7%95%AA%E8%8C%B6%E3%82%92%E4%BD%9C%E3%82%8B"
+            }
+          }
+        },
+        "block_order": [
+          "ca6d7c85-b2ac-4dfc-a0e8-c242c56ea3a7",
+          "dfa547e7-6582-4951-bb99-ae83f0812a2d",
+          "63311459-e02d-4d98-ad38-5761161b2f6b",
+          "e29389c2-a2ea-404d-a837-3ed1a4d5b511",
+          "7e225002-5197-4bc4-998c-392790288fd5",
+          "4e9d9181-d975-4c15-a739-f22044f90251",
+          "c54092c7-7d72-4105-bcfc-1a3d6034baad",
+          "460363a0-d5d2-4821-ab57-d0096fcc6d95"
+        ],
+        "settings": {
+        }
+      },
+      "page-business-details": {
+        "type": "page-business-details",
+        "settings": {
+          "page_title": "法人のお客様へ",
+          "hero_image": "shopify:\/\/shop_images\/business-hero_2f3f6eb2-fef6-4a3f-a881-0da9ae56cc8e.png",
+          "pdf_link": "https:\/\/cdn.shopify.com\/s\/files\/1\/0528\/2548\/9565\/files\/20210601.pdf?v=1617868960",
+          "zendesk_link": "https:\/\/ippodo-tea.zendesk.com\/hc\/ja\/articles\/360003598935"
+        }
+      },
+      "business-page": {
+        "type": "business-page",
+        "blocks": {
+          "ea670242-078d-4445-b314-47f72d6df7f3": {
+            "type": "feature",
+            "settings": {
+              "feature_heading": "“お茶をメニューや商品に使いたい”",
+              "feature_thumbnail": "shopify:\/\/shop_images\/thumbnail-service.png",
+              "feature_title": "飲食店・ホテル・菓子店",
+              "feature_description": "「お茶をドリンクメニューに展開したい」「客室用のお茶を探している」「抹茶味のお菓子を作りたい」などのご要望に合わせたお茶の選び方や提供方法をご提案いたします。お手伝いできるサポート内容やドリンクメニューなど詳しくはこちらをご覧ください。",
+              "feature_button": "一保堂ができること",
+              "feature_button_url": "shopify:\/\/pages\/business-details"
+            }
+          },
+          "64ccfd64-6c0d-4c3a-ba3b-6e6498275aec": {
+            "type": "feature",
+            "settings": {
+              "feature_heading": "“一保堂の商品を販売したい”",
+              "feature_thumbnail": "shopify:\/\/shop_images\/thumbnail-retail_70a9954f-8ffc-4d53-a569-68f7a5b475f8.png",
+              "feature_title": "小売店",
+              "feature_description": "専門性の高い日本茶を扱うためのアドバイスやスタッフ研修プログラムを各種ご用意しております。商品を販売していくうえでは、お取扱い後のコミュニケーションがとても大切です。そのため、直接のお取引をお願いし、関係者の方々と良い関係性を築き、売場環境の充実を目指します。",
+              "feature_button": "法人お問い合わせ",
+              "feature_button_url": "https:\/\/ippodo-tea.zendesk.com\/hc\/ja\/articles\/360003598935"
+            }
+          },
+          "cb37a154-4891-4bb5-a3aa-b0654a5bd9ee": {
+            "type": "feature",
+            "settings": {
+              "feature_heading": "“お茶をギフトに使いたい”",
+              "feature_thumbnail": "shopify:\/\/shop_images\/thumbnail-company_03c9a15d-cd22-4d40-b43b-9dff76e24538.png",
+              "feature_title": "企業・団体",
+              "feature_description": "イベント記念品などの小さなギフトからご進物まで、ご用途に合わせてご提案いたします。また、「来客用のお茶、何にすればよい？」「どう淹れたら良い？」「社内研修の一環としてお茶の淹れ方教室を開催したい！」なども、まずはお気軽にご相談ください。",
+              "feature_button": "法人お問い合わせ",
+              "feature_button_url": "https:\/\/ippodo-tea.zendesk.com\/hc\/ja\/articles\/360003598935"
+            }
+          }
+        },
+        "block_order": [
+          "ea670242-078d-4445-b314-47f72d6df7f3",
+          "64ccfd64-6c0d-4c3a-ba3b-6e6498275aec",
+          "cb37a154-4891-4bb5-a3aa-b0654a5bd9ee"
+        ],
+        "settings": {
+          "page_title": "法人のお客様へ",
+          "hero_image": "shopify:\/\/shop_images\/business-hero_2f3f6eb2-fef6-4a3f-a881-0da9ae56cc8e.png",
+          "page_description": "より多くの人に「お茶のある暮らしやひと時」をお届けするため、色々なお手伝いをしています。",
+          "jumbotron_img": "shopify:\/\/shop_images\/jumbotron-01_1ff0f3c9-1852-4ef9-8ac3-28a016f138c4.png",
+          "jumbotron_text": "お伝えしたいこと",
+          "title_1": "一保堂の思い",
+          "text_1": "茶葉から淹れたお茶の魅力をお客様にお届けすることで、お客様の豊かな時間や空間作りのお手伝いをすることが私どもの使命です。日々の暮らしのなかで、ホッとひと息つくとき、食中・食後、おやつとともに...お茶を使う場面は人によって様々です。その場の空気や人の心を和らげてくれるお茶のチカラ、家族や仲間とのかけがえのないひとときを作ってくれるお茶のチカラ。茶葉から淹れたお茶には、その場や人を元気づけたり、穏やかにしてくれたり、そっと寄り添う優しいチカラがあります。茶葉本来が持つチカラをどこでも発揮できるよう、今後も上質な茶葉を追求し、ご用意してまいります。",
+          "image_1": "shopify:\/\/shop_images\/img-topic-01_025f1f3b-799c-427f-b384-81062c0cb342.png",
+          "title_2": "お茶のこだわり",
+          "text_2": "京都府・滋賀県・奈良県の県境の山間、地形と水に恵まれた豊かな土壌で育まれた茶葉を扱います。味わいの特長は、穏やかで上品な香りと味。熟練の生産者が育て上げた茶葉本来の味や香りをできるだけそのままにお客様へお届けできるようなお茶作りを目指します。茶畑の栽培管理と製茶は生産者の仕事、丁寧に栽培された茶葉を吟味して仕入れるところから一保堂の仕事が始まります。この目利きと後に続くそれぞれの銘柄ごとの味に仕上げる合組（ブレンド）が「一保堂の味」作りのもっとも大切なところで、根幹です。茶葉は自然のもの、一枚として同じ葉っぱはございません。それぞれの葉っぱの個性を見極め、「一保堂の味」となるよう複数の茶葉を組み合わせて、それぞれの銘柄の味に仕上げてまいります。年度ごと、生産者、産地ごとの味ではなく「一保堂の味」を提供しているのが私どものこだわり。抹茶をはじめ、玉露、煎茶、番茶（ほうじ茶・玄米茶など）、年間通じて約30銘柄の「一保堂の味」のみを扱います。",
+          "image_2": "shopify:\/\/shop_images\/img-topic-02_92247d90-b79e-4723-9cbe-cce04b292006.png",
+          "show_timeline": true,
+          "show_profile": true
+        }
+      },
+      "password-header": {
+        "type": "password-header",
+        "settings": {
+        }
+      },
+      "banner-with-animation": {
+        "type": "banner-with-animation",
+        "blocks": {
+          "f789e6bd-4ccf-4298-b3dc-5b6e90309afe": {
+            "type": "image",
+            "settings": {
+              "logo": "shopify:\/\/shop_images\/mainvisual-back_aeb88344-680b-45fc-b898-81e8696d4d73.png",
+              "logo_mb": "shopify:\/\/shop_images\/mainvisual-back-sp_d9dca3f1-dc80-47a8-9656-fd9f002bdb03.png"
+            }
+          },
+          "aa1831a0-656e-46c7-b7e4-148a3b013d4b": {
+            "type": "image",
+            "settings": {
+              "logo": "shopify:\/\/shop_images\/mainvisual-ippodo_33d05715-9afb-4c78-aa07-4343783a5e84.png",
+              "logo_mb": "shopify:\/\/shop_images\/mainvisual-ippodo-sp_eba5770f-31ea-47a9-a633-3ea9cc2184e2.png"
+            }
+          },
+          "1b970542-5b74-44a6-9b6f-a4f7da6c7e41": {
+            "type": "image",
+            "settings": {
+              "logo": "shopify:\/\/shop_images\/mainvisual-front01_9d111859-3491-4150-bbce-fea4e1708364.png",
+              "logo_mb": "shopify:\/\/shop_images\/mainvisual-front-sp_c9ff43ee-5f3a-4e5a-a0a5-eb48554c3f28.png"
+            }
+          },
+          "4657c19d-ce04-41a2-be9b-b45a0e980ea9": {
+            "type": "image",
+            "settings": {
+              "logo": "shopify:\/\/shop_images\/mainvisual-front02_5204d5d0-150a-4517-bf9f-3bf47d85d2a8.png"
+            }
+          }
+        },
+        "block_order": [
+          "f789e6bd-4ccf-4298-b3dc-5b6e90309afe",
+          "aa1831a0-656e-46c7-b7e4-148a3b013d4b",
+          "1b970542-5b74-44a6-9b6f-a4f7da6c7e41",
+          "4657c19d-ce04-41a2-be9b-b45a0e980ea9"
+        ],
+        "settings": {
+        }
+      },
+      "section-feature-list": {
+        "type": "section-feature-list",
+        "blocks": {
+          "16bc2a1a-0d2e-4a6c-91d4-2fde475e04f3": {
+            "type": "item",
+            "settings": {
+              "img": "shopify:\/\/shop_images\/head-img_tsukikage.png",
+              "title": "秋限定抹茶「月影」",
+              "link": ""
+            }
+          },
+          "93bb8d29-a390-4afb-8dc8-bc265ee958f1": {
+            "type": "item",
+            "settings": {
+              "img": "shopify:\/\/shop_images\/feature_coldbrew_202106.png",
+              "title": "冷たいお茶を作ろう！",
+              "link": "https:\/\/ippododev.myshopify.com\/blogs\/tea-recipe\/tagged\/%E5%86%B7%E3%81%9F%E3%81%84%E3%81%8A%E8%8C%B6"
+            }
+          },
+          "d8f63148-9b86-4b65-a688-c3776ef55b6d": {
+            "type": "item",
+            "settings": {
+              "img": "shopify:\/\/shop_images\/feature_gift_summer_202106.png",
+              "title": "夏の贈りもの",
+              "link": "shopify:\/\/collections\/gift-summer-2021"
+            }
+          },
+          "4af7f49f-2ce8-497d-af6d-e914538515fc": {
+            "type": "item",
+            "settings": {
+              "img": "shopify:\/\/shop_images\/img-head_2.png",
+              "title": "はじめての一保堂、まずはこれ。",
+              "link": "shopify:\/\/collections\/first-ippodo"
+            }
+          },
+          "417437ca-7da5-4164-8224-2fec2ff7f376": {
+            "type": "item",
+            "settings": {
+              "img": "shopify:\/\/shop_images\/img-head_1.png",
+              "title": "抹茶スターターキット",
+              "link": "https:\/\/ippododev.myshopify.com\/collections\/all\/%E6%8A%B9%E8%8C%B6%E3%82%B9%E3%82%BF%E3%83%BC%E3%82%BF%E3%83%BC%E3%82%AD%E3%83%83%E3%83%88"
+            }
+          },
+          "f6a444e4-22d7-4c8c-bb81-e44d884938df": {
+            "type": "item",
+            "settings": {
+              "img": "shopify:\/\/shop_images\/img-head.png",
+              "title": "新生活におすすめ",
+              "link": "https:\/\/ippododev.myshopify.com\/collections\/gift\/%E6%96%B0%E7%94%9F%E6%B4%BB"
+            }
+          },
+          "37c4ef17-02f7-4cb3-87b2-b985d2e9cd0e": {
+            "type": "item",
+            "settings": {
+              "img": "shopify:\/\/shop_images\/feature_mugicha_202106.png",
+              "title": "オンライン限定 むぎ茶1㎏缶",
+              "link": "https:\/\/ippododev.myshopify.com\/products\/mugicha643624"
+            }
+          },
+          "15e88a39-4f3d-449f-abe0-4a3f0037c230": {
+            "type": "item",
+            "settings": {
+              "img": "shopify:\/\/shop_images\/feature_limited_summer_202106.png",
+              "title": "夏限定のお茶",
+              "link": "https:\/\/ippododev.myshopify.com\/collections\/all\/%E5%A4%8F%E9%99%90%E5%AE%9A%E3%81%AE%E3%81%8A%E8%8C%B6"
+            }
+          }
+        },
+        "block_order": [
+          "16bc2a1a-0d2e-4a6c-91d4-2fde475e04f3",
+          "93bb8d29-a390-4afb-8dc8-bc265ee958f1",
+          "d8f63148-9b86-4b65-a688-c3776ef55b6d",
+          "4af7f49f-2ce8-497d-af6d-e914538515fc",
+          "417437ca-7da5-4164-8224-2fec2ff7f376",
+          "f6a444e4-22d7-4c8c-bb81-e44d884938df",
+          "37c4ef17-02f7-4cb3-87b2-b985d2e9cd0e",
+          "15e88a39-4f3d-449f-abe0-4a3f0037c230"
+        ],
+        "settings": {
+        }
+      },
+      "mypage-welcome-image": {
+        "type": "mypage-welcome-image",
+        "settings": {
+          "welcome_image": "shopify:\/\/shop_images\/IMG-5401_m.jpg"
+        }
+      },
+      "article-news-template": {
+        "type": "article-news-template",
+        "settings": {
+        }
+      },
+      "list-collections-template": {
+        "type": "list-collections-template",
+        "settings": {
+          "display_type": "all",
+          "sort": "alphabetical",
+          "grid": 3
+        }
+      },
+      "collection-template": {
+        "type": "collection-template",
+        "settings": {
+          "vendor_show": false,
+          "collection_sort_enable": true,
+          "collection_tag_enable": false
+        }
+      },
+      "kyoto-banner-info": {
+        "type": "kyoto-banner-info",
+        "blocks": {
+          "d052aac0-8f29-4be4-bf07-98d87588dc4e": {
+            "type": "info_store",
+            "settings": {
+              "img_info": "shopify:\/\/shop_images\/img-kyoto01.png",
+              "title": "売り場",
+              "content": "古い店構え、「茶 一保堂」と染め抜かれた暖簾をくぐり、自動ドアから一歩入ると現れる大きなカウンター。そのちょうど上あたり、天井近くに全銘柄を記したメニュー表。左側の壁一面にずらりと並ぶ古い茶壷。古いものと新しいものが共存する独特の佇まいです。<br>\nぜひ、お好みのお茶を探しに、お立ち寄りください。テイクアウトのお茶もございます。",
+              "btn": "",
+              "link": ""
+            }
+          },
+          "a714f9b0-e94d-4034-968b-be8984cda3f3": {
+            "type": "info_store",
+            "settings": {
+              "img_info": "shopify:\/\/shop_images\/img-kyoto02.png",
+              "title": "喫茶室 嘉木",
+              "content": "売場右に広がる空間が喫茶室嘉木(かぼく)。おひとりでゆっくり過ごしたい場合は、カウンター席に、お連れさまとおしゃべりを楽しむならテーブル席がおすすめです。お茶とお菓子を味わいながら、ほっとひと息。たまの息抜きにいかがでしょう。<br><br>\n<p><strong>メニュー(季節のお菓子付き)<\/strong><br>\n抹茶880円～\/ 玉露990円～\/ 煎茶880円～\/ ほうじ茶770円など <\/p><br>\n<p>銘柄や淹れ方によって味わいが変化する日本茶。常時14メニューご用意しています。一保堂のお茶の味・香りを楽しみにいらしてください。<\/p>",
+              "btn": "最新メニューはこちら(PDF)",
+              "link": "https:\/\/cdn.shopify.com\/s\/files\/1\/0528\/2548\/9565\/files\/kabokutearoom_kyoto.pdf?v=1638403487"
+            }
+          },
+          "5782b86d-41a0-47a1-90c5-6fa1366debed": {
+            "type": "info_store",
+            "settings": {
+              "img_info": "shopify:\/\/shop_images\/img-kyoto03.png",
+              "title": "教室",
+              "content": "売場奥の階段を上がって2階には、大きい部屋と小さい部屋があります。この落ち着いた静かな雰囲気のなか、茶葉本来のおいしさを引き出すお茶の淹れ方や日々の暮らしに役立つお茶の楽しみ方をお伝えしています。",
+              "btn": "詳しく見る",
+              "link": "#"
+            }
+          }
+        },
+        "block_order": [
+          "d052aac0-8f29-4be4-bf07-98d87588dc4e",
+          "a714f9b0-e94d-4034-968b-be8984cda3f3",
+          "5782b86d-41a0-47a1-90c5-6fa1366debed"
+        ],
+        "settings": {
+          "banner": "shopify:\/\/shop_images\/kyoto-hero.png",
+          "heading": "京都本店",
+          "title": "一保堂茶舗 京都本店／ 喫茶室 嘉木",
+          "description": "<p><strong>店舗<\/strong>：10:00～17:00<br\/><strong>喫茶<\/strong>：10:00～17:00(L.O. 16:30)<br\/><strong>定休日<\/strong>：休まず営業（年末年始除く）<\/p><p>〒604-0915<br\/>京都市中京区寺町通二条上ル常盤木町52<br\/><a href=\"https:\/\/goo.gl\/maps\/YuiLs5bx16t2gq4C7\" target=\"_blank\" title=\"https:\/\/goo.gl\/maps\/YuiLs5bx16t2gq4C7\">地図を見る<\/a><\/p><p><strong>電話：<\/strong> <a href=\"https:\/\/goo.gl\/maps\/YuiLs5bx16t2gq4C7\" target=\"_blank\" title=\"https:\/\/goo.gl\/maps\/YuiLs5bx16t2gq4C7\">075-211-4018<\/a><\/p>"
+        }
+      },
+      "kyoto-map-gallery": {
+        "type": "kyoto-map-gallery",
+        "blocks": {
+          "959f55d9-09d7-44a7-95f9-76b4cf4d5adb": {
+            "type": "image",
+            "settings": {
+              "img": "shopify:\/\/shop_images\/gallery01.png"
+            }
+          },
+          "ac359b7a-0176-4994-8d5d-772765df9d43": {
+            "type": "image",
+            "settings": {
+              "img": "shopify:\/\/shop_images\/gallery02.png"
+            }
+          },
+          "a07b1d6e-33a1-46a6-b977-c430f62b53f4": {
+            "type": "image",
+            "settings": {
+              "img": "shopify:\/\/shop_images\/gallery03.png"
+            }
+          }
+        },
+        "block_order": [
+          "959f55d9-09d7-44a7-95f9-76b4cf4d5adb",
+          "ac359b7a-0176-4994-8d5d-772765df9d43",
+          "a07b1d6e-33a1-46a6-b977-c430f62b53f4"
+        ],
+        "settings": {
+          "img_map": "shopify:\/\/shop_images\/map-kyoto.jpg"
+        }
+      },
+      "store-locator-search": {
+        "type": "store-locator-search",
+        "settings": {
+          "title": "近くの売場を探す",
+          "description": "国内のデパートやスーパーなどでも、一保堂のお茶や道具をお求めいただけます。<br>\n店舗によってお取扱いの品が異なります。詳しくは売場へ直接お問い合わせください。",
+          "img": "shopify:\/\/shop_images\/img-search.png",
+          "note": "一保堂スタッフ常駐店舗です。お茶やお仕立てのことなどもご相談ください。",
+          "updated_month": "7",
+          "updated_year": "2021"
+        }
+      },
+      "marunouchi-banner-info": {
+        "type": "marunouchi-banner-info",
+        "blocks": {
+          "746f8a77-8d6b-4e87-b1f0-520ef5a89f62": {
+            "type": "info_store",
+            "settings": {
+              "img_info": "shopify:\/\/shop_images\/img-marunouchi01.png",
+              "title": "売り場",
+              "content": "東京の玄関口、丸の内を南北に走る丸の内仲通り。並木が連なる広々とした歩道に面したビル1階、「茶 一保堂」の大きな暖簾が目印です。店舗内壁には、京都本店外壁と同じ墨色の漆喰壁。広葉樹の木と漆喰壁で構成された空間は、ゆったりとした気持ちにさせてくれます。お茶選びはもちろん、ランチタイムやお散歩のお伴にテイクアウトのお茶もおすすめです。",
+              "btn": "",
+              "link": ""
+            }
+          },
+          "91679305-794b-448c-9038-ec0e43ff2ed1": {
+            "type": "info_store",
+            "settings": {
+              "img_info": "shopify:\/\/shop_images\/img-marunouchi02.png",
+              "title": "喫茶室 嘉木",
+              "content": "売場右に広がる喫茶室嘉木(かぼく)は、カウンター席とテーブル席がございます。お茶の風味はもちろん、ゆっくりとした時間も楽しめるメニューから、お忙しい合間でもサッとひと息つけるメニューまでいろいろございます。丸の内店ならではの喫茶体験をぜひお楽しみください。",
+              "btn": "メニューを見る(PDF)",
+              "link": "https:\/\/cdn.shopify.com\/s\/files\/1\/0528\/2548\/9565\/files\/kabokutearoom_marunouchi.pdf?v=1638350784"
+            }
+          },
+          "8bf82ac2-74fe-4d4e-826e-c317aac3592e": {
+            "type": "info_store",
+            "settings": {
+              "img_info": "shopify:\/\/shop_images\/img-marunouchi03.png",
+              "title": "教室",
+              "content": "売場から細長く続く通路奥に小さな部屋Room100があります。お茶とじっくり対話するように楽しめる静かな空間です。知っているようで意外と知らないことも多い日本茶のこと、新発見、再発見しにぜひ、いらしてください。",
+              "btn": "詳しく見る",
+              "link": "#"
+            }
+          }
+        },
+        "block_order": [
+          "746f8a77-8d6b-4e87-b1f0-520ef5a89f62",
+          "91679305-794b-448c-9038-ec0e43ff2ed1",
+          "8bf82ac2-74fe-4d4e-826e-c317aac3592e"
+        ],
+        "settings": {
+          "banner": "shopify:\/\/shop_images\/marunouchi-hero.png",
+          "heading": "東京丸の内店",
+          "title": "一保堂茶舗 東京丸の内店 ／ 喫茶室 嘉木",
+          "description": "<p><strong>店舗<\/strong>：12:00～19:00<br\/><strong>喫茶<\/strong>：12:00～19:00(L.O. 18:30)<br\/><strong>定休日<\/strong>：休まず営業（年末年始除く）<\/p><p>〒100-0005<br\/>東京都千代田区丸の内3-1-1<br\/>丸の内仲通り 国際ビル1階<br\/><a href=\"https:\/\/goo.gl\/maps\/JaHU56YaeP3YaMGK9\" target=\"_blank\" title=\"https:\/\/goo.gl\/maps\/JaHU56YaeP3YaMGK9\">地図を見る<\/a><\/p><p><strong>電話<\/strong>：<a href=\"tel:0362120202\" title=\"tel:0362120202\">03-6212-0202<\/a><br\/><\/p>"
+        }
+      },
+      "marunouchi-map-gallery": {
+        "type": "marunouchi-map-gallery",
+        "blocks": {
+          "2e553738-5fcc-42cd-8743-cc4ad9c07138": {
+            "type": "image",
+            "settings": {
+              "img": "shopify:\/\/shop_images\/gallery01_1.png"
+            }
+          },
+          "c764171d-0162-4d41-8cfe-90ac055a07ab": {
+            "type": "image",
+            "settings": {
+              "img": "shopify:\/\/shop_images\/gallery02_1.png"
+            }
+          },
+          "07e55acf-ad70-4825-938a-dbe718e59cbb": {
+            "type": "image",
+            "settings": {
+              "img": "shopify:\/\/shop_images\/gallery03_1.png"
+            }
+          }
+        },
+        "block_order": [
+          "2e553738-5fcc-42cd-8743-cc4ad9c07138",
+          "c764171d-0162-4d41-8cfe-90ac055a07ab",
+          "07e55acf-ad70-4825-938a-dbe718e59cbb"
+        ],
+        "settings": {
+          "img_map": "shopify:\/\/shop_images\/map-marunouchi.jpg"
+        }
+      },
+      "newyork-banner-info": {
+        "type": "newyork-banner-info",
+        "settings": {
+          "banner": "shopify:\/\/shop_images\/newyork-hero.png",
+          "heading": "Ippodo Tea, New York",
+          "title": "Ippodo Tea, New York",
+          "description": "<p><strong>火〜土曜日<\/strong>：11:00～18:00<strong><br\/>日曜日<\/strong>：11:00～17:00<strong><br\/>定休日<\/strong>：月曜日<\/p><p>125 East 39th Street, New York,NY 10016, U.S.A.<br\/><a href=\"https:\/\/goo.gl\/maps\/L4dnz8UDGXLXkgjB8\" target=\"_blank\" title=\"https:\/\/goo.gl\/maps\/L4dnz8UDGXLXkgjB8\">地図を見る<\/a><\/p><p><strong>電話<\/strong>：<a href=\"tel:+12123700609\" title=\"tel:+12123700609\">+1-212-370-0609<\/a><\/p>"
+        }
+      },
+      "newyork-map-gallery": {
+        "type": "newyork-map-gallery",
+        "blocks": {
+          "8791bbfb-2b4a-4fa9-87e4-732a687cfd7b": {
+            "type": "image",
+            "settings": {
+              "img": "shopify:\/\/shop_images\/gallery01_2.png"
+            }
+          },
+          "7b11ed5c-aa60-43eb-bb57-03d536d68599": {
+            "type": "image",
+            "settings": {
+              "img": "shopify:\/\/shop_images\/gallery02_2.png"
+            }
+          },
+          "2430ea7f-5020-4b7d-a299-241fd847c190": {
+            "type": "image",
+            "settings": {
+              "img": "shopify:\/\/shop_images\/gallery03_2.png"
+            }
+          }
+        },
+        "block_order": [
+          "8791bbfb-2b4a-4fa9-87e4-732a687cfd7b",
+          "7b11ed5c-aa60-43eb-bb57-03d536d68599",
+          "2430ea7f-5020-4b7d-a299-241fd847c190"
+        ],
+        "settings": {
+          "img_map": "shopify:\/\/shop_images\/map-newyork.jpg",
+          "description": "坂の真ん中あたり、路面から数段降りたところのガラス扉の向こうに売場があります。穏やかな空気が流れる土壁と木のカウンターで構成された店内は、ひっそり佇む都会の隠れ家のような空間です。<br>\nティータイムに“一保堂の味”をお楽しみいただけますよう、すべてのお茶を京都よりお届けしています。抹茶人気の高いNY店ならではの“とっておきの抹茶”もございます。お散歩やお仕事の合間に便利なテイクアウトのお茶もおすすめです。"
+        }
+      },
+      "cart-domestic": {
+        "type": "cart-domestic",
+        "settings": {
+        }
+      }
+    },
+    "content_for_index": [
+      "1614674049f0f55d42",
+      "1614674375ca588405",
+      "16146745824f88f3e1",
+      "16146747097c2d4e64",
+      "16146747558b85a33f",
+      "16146747803d6058d7",
+      "16146751869b981e68",
+      "1614675064d8a28782"
+    ]
+  },
+  "presets": {
+    "Default": {
+      "content_for_index": [
+
+      ]
+    },
+    "Light": {
+      "color_text": "#162950",
+      "color_body_text": "#6d6d6d",
+      "color_sale_text": "#DA2F0C",
+      "color_borders": "#e4e4e4",
+      "color_button": "#DA2F0C",
+      "color_button_text": "#ffffff",
+      "color_small_button_text_border": "#162950",
+      "color_text_field": "#ffffff",
+      "color_text_field_text": "#162950",
+      "color_text_field_border": "#909090",
+      "color_image_overlay_text": "#ffffff",
+      "color_image_overlay": "#3d3d3d",
+      "image_overlay_opacity": 40,
+      "color_body_bg": "#f8f8f8",
+      "type_header_font": "muli_n6",
+      "type_header_base_size": 26,
+      "type_base_font": "muli_n4",
+      "type_base_size": 18,
+      "share_facebook": true,
+      "share_twitter": true,
+      "share_pinterest": true,
+      "social_twitter_link": "",
+      "social_facebook_link": "",
+      "social_pinterest_link": "",
+      "social_instagram_link": "",
+      "social_tumblr_link": "",
+      "social_snapchat_link": "",
+      "social_youtube_link": "",
+      "social_vimeo_link": "",
+      "favicon": "",
+      "checkout_header_image": "",
+      "checkout_logo_image": "",
+      "checkout_logo_position": "left",
+      "checkout_logo_size": "small",
+      "checkout_body_background_image": "",
+      "checkout_body_background_color": "#ffffff",
+      "checkout_input_background_color_mode": "white",
+      "checkout_sidebar_background_image": "",
+      "checkout_sidebar_background_color": "#e8f3f6",
+      "checkout_heading_font": "Roboto",
+      "checkout_body_font": "Source Sans Pro",
+      "checkout_accent_color": "#1990c6",
+      "checkout_button_color": "#23314e",
+      "checkout_error_color": "#ff6d6d",
+      "sections": {
+        "slideshow": {
+          "type": "slideshow",
+          "blocks": {
+            "slideshow-0": {
+              "type": "image",
+              "settings": {
+                "image": "",
+                "alignment": "center center"
+              }
+            },
+            "1492095993817": {
+              "type": "image",
+              "settings": {
+                "image": "",
+                "alignment": "center"
+              }
+            }
+          },
+          "block_order": [
+            "slideshow-0",
+            "1492095993817"
+          ],
+          "settings": {
+            "text_size": "medium"
+          }
+        },
+        "product-template": {
+          "type": "product-template",
+          "settings": {
+          }
+        },
+        "collection-template": {
+          "type": "collection-template",
+          "settings": {
+          }
+        },
+        "article-template": {
+          "type": "article-template",
+          "settings": {
+          }
+        }
+      },
+      "content_for_index": [
+
+      ]
+    }
+  }
+}

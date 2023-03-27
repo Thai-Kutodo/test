@@ -1,0 +1,13 @@
+{% unless template.suffix contains 'inquiry' %}
+	<script>
+	(function(){const w=window;if(w.ChannelIO){return w.console.error("ChannelIO script included twice.")}const ch=function(...args){ch.c(args)};ch.q=[];ch.c=function(args){ch.q.push(args)};w.ChannelIO=ch;function l(){if(w.ChannelIOInitialized){return}w.ChannelIOInitialized=true;const s=document.createElement("script");s.type="text/javascript";s.async=true;s.src='https://cdn.channel.io/plugin/ch-plugin-web.js';const x=document.getElementsByTagName("script")[0];if(x.parentNode){x.parentNode.insertBefore(s,x)}}if(document.readyState==="complete"){l()}else{w.addEventListener("DOMContentLoaded",l);w.addEventListener("load",l)}})();
+
+	ChannelIO('boot', {
+		"pluginKey": "f70b23a7-02c1-4e1a-821e-35b95bf5d2f8",
+		"customLauncherSelector": "#ch-plugin-launcher",
+		"hideChannelButtonOnBoot": true
+	});
+	</script>
+{% else %}
+   <script src="https://cax.channel.io/shopify/plugins/f70b23a7-02c1-4e1a-821e-35b95bf5d2f8.js" async></script>
+{% endunless %}

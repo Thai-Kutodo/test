@@ -1,0 +1,49 @@
+<div class="is-loading is-before-checkout" id="login-container">
+  <div class="modal-top lg:modal-center modal-login" data-login-target="login" id="login">
+    <div class="modal__header pc">
+      <button aria-label="閉じる" class="modal__close-button" data-action="login#close" type="button">{% render 'icon-close' %}</button>
+    </div>
+    {%- form 'customer_login', class: 'modal-login__forms', id: "customer-login" -%}
+    
+    {%- if template.name == 'product' or template.name == 'page' or template.name == 'article' -%}
+      <input type="hidden" name="return_to" value="{{ request.path }}">
+    {%- endif -%}
+
+    <div class="modal__content">
+      <div class="container gap-40 lg:gap-60 pt-40 lg:pt-10 pb-40 lg:pb-80">
+        <h2 class="modal-login__title">ログイン</h2>
+        <div class="modal-login__forms">
+          <div class="modal-login__form">
+            <label>ログインID（メールアドレス）</label>
+            <input placeholder="メールアドレス" name="customer[email]" type="text">
+          </div>
+          <div class="modal-login__form">
+            <label>パスワード</label>
+            <input placeholder="パスワード" name="customer[password]" type="password">
+            <a class="underlined-button" href="/account/login#recover" data-action="login#close" >パスワードをお忘れですか？</a>
+          </div>
+        </div>
+        <div class="container gap-40 lg:gap-50">
+          <button type="submit" id="submit-button" class="button button--cta">ログイン</button>
+          <div class="container gap-20">
+            <a id="register-button" class="button button--has-icon-arrow-right" href="/account/register?view=terms">新規会員登録はこちら</a>
+            <a class="button button--has-icon-arrow-right hidden" data-cart-target="beforeCheckout" data-before-checkout href="/cart?view=contact_information">会員登録せずご購入手続きへ</a>
+          </div>
+        </div>
+        <p class="modal__caption hidden" data-before-checkout data-cart-target="captionLogin">
+          ご注文の際の注意事項は<a href="/pages/guide">こちら</a>
+        </p>
+
+        <p class="modal__caption hidden" data-before-checkout data-cart-target="noteProductPickup">
+          FAMILIAR会員登録には店頭受け取りが必要です
+        </p>
+      </div>
+    </div>
+    {%- endform -%}
+    <div class="modal__footer sp">
+      <button aria-label="閉じる" class="modal__close-button" data-action="login#close" type="button">
+        {% render 'icon-close' %}
+      </button>
+    </div>
+  </div>
+</div>

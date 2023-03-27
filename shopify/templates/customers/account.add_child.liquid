@@ -1,0 +1,239 @@
+<input type="text" id="child1" value="{{ customer.metafields.child1.gender }}" hidden/>
+<input type="text" id="child2" value="{{ customer.metafields.child2.gender }}" hidden/>
+<input type="text" id="child3" value="{{ customer.metafields.child3.gender }}" hidden/>
+<input type="text" id="child4" value="{{ customer.metafields.child4.gender }}" hidden/>
+<input type="text" id="child5" value="{{ customer.metafields.child5.gender }}" hidden/>
+<input type="text" id="child1-date" value="{{ customer.metafields.child1.date_type | downcase }}" hidden/>
+<input type="text" id="child2-date" value="{{ customer.metafields.child2.date_type | downcase }}" hidden/>
+<input type="text" id="child3-date" value="{{ customer.metafields.child3.date_type | downcase }}" hidden/>
+<input type="text" id="child4-date" value="{{ customer.metafields.child4.date_type | downcase }}" hidden/>
+<input type="text" id="child5-date" value="{{ customer.metafields.child5.date_type | downcase }}" hidden/>
+<input type="text" id="customer-id" value="{{ customer.id }}" hidden/>
+{% assign hmac = customer.id | hmac_sha256: settings.SALT %}
+<input type="text" id="hmac" value="{{ hmac }}" hidden/>
+{% capture modal_new %}
+  <div class="modal modal-nav-bar lg:modal-nav-bar" data-controller="modal">
+    <div class="modal__logo">
+      {% render 'icon-logo' %}
+    </div>
+    <div class="modal__header">
+      <button class="modal__nav-button" data-action="modal#close" type="button">
+        {% render 'icon-arrow-left' %}
+        お子さま情報
+      </button>
+    </div>
+    <div class="modal__content mypage">
+      <div class="container gap-50 lg:gap-80 pt-40 lg:pt-0 pb-70 lg:pb-160">
+        <h1 class="mypage__title">お子さま情報登録</h1>
+        <div class="mypage-child__item">
+          <h4 id="edit-child-num">お子さま情報</h4>
+          <div class="input-form">
+            <div class="grid-cols-2">
+              <label class="input-form__label col-span-2">生年月日 or 出産予定日*</label>
+              <div class="col-span-2 container gap-20 lg:gap-10">
+                <div class="col-span-2">
+                  {% render 'date-selector', year_min: 2000, birth_date: true, initial_values_blank: true %}
+                </div>
+                <div class="radio-button-group col-span-2 mt-5 lg:mt-10">
+                  {% assign items = "生年月日,出産予定日" | split: ',' %}
+                  {% for item in items %}
+                    <label class="radio-button">
+                      <input name="birthday" type="radio" value="{{ item }}" {% if forloop.first %} checked {% endif %}>
+                      <span></span>
+                      {{ item }}
+                    </label>
+                  {% endfor %}
+                </div>
+                <div class="mypage__note col-span-2">ご出産予定日登録の方はお子さまがご誕生されましたら、<br class="sp">情報更新をお願い致します。</div>
+              </div>
+            </div>
+            <div class="grid-cols-2">
+              <label class="input-form__label col-span-2">お名前*</label>
+              <div>
+                <input autocomplete="family-name" class="col-span-1" name="family-name" placeholder="姓" required type="text">
+                <span class="error hide col-span-1 hide" id="error-family-name">入力必須項目です。</span>
+              </div>
+              <div>
+                <input autocomplete="given-name" class="col-span-1" name="given-name" placeholder="名" required type="text">
+                <span class="error hide col-span-1 hide" id="error-given-name">入力必須項目です。</span>
+              </div>
+            </div>
+            <div class="grid-cols-2">
+              <label class="input-form__label col-span-2">お名前（カナ）*</label>
+              <div>
+                <input class="col-span-1" name="family-name-kana" placeholder="セイ" required type="text">
+                <span class="error hide col-span-1 hide" id="error-family-name-kana">入力必須項目です。</span>
+
+              </div>
+              <div>
+                <input class="col-span-1" name="given-name-kana" placeholder="メイ" required type="text">
+                <span class="error hide col-span-1 hide" id="error-given-name-kana">入力必須項目です。</span>
+              </div>
+              <p class="input-form__caption col-span-2">全角で入力してください。</p>
+            </div>
+            <div class="grid-cols-2">
+              <label class="input-form__label col-span-2">性別*</label>
+              <div class="radio-button-group col-span-2">
+                {% assign items = "女の子,男の子,登録しない" | split: ',' %}
+                {% for item in items %}
+                  <label class="radio-button">
+                    <input name="gender" id="{{item}}" type="radio" value="{{ item }}" {% if forloop.first %} checked {% endif %}>
+                    <span></span>
+                    {{ item }}
+                  </label>
+                {% endfor %}
+              </div>
+            </div>
+            <div class="grid-cols-2">
+              <label class="input-form__label col-span-2">続柄*</label>
+              <div class="radio-button-group col-span-2">
+                {% assign items = "お子さま,お孫さま" | split: ',' %}
+                {% for item in items %}
+                  <label class="radio-button">
+                    <input name="relationship" type="radio" value="{{ item }}" {% if forloop.first %} checked {% endif %}>
+                    <span></span>
+                    {{ item }}
+                  </label>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="mypage__footer" data-controller="alert-trigger">
+          {% comment %} new button that checks for validation {% endcomment %}
+          <button id="validate-new-child-button" class="button button--cta" type="button">登録する</button>
+          <button id="confirm-child-button" class="button button--cta" data-action="alert-trigger#open" type="button" style="display: none;">登録する</button>
+          <button class="button button--has-icon-arrow-left" data-action="modal#close" type="button">もどる</button>
+          <template data-alert-trigger-target="template">
+            <div class="alert" data-alert-close-modal-value="true" data-controller="alert">
+              <div class="alert__title">登録完了しました</div>
+              <a class="button button--cta" href="/account?view=add_child">閉じる</a>
+              <a class="button" href="/account">マイページへ</a>
+            </div>
+          </template>
+        </div>
+        {% comment %} alert controller for date error popup {% endcomment %}
+        <div data-controller="alert-trigger">
+          <button id="date-error-open" class="button button--cta" data-action="alert-trigger#open" type="button" style="display: none;"></button>
+          <template data-alert-trigger-target="template">
+            <div class="alert" data-alert-close-modal-value="false" data-controller="alert">
+              <div id="date-error-text" class="alert__title">登録完了しました</div>
+              <button id="date-error-close" class="button button--cta" data-action="alert#close" type="button">OK</button>
+            </div>
+          </template>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endcapture %}
+
+
+<main class="mypage mypage-child" data-controller="modal-trigger alert-trigger">
+  <div class="container gap-50 lg:gap-80 pt-40 lg:pt-60" >
+    <h1 class="mypage__title">お子さま情報</h1>
+    {% assign children = "child1, child2, child3, child4, child5" | split: ", " %}
+    {% assign childNum = 0 %}
+    {% assign hasChildren = false %}
+    {% for child in children %}
+      {% if customer.metafields[child]gender %}
+        {% assign hasChildren = true %}
+        {% assign childNum = childNum | plus: 1%}
+        {% assign childDateType = customer.metafields[child].date_type | downcase %}
+        <div class="mypage-child__item">
+          <h4 class="has-button">
+            <span>お子さま情報</span>
+            <div>
+            {% comment %} add delete and edit functions {% endcomment %}
+            {% comment %} add class to add click function to all and dataset for  {% endcomment %}
+              <button class="delete_child" data-action="alert-trigger#open" data-child="{{child}}" type="button">削除する</button>
+              <button class="edit_child" data-action="modal-trigger#open"
+              data-child="{{child}}"
+              data-date-type="{{ childDateType }}" type="button">修正する</button>
+            </div>
+          </h4>
+          <dl  class="description-list grid-cols-2 lg:grid-cols-8">
+            <dt class="lg:col-span-2">お名前</dt>
+            {% if customer.metafields[child].last_name != blank or customer.metafields[child].first_name != blank %}
+              <dd id="{{ child }}-name"class="lg:col-span-6">{{ customer.metafields[child].last_name }} {{ customer.metafields[child].first_name}}</dd>
+            {% else %}
+              <dd id="{{ child }}-name"class="lg:col-span-6">-</dd>
+            {% endif %}
+            <dt class="lg:col-span-2">お名前（カナ）</dt>
+            {% if customer.metafields[child].kana_last_name != blank or customer.metafields[child].kana_first_name %}
+              <dd id="{{ child }}-kana" class="lg:col-span-6">{{ customer.metafields[child].kana_last_name}} {{ customer.metafields[child].kana_first_name}}</dd>
+            {% else %}
+              <dd id="{{ child }}-kana" class="lg:col-span-6">-</dd>
+            {% endif %}
+            <dt class="lg:col-span-2">
+            {% if childDateType == "true" %}
+              生年月日
+            {% else %}
+             出産予定日
+            {% endif %}
+            </dt>
+            {% if customer.metafields[child].year != blank %}
+              <dd id="{{ child }}-birthday" class="lg:col-span-6">{{ customer.metafields[child].year}}年{{ customer.metafields[child].month}}月{{ customer.metafields[child].day}}日</dd>
+            {% else %}
+              <dd id="{{ child }}-birthday" class="lg:col-span-6">-</dd>
+            {% endif %}
+            <dt class="lg:col-span-2">性別</dt>
+            <dd id="{{ child }}-gender" class="lg:col-span-6">{{ customer.metafields[child].gender}}</dd>
+            <dt class="lg:col-span-2">続柄</dt>
+            <dd id="{{ child }}-relationship" class="lg:col-span-6">{{ customer.metafields[child].relationship}}</dd>
+          </dl>
+        </div>
+      {% endif %}
+    {% endfor %}
+    {% if hasChildren == false %}
+      <div class="mypage__description mypage__description--large">ご登録のお子さま情報はありません。</div>
+    {% endif %}
+    <div class="mypage__footer">
+    {% comment %} disbale add child button if at the 5 child limit {% endcomment %}
+    {% if childNum > 4 %}
+      <button id="open-new-child-button" class="button button--has-icon-plus" data-action="modal-trigger#open" type="button" disabled>
+        お子さま情報を追加する
+      </button>
+    {% else %}
+      <button id="open-new-child-button" class="button button--has-icon-plus" data-action="modal-trigger#open" type="button">
+        お子さま情報を追加する
+      </button>
+    {% endif%}
+      
+      <template data-modal-trigger-target="template">
+        {{ modal_new }}
+      </template>
+    </div>
+  </div>
+  <template data-alert-trigger-target="template">
+    <div class="alert" data-controller="alert">
+      <div class="alert__title">本当に削除しますか？</div>
+      <div data-controller="alert-trigger">
+
+        <a id="confirm-delete-child-button" class="button button--cta">削除する</a>
+        <button  id="complete-delete-child-button" class="button button--cta" data-action="alert#close alert-trigger#open" type="button" style="display: none;">削除する</button>
+        <button class="button" data-action="alert#close" type="button">もどる</button>
+        <template data-alert-trigger-target="template">
+          <div class="alert" data-controller="alert">
+            <div class="alert__title">削除完了しました</div>
+            <a class="button button--cta" href="/account?view=add_child">閉じる</a>
+          </div>
+        </template>
+      </div>
+    </div>
+  </template>
+  {% comment %} accentuate form for child details {% endcomment %}
+  <form id="child_form">
+      <input type="hidden" id="acc-child-cust-id" name="customer[id]" value="{{ customer.id }}">
+      <input type="hidden" id="acc-child-given-name" name="metafield[child1.first_name]" value="" />
+      <input type="hidden" id="acc-child-family-name" name="metafield[child1.last_name]" value=""/>
+      <input type="hidden" id="acc-child-given-name-kana" name="metafield[child1.kana_first_name]" value=""/>
+      <input type="hidden" id="acc-child-family-name-kana" name="metafield[child1.kana_last_name]" value=""/>
+      <input type="hidden" id="acc-child-day" name="metafield[child1.day]" value=""/>
+      <input type="hidden" id="acc-child-month" name="metafield[child1.month]" value=""/>
+      <input type="hidden" id="acc-child-year" name="metafield[child1.year]" value=""/>
+      <input type="hidden" id="acc-child-date-type" name="metafield[child1.date_type]" value=""/>
+      <input type="hidden" id="acc-child-gender" name="metafield[child1.gender]" value=""/>
+      <input type="hidden" id="acc-child-relationship" name="metafield[child1.relationship]" value=""/>
+      <button type="submit" id="acc-child-submit" class="button button--cta" style="display:none">登録する</button>
+    </form>
+</main>

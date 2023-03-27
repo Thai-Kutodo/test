@@ -1,0 +1,21 @@
+<section class="section-recently-viewed scroll-item-list{% if has_divider %} scroll-item-list--has-divider{% endif %}{% if has_header_link %} scroll-item-list--has-header-link{% endif %}">
+  <input type="hidden" class="js-productRecently" name="" value="">
+  {% if title %}
+      <h2 class="scroll-item-list__title">
+        {{ title }}
+        {% if has_header_link %}
+          <a class="scroll-item-list__view-all" href="{{ collections[collection_gift].url }}">一覧</a>
+        {% endif %}
+      </h2>
+    {% endif %}
+    {% if description %}
+      <p class="scroll-item-list__description">{{ description | newline_to_br }}</p>
+    {% endif %}
+  <div class="scroll-item-list__images" data-controller="recently-viewed scrollable">
+    <button aria-label="左にスクロールする" class="scroll-item-list__button scroll-item-list__button--left" data-action="scrollable#scrollLeft" data-scrollable-target="leftButton" type="button"></button>
+      <ul class="scroll-image-list js-renderRecentlyViewed-searchbar" data-scrollable-target="content">
+      </ul>
+      <button aria-label="右にスクロールする" class="scroll-item-list__button scroll-item-list__button--right" data-action="scrollable#scrollRight" data-scrollable-target="rightButton" type="button"></button>
+  </div>
+</section>
+  

@@ -1,0 +1,71 @@
+{% assign badge_sale = false %}
+{% assign badge_few_in_stock = false %}
+
+{%- if card_product.type == "セール品" -%}
+  {% assign badge_sale = true %}
+{%- endif -%}
+{%- for variant in card_product.variants -%}
+  {%- if variant.available and variant.inventory_quantity < 10 -%}
+    {% assign badge_few_in_stock = true %}
+    {% break %}
+  {%- endif -%}
+{%- endfor -%}
+<a href="{{ card_product.url }}" data-id="{{ card_product.id }}">
+  <figure class="product-item{% unless card_product.available %} product-item--soldout{% endunless %}">
+    <div class="product-item__image">
+      <div class="product-item__tags">
+        {% if badge_sale %}
+        <span class="product-item__tag product-item__tag--sale">SALE</span>
+      {% endif %}
+        {% if badge_few_in_stock %}
+        <span class="product-item__tag">在庫わずか</span>
+        {% endif %}
+        {% if card_product.tags contains "NEW" %}
+          <span class="product-item__tag">NEW</span>
+        {% endif %}
+
+        {% if card_product.tags contains "予約商品" %}
+          <span class="product-item__tag">予約商品</span>
+        {% endif %}
+      </div>
+
+      {%- if card_product.featured_image != blank -%}
+        <img alt="{{ card_product.title }}" src="{{ card_product.featured_image | image_url: width: 1200 }}">
+      {%- else -%}
+        <img alt="{{ card_product.title }}" src="" />
+      {%- endif -%}
+    </div>
+
+    <figcaption>
+      <p class="product-item__name">{{ card_product.title }}</p>
+
+      {%- liquid
+        assign product_ep_metafield = card_product.metafields.loyalty.easy_points_attributes
+        assign point_cost = product_ep_metafield.value.point_exchange.point_cost
+        assign point_cost = product_ep_metafield.point_exchange.point_cost | default: point_cost
+      -%}
+      
+      {%- if point_cost -%}
+        <p class="cart-item__price" {% render 'easy_points_point_exchange_product', product: card_product %}>
+          {{ point_cost | times: 100 | money_without_currency }}
+          <span class="easy-points__text easy-points__text--suffix">
+            {{ 'easypoints.points' | t }}
+          </span>
+        </p>
+      {%- endif -%}
+
+      {%- unless point_cost and card_product.price == 0 -%}
+        <p class="product-item__price">
+          {% if card_product.price_min == card_product.price_max %}
+            {{ card_product.price | money }}
+          {% else %}
+            {{ card_product.price_min | money }}
+            -
+            {{ card_product.price_max | money }}
+          {% endif %}
+          <span class="product-item__tax-in">税込</span>
+        </p>
+      {%- endunless -%}
+    </figcaption>
+  </figure>
+</a>

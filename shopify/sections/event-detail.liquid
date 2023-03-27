@@ -1,0 +1,430 @@
+{% comment %} ticket/product data stored here for event-reservation.ts {% endcomment %}
+<div id="tickets">
+    <input type="text" id="date-today" value='{{ "now" | date: "%Y-%m-%d %H:%M" }}' hidden/>
+    {% assign storeNameString = "" %}
+    {% paginate collection.products by 1000 %}
+      {% for product in collection.products %}
+        {% for variant in product.variants %}
+          {% assign eventDataJson = variant.metafields.event_ticketing.event_v2.value | json %}
+          {% assign ticketDataJson = variant.metafields.event_ticketing.ticket.value | json %}
+            <input class="ticket-data" type="text" 
+            data-product="{{ product.id}}" 
+            data-variant="{{ variant.id}}"
+            data-name="{{ collection.title }}"
+            data-event='{{ eventDataJson }}' 
+            data-ticket='{{ ticketDataJson }}'
+            data-stock="{{ variant.inventory_quantity }}"
+            data-available="{{ variant.available }}"
+            data-fee="{{ collection.metafields.event.fee }}" 
+            data-gift="{{ collection.metafields.event.gift_name}}"
+            data-qty="{{ collection.metafields.event.gift_qty}}"
+            data-reservation-start-date-time="{{ product.metafields.event.reservation_start_date_time }}"
+            data-reservation-end-date-time="{{ variant.metafields.event.event_reservation_end_date_time }}"
+            hidden/>
+        {% endfor %}
+
+        {% assign venueName = product.metafields.event_ticketing.event_v2.value.venue.name %}
+        {% unless storeNameString contains venueName %}
+          {% if forloop.index > 1 %}
+          {% assign storeNameString = storeNameString | append: "," %}
+          {% endif %}
+          {% assign storeNameString = storeNameString | append: venueName %}
+        {% endunless %}
+      {% endfor %}
+    {% endpaginate %}
+    {% assign storeNameList = storeNameString | split: "," %}
+</div>
+<input type="text" id="acc-id" value="{{ customer.id }}" hidden/>
+<input type="text" id="acc-add" value='{{ customer.default_address | json }}' hidden/>       
+{% capture modal_event_reservation_04 %}
+  <div class="text-center">
+    <img alt="" class="modal-event__completed-icon" height="70" src="{{ 'icon_completed.svg' | asset_url }}" width="70">
+    <h1 class="modal-event__completed-header">ご予約受け付けました。</h1>
+    <div class="modal-event__completed-body">
+      ご予約が完了している場合はまもなくご予約確認メールが届きます。<br>メールが届かない、マイページの予約履歴に反映されていない場合は、<br>ご予約が確定しておりません。<br>必ずマイページの予約履歴をご確認下さい。
+    </div>
+  </div>
+  <div class="modal-event__completed-buttons pb-120 lg:pb-160">
+    <button class="button button--cta" data-action="modal#close" type="button">閉じる</button>
+    <a class="button" href="/account">予約中のイベント</a>
+    <a class="button" href="/">TOP</a>
+  </div>
+{% endcapture %}
+
+{% capture modal_event_reservation_03 %}
+  <div class="container gap-50 lg:gap-60 pt-50 lg:pt-0 pb-120 lg:pb-160">
+    <p class="text-center">下記の内容でご予約をお承りします。<br>内容をご確認ください。</p>
+    <div>
+      <div class="modal-event__has-bottom-border">
+        <h3 class="modal-event__title">予約内容</h3>
+        <dl class="description-list grid-cols-3 lg:grid-cols-8">
+          <dt class="lg:col-span-2">イベント名</dt>
+          <dd id="confirm-modal-event-name" class="col-span-2 lg:col-span-6">{{ collection.title }}</dd>
+          <dt class="lg:col-span-2">開催日時</dt>
+          <dd id="confirm-modal-event-date" class="col-span-2 lg:col-span-6">2022/3/18(金) 11:00-12:00</dd>
+          <dt class="lg:col-span-2">開催店舗</dt>
+          <dd id="confirm-modal-event-venue" class="col-span-2 lg:col-span-6">ながの東急百貨店ファミリアショップ</dd>
+          <dt class="lg:col-span-2">予約枠数</dt>
+          <dd id="confirm-modal-event-adult-total" class="col-span-2 lg:col-span-6">2</dd>
+          <dt class="lg:col-span-2">お支払い合計<br class="sp">（予定）</dt>
+          <dd id="confirm-modal-event-fee" class="col-span-2 lg:col-span-6">¥4,400-
+            <span class="description-list__tax-in">税込</span>
+          </dd>
+        </dl>
+      </div>
+      <ul class="modal-event__caution-list modal-event__caution-list--smaller mt-20">
+        <li>店頭でお支払いの場合、申込数によりお支払い金額が変更となる場合がございます</li>
+      </ul>
+    </div>
+    <div class="modal-event__has-bottom-border">
+      <h3 class="modal-event__title">お客様情報</h3>
+      <dl id="confirm-modal-info-list" class="description-list grid-cols-3 lg:grid-cols-8">
+        <dt class="lg:col-span-2">ログインID</dt>
+        <dd class="col-span-2 lg:col-span-6">{{ customer.email }}</dd>
+        <dt class="lg:col-span-2">お名前</dt>
+        <dd id="confirm-modal-name" class="col-span-2 lg:col-span-6">{{ customer.last_name }} {{ customer.first_name }}</dd>
+        <dt class="lg:col-span-2">お名前（カナ）</dt>
+        <dd id="confirm-modal-kana" class="col-span-2 lg:col-span-6">{{ customer.metafields.additional.kana_last_name }} {{ customer.metafields.additional.kana_first_name }}</dd>
+        <dt class="lg:col-span-2">電話番号</dt>
+        <dd id="confirm-modal-phone" class="col-span-2 lg:col-span-6">{{ customer.default_address.phone }}</dd>
+      </dl>
+    </div>
+    <div class="modal-event__checkbox">
+      <label class="checkbox">
+        <input data-action="change->event-reservation#validateCheck" type="checkbox">
+        <span>{% render 'icon-checkbox' %}</span>
+        個人情報のお取り扱いにつきまして、<a href="/pages/privacy" target="_blank">プライバシーポリシー</a>をご確認・同意の上、お申し込みください。
+      </label>
+    </div>
+  </div>
+  <div class="modal-event__footer grid-cols-2">
+    <button class="button button--has-icon-arrow-left col-span-1" data-action="event-reservation#switch" data-event-reservation-target-param="1" type="button">内容を変更する</button>
+    <button id="send-event-order-request-button" class="button button--cta col-span-1 next-button" disabled type="button">予約を申し込む</button>
+    <button id="to-complete-modal-button"class="" data-action="event-reservation#switch" data-event-reservation-target-param="3" hidden type="button">予約を申し込む</button>
+  </div>
+  {% comment %} alert controller for error popup {% endcomment %}
+  <div data-controller="alert-trigger">
+    <button id="event-error-open" class="button button--cta" data-action="alert-trigger#open" type="button" style="display: none;"></button>
+    <template data-alert-trigger-target="template">
+      <div class="alert" data-alert-close-modal-value="false" data-controller="alert">
+        <div id="date-error-text" class="alert__title">こちらのイベントは満席のため、<br> ご予約いただけません。</div>
+        <a id="date-error-close" class="button button--cta" href="" type="button">閉じる</a>
+      </div>
+    </template>
+  </div>
+{% endcapture %}
+
+{% capture modal_event_reservation_02 %}
+  <div class="container gap-50 lg:gap-60 pt-50 lg:pt-0 pb-120 lg:pb-160">
+    <div>
+      <h3 class="modal-event__title">予約内容</h3>
+      <dl class="description-list grid-cols-3 lg:grid-cols-8">
+        <dt class="lg:col-span-2">イベント名</dt>
+        <dd class="col-span-2 lg:col-span-6">{{ collection.title }}</dd>
+        <dt class="lg:col-span-2">開催日時</dt>
+        <dd id="customer-modal-event-date" class="col-span-2 lg:col-span-6">2022/3/18(金) 11:00-12:00</dd>
+        <dt class="lg:col-span-2">開催店舗</dt>
+        <dd id="customer-modal-event-venue" class="col-span-2 lg:col-span-6">ながの東急百貨店ファミリアショップ</dd>
+        <dt class="lg:col-span-2">参加費/1組</dt>
+        <dd id="customer-modal-event-fee" class="col-span-2 lg:col-span-6">¥2,200-
+          <span class="description-list__tax-in">税込</span>
+        </dd>
+      </dl>
+    </div>
+    <div>
+      <h3 class="modal-event__title">予約枠数</h3>
+      <div id="customer-modal-adult-counter" class="counter" data-controller="counter">
+        <button id="customer-modal-adult-counter-decrement" class="counter__decrement" data-action="counter#decrement" data-counter-target="decrement" type="button"></button>
+        <input id="customer-modal-adult-total" class="counter__value" data-counter-target="value" max="9" min="1" type="number" value="1">
+        <button id="customer-modal-adult-counter-increment" class="counter__increment" data-action="counter#increment" data-counter-target="increment" type="button"></button>
+      </div>
+    </div>
+    <div>
+      <h3 class="modal-event__title">お客様情報入力</h3>
+      <div class="input-form">
+        <div class="grid-cols-2">
+          <label class="input-form__label col-span-2">ログインID（メールアドレス）</label>
+          <input class="col-span-2" disabled name="email-address" type="text" value="{{ customer.email }}">
+        </div>
+        <div class="grid-cols-2">
+          <label class="input-form__label col-span-2">お名前</label>
+          <div>
+            <input id="customer-modal-last-name" autocomplete="family-name" class="col-span-1" name="family-name" placeholder="姓" required type="text" value="{{customer.last_name}}">
+            <span class="error hide col-span-1 hide" id="error-family-name">入力必須項目です。</span>
+          </div>
+          <div>
+            <input id="customer-modal-first-name" autocomplete="given-name" class="col-span-1" name="given-name" placeholder="名" required type="text" value="{{customer.first_name}}">
+            <span class="error hide col-span-1 hide" id="error-given-name">入力必須項目です。</span>
+          </div>
+        </div>
+        <div class="grid-cols-2">
+          <label class="input-form__label col-span-2">お名前（カナ）</label>
+          <div>
+            <input id="customer-modal-last-name-kana" class="col-span-1" name="family-name-kana" placeholder="セイ" required type="text" value="{{customer.metafields.additional.kana_last_name}}">
+            <span class="error hide col-span-1 hide" id="error-family-name-kana">入力必須項目です。</span>
+          </div>
+          <div>
+            <input id="customer-modal-first-name-kana" class="col-span-1" name="given-name-kana" placeholder="メイ" required type="text" value="{{customer.metafields.additional.kana_first_name}}">
+            <span class="error hide col-span-1 hide" id="error-given-name-kana">入力必須項目です。</span>
+          </div>
+        </div>
+        <div class="grid-cols-2">
+          <label class="input-form__label col-span-2">電話番号</label>
+          <input id="customer-modal-phone" autocomplete="tel" class="col-span-2" maxlength="14" onkeyup="this.value=this.value.replace(/[^\d]/g,'')" name="tel" placeholder="電話番号" required type="text" value="{{ customer.default_address.phone }}">
+           <span class="error hide col-span-1 hide" id="error-phone">入力必須項目です。</span>
+        </div>
+        <hr>
+        <div id="child-info-container">
+          <p class="modal-event__sub-title">参加するお子さまの人数</p>
+          <div>
+            <div id="customer-modal-child-counter" class="counter" data-controller="counter">
+              <button class="counter__decrement" data-action="counter#decrement" data-counter-target="decrement" type="button"></button>
+              <input id="customer-modal-child-total" class="counter__value" data-counter-target="value" max="9" min="1" type="number" value="1">
+              <button class="counter__increment" data-action="counter#increment" data-counter-target="increment" type="button"></button>
+            </div>
+            <div id="child-input-container">
+              {% render 'event-booking-child-input', child_num: 1 %}
+              {% render 'event-booking-child-input', child_num: 2 %}
+              {% render 'event-booking-child-input', child_num: 3 %}
+              {% render 'event-booking-child-input', child_num: 4 %}
+              {% render 'event-booking-child-input', child_num: 5 %}
+              {% render 'event-booking-child-input', child_num: 6 %}
+              {% render 'event-booking-child-input', child_num: 7 %}
+              {% render 'event-booking-child-input', child_num: 8 %}
+              {% render 'event-booking-child-input', child_num: 9 %}
+            </div>
+          </div>
+        </div>
+        {% unless collection.metafields.event.gift_name == blank %}
+          {% assign gift_qty = 0 %}
+          {% if collection.metafields.event.gift_qty != blank %}
+            {% assign gift_qty = collection.metafields.event.gift_qty %}
+          {% endif %}
+          <p class="modal-event__sub-title gift-info-section">{{collection.metafields.event.gift_name}}の購入点数</p>
+          <div class="counter gift-info-section" data-controller="counter">
+            <button class="counter__decrement" data-action="counter#decrement" data-counter-target="decrement" type="button"></button>
+            <input id="customer-modal-present-total" class="counter__value" data-counter-target="value" max="{{gift_qty}}" min="1" type="number" value="1">
+            <button class="counter__increment" data-action="counter#increment" data-counter-target="increment" type="button"></button>
+          </div>
+          <hr class="gift-info-section">
+        {% endunless %}
+        {% assign next_year = 'now' | date: '%Y' | plus: 1 %}
+        <div class="grid-cols-2 expected-birthday-input" data-question="出産予定日">
+          <label class="input-form__label col-span-2 ">出産予定日</label>
+          <div id="customer-modal-expected-birthday" class="col-span-2 child-expected-input" >
+            {% render 'date-selector', year_min: 2022, year_default: 2022, year_max: next_year %}
+          </div>
+          <span class="error hide col-span-1 hide" id="error-customer-modal-expected-birthday">入力必須項目です。</span>
+        </div>
+        <div class="grid-cols-2 birthday-input" data-question="お子さまのお誕生日">
+          <label class="input-form__label col-span-2 ">お子さまのお誕生日</label>
+          <div id="customer-modal-birthday" class="col-span-2 child-birthday-input" >
+            {% render 'date-selector', year_min: 2010, year_default: 2022, year_max: 2023 %}
+          </div>
+          <span class="error hide col-span-1 hide" id="error-customer-modal-birthday">入力必須項目です。</span>
+        </div>
+        <div class="grid-cols-2">
+          <label class="input-form__label col-span-2">備考欄</label>
+          <textarea id="customer-modal-child-additional-text" class="col-span-2" placeholder="ご要望などがございましたらご入力ください。" rows="3"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-event__has-bottom-border">
+      <h3 class="modal-event__title">お支払い方法</h3>
+      <div>店頭支払い</div>
+    </div>
+    <div>
+      <div class="modal-event__has-bottom-border">
+        <h3 class="modal-event__title">金額明細</h3>
+        <div class="detail-list">
+          <dl class="description-list grid-cols-2">
+            <dt>商品小計</dt>
+            <dd>
+              <span id="customer-modal-price-subtotal" >¥4,400</span>
+              <span class="detail-list__tax-in">税込</span>
+            </dd>
+            <dt>小計</dt>
+            <dd>
+              <span id="customer-modal-price-subtotal2" >¥4,400</span>
+              <span class="detail-list__tax-in">税込</span>
+            </dd>
+            <dt>送料</dt>
+            <dd>¥0</dd>
+            <dt>内消費税</dt>
+            <dd id="customer-modal-price-tax" >¥400</dd>
+            <dt class="detail-list__prices">お支払い合計<br class="sp">（予定）</dt>
+            <dd class="detail-list__prices">
+              <span id="customer-modal-price-total" class="detail-list__price">¥4,400</span>
+              <span class="detail-list__tax-in">税込</span>
+            </dd>
+          </dl>
+        </div>
+      </div>
+      <ul class="modal-event__caution-list modal-event__caution-list--smaller mt-20">
+        <li>店頭でお支払いの場合、申込数によりお支払い金額が変更となる場合がございます</li>
+      </ul>
+    </div>
+  </div>
+  <div class="modal-event__footer grid-cols-3">
+    <button class="button col-span-1" data-action="event-reservation#switch" data-event-reservation-target-param="0" type="button">もどる</button>
+    <button id="validate-customer-modal-button" class="button button--cta col-span-2 next-button" data-event-reservation-target-param="2" type="button">
+      <span id="customer-modal-button-fee">合計 ¥4,400
+        <span class="tax-in">税込</span>・確認画面へ</span>
+    </button>
+    <button id="to-confirm-modal-button" class="button button--cta col-span-2 next-button hide" data-action="event-reservation#switch" data-event-reservation-target-param="2" type="button" hidden>
+      <span id="customer-modal-button-fee">合計 ¥4,400
+        <span class="tax-in">税込</span>・確認画面へ</span>
+    </button>
+  </div>
+{% endcapture %}
+
+{% capture modal_event_reservation_01 %}
+  <div class="container gap-50 lg:gap-60 pt-40 lg:pt-0 pb-120 lg:pb-160">
+    <dl class="modal-event__info">
+      <dt class="lg:col-span-2">イベント名</dt>
+      <dd id="dates-modal-event-name" class="col-span-2 lg:col-span-6">{{ collection.title }}</dd>
+      <dt iclass="lg:col-span-2">開催店舗</dt>
+      <dd id="dates-modal-venue-name" class="col-span-2 lg:col-span-6">ながの東急百貨店ファミリアショップ</dd>
+      <dt class="lg:col-span-2">参加費/1組</dt>
+      <dd id="dates-modal-event-fee" class="col-span-2 lg:col-span-6">{{ collection.metafields.event.fee | times: 100 | money }}
+        <span class="tax-in">税込</span>
+      </dd>
+    </dl>
+    {% comment %} optional section set by event.notesmetafield {% endcomment %}
+    {% comment %} example metafield:
+        <li>初産の方に限らせていただきます。</li>
+        <li>新型コロナウイルス感染防止のため、定員を1組に限らせていただきます。<br>開催スケジュールは新型コロナウイルス感染状況により、急遽変更となる場合がございます。予めご了承ください。</li>
+     {% endcomment %}
+    {% if collection.metafields.event.notes %}
+      <div>
+        <h3 class="modal-event__title mb-15">注意事項</h3>
+        <ul class="modal-event__caution-list">
+          {{ collection.metafields.event.notes | markdownify }}
+        </ul>
+      </div>
+    {% endif %}
+    <div>
+      <h3 class="modal-event__title lg:mb-30">予約日時の選択</h3>
+      <ul class="modal-event__dates">
+      {% comment %} dates loaded from event-reservation.ts {% endcomment %}
+      </ul>
+    </div>
+  </div>
+  <div class="modal-event__footer">
+    <button id="to-customer-modal-button" class="button button--cta next-button" data-action="event-reservation#switch" data-event-reservation-target-param="1" disabled type="button">お客様情報へ</button>
+  </div>
+{% endcapture %}
+
+{% capture modal_event_reservation %}
+  <div class="modal modal-bottom lg:modal-center modal-event" data-controller="modal event-reservation">
+    <div class="modal__header">
+      <span class="modal__header-left"></span>
+      <span class="modal__header-center sp">イベント予約</span>
+      <button aria-label="閉じる" class="modal__header-right modal__close-button" data-action="modal#close" type="button">
+        {% render 'icon-close' %}
+      </button>
+    </div>
+    <div class="modal__content">
+      <div class="container lg:gap-60">
+        <h1 class="modal__title pc">イベント予約</h1>
+        <div>
+          <div data-event-reservation-index-param="0" data-event-reservation-target="content" id="event-reservation-1">
+            {{ modal_event_reservation_01 }}
+          </div>
+          <div data-event-reservation-index-param="1" data-event-reservation-target="content" id="event-reservation-2" style="display: none;">
+            {{ modal_event_reservation_02 }}
+          </div>
+          <div data-event-reservation-index-param="2" data-event-reservation-target="content" id="event-reservation-3" style="display: none;">
+            {{ modal_event_reservation_03 }}
+          </div>
+          <div data-event-reservation-index-param="3" data-event-reservation-target="content" id="event-reservation-4" style="display: none;">
+            {{ modal_event_reservation_04 }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endcapture %}
+
+<main class="event">
+  <div class="container gap-10 lg:gap-80 pb-70 lg:pb-120">
+    <div class="event__hero lg:grid-cols-10">
+      <div class="lg:col-span-7">
+        <div class="event__hero-image">
+          <img class="lazy animated" data-src="{{ collection.image | image_url: width: 1500 }}">
+        </div>
+      </div>
+      <div class="lg:col-span-3">
+        <div class="event-item__statuses">
+            {% for tag in collection.metafields.event.tags.value %}
+                {% assign tag_style = ""%}
+                {% if tag.style != "" %}
+                    {% assign tag_style = "--" | append: tag.style %}
+                {% endif %}
+                <span class="event-item__status event-item__status{{tag_style}}">{{ tag.name }}</span>
+            {% endfor %}
+        </div>
+        <h1 class="event__title">
+          {{ collection.title }}
+        </h1>
+        <div class="event__body pc">
+          <p>{{ collection.description }}</p>
+        </div>
+      </div>
+    </div>
+    <hr class="pc">
+    <div class="event__content">
+      <div class="container gap-20 lg:gap-40">
+        <div class="event__body">
+          <p>{{ collection.metafields.event.description }}</p>
+        </div>
+        {% if collection.metafields.event.image != blank %}
+          <div class="event__image">
+            <img class="lazy animated" data-src="{{ collection.metafields.event.image | file_url }}">
+          </div>
+        {% endif %}
+        {% unless collection.metafields.event.custom_text == blank %}
+          <div class="event__body">
+            <p>{{collection.metafields.event.custom_text}}</p>
+          </div>
+        {% endunless %}
+        <div class="event__description-list">
+          <dl class="description-list grid-cols-3 lg:grid-cols-8">
+            <dt class="lg:col-span-2">対象</dt>
+            <dd class="col-span-2 lg:col-span-6">{{ collection.metafields.event.subject }}</dd>
+            <dt class="lg:col-span-2">定員</dt>
+            <dd class="col-span-2 lg:col-span-6">{{ collection.metafields.event.capacity}}</dd>
+            <dt class="lg:col-span-2">参加費/1組</dt>
+            <dd id="event-detail-event-fee" class="col-span-2 lg:col-span-6">{{ collection.metafields.event.fee | times: 100 | money }}
+              <span class="description-list__tax-in">税込</span>
+            </dd>
+            <dt class="lg:col-span-2">備考</dt>
+            <dd class="col-span-2 lg:col-span-6">{{ collection.metafields.event.remarks }}</dd>
+          </dl>
+        </div>
+        <select id="store-select" name="store">
+          <option value="" hidden>開催店舗を選ぶ</option>
+          {% for store in storeNameList%}
+            <option>
+                {% if store == "EC倉庫" %}
+                    オンライン
+                {% else %}
+                    {{ store }}
+                {% endif %}
+            </option>
+          {% endfor %}
+        </select>
+        <div data-controller="modal-trigger">
+        {% if customer %}
+          <button id="to-date-modal-button" class="button button--cta" data-action="modal-trigger#open" data-title="{{collection.title}}" data-id="{{collection.id}}" type="button" disabled>イベント日時選択へ</button>
+        {% else %}
+          <button id="to-date-modal-button" class="button button--cta" data-action="login#open" data-title="{{collection.title}}" data-id="{{collection.id}}" type="button" disabled>イベント日時選択へ</button>
+        {% endif %}
+          <template data-modal-trigger-target="template">
+            {{ modal_event_reservation }}
+          </template>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>

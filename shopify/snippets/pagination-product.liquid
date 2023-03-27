@@ -1,0 +1,42 @@
+{% comment %}
+    Renders a set of links for paginated results. Must be used within paginate tags.
+
+    Usage:
+    {% paginate results by 2 %}
+      {% render 'pagination', paginate: paginate, anchor: '#yourID' %}
+    {% endpaginate %}
+
+    Accepts:
+    - paginate: {Object}
+    - anchor: {String} (optional) This can be added so that on page reload it takes you to wherever you've placed your anchor tag.
+{% endcomment %}
+
+{%- if paginate.parts.size > 0 -%}
+<div class="pagination pagination-wrapper" data-controller="pagination">
+  {%- if paginate.previous -%}
+  <a class="pagination__arrow pagination__arrow--prev" href="{{ paginate.previous.url }}{{ anchor }}{% if template == 'tag' %}&view=filter-content{% endif %}" data-action="click->pagination#clickPaginationAjax" aria-label="{{ 'general.pagination.previous' | t }}"></a>
+  {%- endif -%}
+  <ul class="pagination__list">
+
+    {%- for part in paginate.parts -%}
+    {%- if part.is_link -%}
+    <li class="pagination__item">
+      <a href="{{ part.url }}{{ anchor }}{% if template == 'tag' %}&view=filter-content{% endif %}"  data-action="click->pagination#clickPaginationAjax"  data-item-action-param="{{ part.url }}{{ anchor }}" aria-label="{{ 'general.pagination.page' | t: number: part.title }}">{{ part.title }}</a>
+    </li>
+    {%- else -%}
+
+      {%- if part.title == paginate.current_page -%}
+      <li class="pagination__item pagination__item--active">
+        <a href="#">{{ part.title }}</a>
+      </li>
+      {%- else -%}
+      <li class="pagination__item"><span >{{ part.title }}</span></li>
+      {%- endif -%}
+      {%- endif -%}
+    {%- endfor -%}
+  </ul>
+  {%- if paginate.next -%}
+  <a class="pagination__arrow pagination__arrow--next" href="{{ paginate.next.url }}{{ anchor }}{% if template == 'tag' %}&view=filter-content{% endif %}" data-action="click->pagination#clickPaginationAjax" aria-label="{{ 'general.pagination.next' | t }}"></a>
+  {%- endif -%}
+</div>
+{%- endif -%}

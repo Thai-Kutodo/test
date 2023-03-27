@@ -1,0 +1,556 @@
+{% assign origin_price = cart.total_price | divided_by: 1.1 | round %}
+{% assign hide_pickup = false %}
+{% assign hide_online_store = false %}
+{% assign metafields_kana_info = customer.metafields.address.kana_info.value %}
+{% assign special_shipping_large_furniture = false %}
+{% assign qty_large_furniture = 0 %}
+{% assign fee_shipping = 0 %}
+{% assign support_shipping = true %}
+{% assign total_points_receive = 0 %}
+{% assign total_tax = 0 %}
+{% assign hide_gift_wrapping = true %}
+{% assign discount_staff_account = 1 %}
+{% assign tag_sale_staff_discount = false %}
+{% assign product_type = '' %}
+{% assign array_zipcode = section.settings.zipcode %}
+{% assign customer_zipcode = customer.default_address.zip | remove: '-' | default: 9999999999 %}
+{% assign invalid_go_to_next_step = true %}
+
+{%- liquid
+  assign easypoint_metafield = shop.metafields.loyalty.easy_points_attributes
+  assign easypoint_metafield = easypoint_metafield.value | default: easypoint_metafield
+  assign point_cost_pdp = 0
+  assign point_cost_pdp_count = 0
+  assign line_items = cart.items | default: checkout.line_items
+
+  for line_item in line_items
+    assign product_ep_metafield = line_item.product.metafields.loyalty.easy_points_attributes
+    assign unit_point_cost_pdp = product_ep_metafield.value.point_exchange.point_cost
+    assign unit_point_cost_pdp = product_ep_metafield.point_exchange.point_cost | default: unit_point_cost_pdp
+
+    if unit_point_cost_pdp
+      assign line_item_point_cost_pdp = unit_point_cost_pdp | times: line_item.quantity
+      assign point_cost_pdp = point_cost_pdp | plus: line_item_point_cost_pdp
+      assign point_cost_pdp_count = point_cost_pdp_count | plus: 1
+    endif
+  endfor
+-%}
+
+{% assign point_cost_pdp = point_cost_pdp | times: 100 %}
+
+{%- for line_item in cart.items -%}
+  {%- for tag in line_item.product.tags -%}
+    {%- if tag contains '社販セール品' -%}
+      {% assign tag_sale_staff_discount = true %}
+    {%- endif -%}
+  {%- endfor -%}
+
+  {%- unless line_item.variant.available -%}
+    {% assign invalid_go_to_next_step = false %}
+  {%- endunless -%}
+
+  {%- unless product_type contains line_item.product.type -%}
+    {% assign product_type = product_type | append: line_item.product.type | append: ',' %}
+  {%- endunless -%}
+{%- endfor -%}
+
+{% assign product_type = product_type | remove_last: ',' | split: ',' %}
+
+{%- if customer.tags contains '社員' and customer -%}
+  {%- if tag_sale_staff_discount -%}
+    {% assign discount_staff_account = 0.5 %}
+  {%- else -%}
+    {% assign discount_staff_account = 0.65 %}
+  {%- endif -%}
+{%- endif -%}
+
+{%- for item in cart.items -%}
+  {%- if item.product.tags contains '店舗受取不可商品' or item.product.type == '大型家具' or item.product.type == 'メーカー直送' or item.product.type == 'セール品' -%}
+    {% assign hide_pickup = true %}
+  {%- endif -%}
+
+  {%- if customer -%}
+    {%- if item.product.tags contains '配送不可商品' or item.product.tags contains '自宅配送不可商品' -%}
+      {% assign hide_online_store = true %}
+    {%- endif -%}
+  {%- endif -%}
+
+  {%- if item.product.type == '大型家具' -%}
+    {% assign special_shipping_large_furniture = true %}
+    {% assign qty_large_furniture = qty_large_furniture | plus: item.quantity %}
+  {%- endif -%}
+
+  {%- if item.product.type != '大型家具' and item.product.type != 'メーカー直送' and item.product.type != 'セール品' -%}
+    {%- unless item.product.tags contains 'ギフト包装不可' -%}
+      {% assign hide_gift_wrapping = false %}
+    {%- endunless -%}
+  {%- endif -%}
+
+  {%- unless item.product.tags contains 'no-easy-points' -%}
+    {%- if item.product.tags contains '軽減税率対象' -%}
+      {% assign points = item.variant.price | divided_by: 100 | times: discount_staff_account | divided_by: 1.08 | times: 0.05 | round %}
+    {%- else -%}
+      {% assign points = item.variant.price | divided_by: 100 | times: discount_staff_account | divided_by: 1.1 | times: 0.05 | round %}
+    {%- endif -%}
+
+    {% assign total_points_receive = total_points_receive | plus: points %}
+  {%- endunless -%}
+
+  {%- if item.product.tags contains '軽減税率対象' -%}
+    {% assign origin_price_line_item = item.final_line_price | times: discount_staff_account | divided_by: 1.08  %}
+    {% assign tax_line_item = item.final_line_price | times: discount_staff_account | minus: origin_price_line_item %}
+    {% assign total_tax = total_tax | plus: tax_line_item %}
+  {%- else -%}
+    {% assign origin_price_line_item = item.final_line_price | times: discount_staff_account | divided_by: 1.1 %}
+    {% assign tax_line_item = item.final_line_price | times: discount_staff_account | minus: origin_price_line_item %}
+    {% assign total_tax = total_tax | plus: tax_line_item %}
+  {%- endif -%}
+{%- endfor -%}
+
+{%- if special_shipping_large_furniture -%}
+  {%- if customer.default_address.province == "沖縄県" or customer.default_address.province == "okinawa" or customer.default_address.province == "Okinawa" or array_zipcode contains customer_zipcode -%}
+    {% assign support_shipping = false %}
+  {%- endif -%}
+{%- endif -%}
+
+{%- if special_shipping_large_furniture -%}
+  {%- if qty_large_furniture == 1 -%}
+    {% assign fee_shipping = 880000 %}
+  {%- else -%}
+    {% assign qty_large_furniture_2 = qty_large_furniture | minus: 1 %}
+    {% assign fee_shipping = 550000 | times: qty_large_furniture_2 | plus: 880000 %}
+  {%- endif -%}
+{%- else -%}
+  {%- if point_cost_pdp > 0 -%}
+    {% assign maximum_shipping_fee = 1000000 %}
+    {% assign cart_total_price = cart.total_price | minus: total_tax | plus: point_cost_pdp | times: discount_staff_account %}
+  {%- else -%}
+    {% assign maximum_shipping_fee = 1100000 %}
+    {% assign cart_total_price = cart.total_price | plus: point_cost_pdp | times: discount_staff_account %}
+  {%- endif -%}
+
+  {%- if cart_total_price < maximum_shipping_fee -%}
+    {% assign fee_shipping = 77000 %}
+  {%- else -%}
+    {% assign fee_shipping = 0 %}
+  {%- endif -%}
+{%- endif -%}
+
+{%- render 'header-checkout', media: 'sp', url: '/cart' -%}
+{%- render 'breadcrumbs-checkout', class: "lg:mt-30 sp", hide_online_store: hide_online_store -%}
+
+<button aria-expanded="false" class="checkout-accordion-button checkout-accordion-button--cart mt-50 sp" data-accordion-target="trigger" data-action="accordion#toggle" type="button">
+  {% render 'icon-cart' %}
+  <span>ご注文内容を表示</span>
+  <p class="checkout-price">
+    {{ cart.total_price | times: discount_staff_account | plus: fee_shipping | money }}
+    <span class="checkout-price__tax-in">税込</span>
+  </p>
+</button>
+
+{%- if customer -%}
+  <div class="js-customerId" data-customer_id="{{ customer.id }}" data-hash="{{ customer.id | hmac_sha256: settings.cart_api_salt }}"></div>
+{%- endif -%}
+
+<div data-packaging-target="cartItem" class="hidden">{{ cart.items | json }}</div>
+
+<div class="checkout__wrapper" data-controller="contact-information" data-product_type_different="{%- if product_type.size > 1 -%}true{%- else -%}false{%- endif -%}" data-checkout-target="contactInformation" data-cart_null="{% if cart.item_count > 0 %}false{% else %}true{% endif %}" data-support_shipping="{{ support_shipping }}">
+  {%- if special_shipping_large_furniture and section.settings.zipcode != blank -%}
+    <div data-contact-information-target="itemZipcode" data-zipCode='[{{ section.settings.zipcode }}]' class="hidden"></div>
+  {%- endif -%}
+
+  <div class="checkout__container">
+    {%- render 'header-checkout', media: 'pc', url: '/cart' -%}
+    {%- render 'breadcrumbs-checkout',class: "lg:mt-30 pc", hide_online_store: hide_online_store -%}
+
+    <div class="checkout__content">
+      <div class="container gap-30 lg:gap-80 pt-50 lg:pt-80 pb-30 lg:pb-80">
+        <h1>配送方法の指定</h1>
+
+        {% if customer %}
+          <ul class="checkout-toggle-buttons{% if hide_pickup or hide_online_store %} flex-box--center{% endif %}">
+            <li class="toggle-button{% if hide_pickup %} max-width-custom{% endif %}{% if hide_online_store %} hidden{% endif %}">
+              <input autocomplete="off"
+                    {% unless hide_online_store %}checked{% endunless %}
+                    class="toggle-button__button"
+                    data-action="checkout#toggleShipping"
+                    data-shipping_fee="{{ fee_shipping | divided_by: 100 }}"
+                    data-total_price="{{ cart.total_price | times: discount_staff_account | divided_by: 100 }}"
+                    data-total_tax="{{ total_tax | round | money_without_currency | remove: ',' }}"
+                    data-checkout-target="shippingButton"
+                    name="shipping"
+                    type="radio"
+                    value="shipping"
+                >
+              <label class="toggle-button__label">
+                <img alt="" src="{{ 'icon_shipping.svg' | asset_url }}">
+                配送
+              </label>
+            </li>
+            <li class="toggle-button{% if hide_pickup %} hidden{% endif %}{% if hide_online_store %} max-width-custom{% endif %}">
+              <input autocomplete="off"
+                    {% if hide_online_store %}checked{% endif %}
+                    class="toggle-button__button"
+                    data-action="checkout#toggleShipping"
+                    data-shipping_fee="{{ fee_shipping | divided_by: 100 }}"
+                    data-total_price="{{ cart.total_price | times: discount_staff_account | divided_by: 100 }}"
+                    data-total_tax="{{ total_tax | round | money_without_currency | remove: ',' }}"
+                    data-checkout-target="pickupButton"
+                    name="shipping"
+                    type="radio"
+                    value="pickup"
+              >
+              <label class="toggle-button__label">
+                <img alt="" src="{{ 'icon_pickup.svg' | asset_url }}">
+                店舗受取
+              </label>
+            </li>
+          </ul>
+        {% endif %}
+      </div>
+
+      <div class="container gap-50 lg:gap-80{% if hide_online_store %} hidden{% endif %}" data-checkout-target="shippingContent" data-contact-information-target="shippingContent">
+        <div class="container gap-30 lg:gap-60">
+          {%- if customer -%}
+            <div class="container gap-20">
+              <h4 class="has-divider">お届け先</h4>
+              <div class="checkout-address">
+                <label class="radio-button">
+                  <input checked name="address" type="radio" value="address_default"
+                    data-action="contact-information#getInfoAddress contact-information#supportShipping"
+                    data-customer_id="{{ customer.id }}"
+                    data-last_name="{{ customer.default_address.last_name }}"
+                    data-first_name="{{ customer.default_address.first_name }}"
+                    data-zip="{{ customer.default_address.zip }}"
+                    data-province="{{ customer.default_address.province }}"
+                    data-province_code="{{ customer.default_address.province_code }}"
+                    data-city="{{ customer.default_address.city }}"
+                    data-country="{{ customer.default_address.country }}"
+                    data-country_code="{{ customer.default_address.country_code }}"
+                    data-address1="{{ customer.default_address.address1 }}"
+                    data-address2="{{ customer.default_address.address2 }}"
+                    data-phone="{{ customer.default_address.phone }}"
+                  >
+                  <span></span>
+                  会員登録住所
+                </label>
+                <address>
+                  {{ customer.default_address.last_name }}{{ customer.default_address.first_name }} 様<br>
+                  〒{{ customer.default_address.zip }}<br>
+                  {{ customer.default_address.province }} {{ customer.default_address.city }} {{ customer.default_address.address1 }} {{ customer.default_address.address2 }}<br>
+                  {{ customer.default_address.phone }}
+                </address>
+              </div>
+
+              <div class="expander" data-controller="expander">
+                {%- if customer.addresses.size > 1 -%}
+                  <button class="expander__content1 button button--light button--has-icon-arrow-bottom" data-action="expander#toggle" data-expander-target="content1" type="button">その他お届け先</button>
+                {%- endif -%}
+
+                <div class="expander__content2{% if customer.addresses.size == 1 %} show{% endif %}" data-expander-target="content2">
+                  <div class="container gap-20" data-controller="modal-trigger alert-trigger">
+                    {% assign index = 0 %}
+
+                    {%- for address in customer.addresses -%}
+                      {%- if address.id != customer.default_address.id -%}
+                        {% assign index = index | plus: 1 %}
+
+                        <div class="checkout-address">
+                          <label class="radio-button">
+                            <input name="address" type="radio" value="address_{{ index }}"
+                              data-action="contact-information#getInfoAddress contact-information#supportShipping"
+                              data-customer_id="{{ customer.id }}"
+                              data-last_name="{{ address.last_name }}"
+                              data-first_name="{{ address.first_name }}"
+                              data-zip="{{ address.zip }}"
+                              data-province="{{ address.province }}"
+                              data-province_code="{{ address.province_code }}"
+                              data-city="{{ address.city }}"
+                              data-country="{{ address.country }}"
+                              data-country_code="{{ address.country_code }}"
+                              data-address1="{{ address.address1 }}"
+                              data-address2="{{ address.address2 }}"
+                              data-phone="{{ address.phone }}"
+                            >
+                            <span></span>
+                            お届け先{{ index }}
+                          </label>
+                          <address>
+                            {{ address.last_name }}{{ address.first_name }} 様<br>
+                            〒{{ address.zip }}<br>
+                            {{ address.province }} {{ address.city }} {{ address.address1 }} {{ address.address2 }}<br>
+                            {{ address.phone }}
+
+                            <div class="checkout-address__footer">
+                              <button class="is-delete" data-action="alert-trigger#open contact-information#passParamToBtn" data-address_id="{{ address.id }}" data-alert-trigger-title-param="お届け先{{ index }}を削除しますか？" type="button">削除する</button>
+                              <button class="is-update" data-action="modal-trigger#openFormEditAccount contact-information#passParamToBtn" data-address_id="{{ address.id }}" data-index="{{ index | minus: 1 }}" type="button">修正する</button>
+                            </div>
+                          </address>
+                        </div>
+
+                        <template data-modal-trigger-target="templateAccount">
+                          <div class="modal modal-nav-bar lg:modal-full" data-controller="modal contact-information">
+                            <div class="modal__header">
+                              <button class="modal__nav-button sp" data-action="modal#close" type="button">
+                                {% render 'icon-arrow-left' %}
+                                購入：配送情報の指定
+                              </button>
+                              <button aria-label="閉じる" class="modal__close-button pc" data-action="modal#close" type="button">{% render 'icon-close' %}</button>
+                            </div>
+                            <div class="modal__content mypage">
+                              <div class="container gap-50 pt-50 pb-70">
+                                <h1 class="mypage__title">お届け先情報の追加・修正</h1>
+                                <div class="mypage-addresses__item">
+                                  {% assign address_id_string = address.id | append: '' %}
+                                  <h4>お届け先{{ index }}</h4>
+
+                                  {% render 'form-edit-account-checkout', customer: address, kana_first_name: metafields_kana_info[address_id_string].kana_first_name, kana_last_name: metafields_kana_info[address_id_string].kana_last_name %}
+                                </div>
+                                <div class="mypage__footer" data-controller="alert-trigger">
+                                  <button class="hidden popup-success" data-action="alert-trigger#open" type="button"></button>
+                                  <button class="button button--cta confirm-update" data-action="contact-information#updateAddress" type="button">登録する</button>
+                                  <button class="button button--has-icon-arrow-left" data-action="modal#close" type="button">もどる</button>
+                                  <template data-alert-trigger-target="template">
+                                    <div class="alert" data-alert-close-modal-value="true" data-controller="alert">
+                                      <div class="alert__title">登録完了しました</div>
+                                      <button class="button button--cta" data-action="alert#close alert#reloadPage" type="button">閉じる</button>
+                                    </div>
+                                  </template>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </template>
+                      {%- endif -%}
+                    {%- endfor -%}
+
+                    <button class="button button--has-icon-plus mb-20 lg:mb-0" data-action="modal-trigger#open" type="button">お届け先の追加</button>
+
+                    <template data-modal-trigger-target="template">
+                      <div class="modal modal-nav-bar lg:modal-full" data-controller="modal contact-information">
+                        <div class="modal__header">
+                          <button class="modal__nav-button sp" data-action="modal#close" type="button">
+                            {% render 'icon-arrow-left' %}
+                            購入：配送情報の指定
+                          </button>
+                          <button aria-label="閉じる" class="modal__close-button pc" data-action="modal#close" type="button">{% render 'icon-close' %}</button>
+                        </div>
+                        <div class="modal__content mypage">
+                          <div class="container gap-50 pt-50 pb-70">
+                            <h1 class="mypage__title">お届け先情報の追加・修正</h1>
+                            <div class="mypage-addresses__item">
+                              <h4>お届け先</h4>
+                              {% render 'form-new-address-checkout' %}
+                            </div>
+                            <div class="mypage__footer" data-controller="alert-trigger">
+                              <button class="hidden popup-success" data-action="alert-trigger#open" type="button"></button>
+                              <button class="button button--cta" data-action="contact-information#addNewAddress" type="button">登録する</button>
+                              <button class="button button--has-icon-arrow-left" data-action="modal#close" type="button">もどる</button>
+                              <template data-alert-trigger-target="template">
+                                <div class="alert" data-alert-close-modal-value="true" data-controller="alert">
+                                  <div class="alert__title">登録完了しました</div>
+                                  <button class="button button--cta" data-action="alert#close alert#reloadPage" type="button">閉じる</button>
+                                </div>
+                              </template>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </template>
+
+                    <template data-alert-trigger-target="template">
+                      <div class="alert" data-controller="alert contact-information">
+                        <div class="alert__title"></div>
+                        <div data-controller="alert-trigger" class="content-popup">
+                          <button type="button" data-action="alert#close alert-trigger#open" class="hidden popup-success"></button>
+                          <button class="button button--cta confirm-delete" data-action="contact-information#deleteAddress" type="button">削除する</button>
+                          <button class="button" data-action="alert#close" type="button">もどる</button>
+                          <template data-alert-trigger-target="template">
+                            <div class="alert" data-controller="alert">
+                              <div class="alert__title">削除完了しました</div>
+                              <button class="button button--cta" data-action="alert#close alert#reloadPage" type="button">閉じる</button>
+                            </div>
+                          </template>
+                        </div>
+                      </div>
+                    </template>
+                  </div>
+                </div>
+              </div>
+
+              <div class="error-message-address hidden" data-packaging-target="messageErrorLogin">
+                <div class="message first-name hidden">お届け先住所のお名前（名）を設定お願いします。</div>
+                <div class="message last-name hidden">お届け先住所のお名前（姓）を設定お願いします。</div>
+                <div class="message zipcode hidden">お届け先住所の郵便番号を設定お願いします。</div>
+                <div class="message prefecture hidden">お届け先住所の都道府県を設定お願いします。</div>
+                <div class="message city hidden">お届け先住所の市区町村を設定お願いします。</div>
+                <div class="message address hidden">お届け先住所の番地を設定お願いします。</div>
+                <div class="message phone hidden">お届け先住所の電話番号を設定お願いします。</div>
+              </div>
+            </div>
+          {%- else -%}
+            <div class="container gap-5">
+              <h4>お届け先</h4>
+              <div class="checkout-form-container">
+                {% render 'form-edit-account-checkout' %}
+              </div>
+            </div>
+          {%- endif -%}
+
+          <div class="container gap-20" data-contact-information-target="contentShipping">
+            <h4 class="lg:has-divider">配送方法</h4>
+
+            <ul class="checkout-radio-button-list list-shipping{% unless support_shipping %} hidden{% endunless %}">
+              <li class="checkout-radio-button-list__item checkout-radio-button-list__item--no-border">
+                <label class="radio-button">
+                  <input autocomplete="off" checked name="shipping-method" type="radio" value="normal">
+                  <span></span>
+                  <span>
+                    通常配送　{% if fee_shipping != 0 %}送料{% endif %}
+                    <span class="checkout__price">
+                      {%- if fee_shipping == 0 -%}
+                        送料無料
+                      {%- else -%}
+                        {{ fee_shipping | money }}
+                      {%- endif -%}
+                    </span>
+                    {%- if fee_shipping != 0 -%}
+                      <span class="checkout__tax-in">税込</span>
+                    {%- endif -%}
+                  </span>
+                </label>
+              </li>
+            </ul>
+
+            <div class="not-support-shipping{% if support_shipping %} hidden{% endif %}">
+              沖縄県・離島への発送不可
+            </div>
+          </div>
+        </div>
+        <hr class="full-width">
+        <div class="container gap-30 lg:gap-40 lg:pb-20{% if hide_gift_wrapping %} hidden{% endif %}">
+          <h2 class="text-center">包装指定</h2>
+
+          <ul class="checkout-toggle-buttons">
+            <li class="toggle-button">
+              <input autocomplete="off" checked class="toggle-button__button" data-checkout-target="wrappingButton" data-action="checkout#toggleGiftWrapping" name="wrapping" type="radio" value="normal">
+              <label class="toggle-button__label">
+                <img alt="" src="{{ 'icon_normal-wrapping.svg' | asset_url }}">
+                ギフト包装なし
+              </label>
+            </li>
+
+            <li class="toggle-button">
+              <input class="toggle-button__button" data-checkout-target="wrappingButton" data-action="checkout#toggleGiftWrapping" name="wrapping" type="radio" value="gift">
+              <label class="toggle-button__label">
+                <img alt="" src="{{'icon_gift-wrapping.svg' | asset_url}}">
+                ギフト包装あり（有料）
+              </label>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="checkout__footer{% unless invalid_go_to_next_step %} hidden{% endunless %}">
+        <a class="button button--cta lg:col-span-8{% unless support_shipping %} disabled{% endunless %}" data-action="{% unless customer %}contact-information#saveInfoNewAddress {% endunless %}packaging#processGiftWrapping" href="{% if hide_online_store %}/cart?view=pickup{% else %}/cart?view=delivery_date&method=shipping&packaging=normal{% endif %}">つぎに進む</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="checkout__sidebar" data-accordion-target="content">
+    <div class="container gap-50 lg:gap-60 pt-20 lg:pt-80 pb-50">
+      <div class="checkout-accordion-button checkout-accordion-button--cart pc">
+        {% render 'icon-cart' %}
+        <span>ご注文内容</span>
+        <p class="checkout-price">
+          {{ cart.total_price | times: discount_staff_account | plus: fee_shipping | money }}
+          <span class="checkout-price__tax-in">税込</span>
+        </p>
+      </div>
+
+      <h2 class="has-divider has-button" data-controller="alert-trigger">
+        ご注文商品
+        <button data-action="alert-trigger#open" type="button">カートに戻って修正する</button>
+        <template data-alert-trigger-target="template">
+          <div class="alert" data-controller="alert">
+            <div class="alert__title">入力内容が消えますが<br>よろしいでしょうか？</div>
+            <a class="button button--cta" href="/cart">内容削除してカートを修正</a>
+            <button class="button button--light" data-action="alert#close" type="button">購入フローに戻る</button>
+          </div>
+        </template>
+      </h2>
+
+      <div class="container gap-15 lg:gap-20">
+        {% for item in cart.items %}
+          {% render 'order-item-checkout', item: item, show_qty: true, slash: true, tag_sale_staff_discount: tag_sale_staff_discount %}
+        {% endfor %}
+      </div>
+
+      <div class="container gap-20 pc">
+        <hr>
+        <div class="detail-list">
+          <dl class="description-list grid-cols-2">
+            <dt>商品小計</dt>
+            <dd>
+              <span>{{ cart.items_subtotal_price | times: discount_staff_account | money }}</span>
+              <span class="detail-list__tax-in">税込</span>
+            </dd>
+
+            {% render 'easy_points_point_exchange_checkout_total' %}
+
+            <dt>小計</dt>
+            <dd>
+              <span>{{ cart.items_subtotal_price | times: discount_staff_account | money }}</span>
+              <span class="detail-list__tax-in">税込</span>
+            </dd>
+
+            {%- if hide_online_store -%}
+              {% assign fee_shipping = 0 %}
+            {%- endif -%}
+
+            <dt>送料</dt>
+            <dd class="shipping-fee">
+              {{ fee_shipping | money }}
+              <span class="detail-list__tax-in"> 税込</span>
+            </dd>
+
+            <dt class="detail-list__prices">お支払い合計</dt>
+            <dd class="detail-list__prices">
+              <span class="detail-list__price">{{ cart.total_price | times: discount_staff_account | plus: fee_shipping | money }}</span>
+              <span class="detail-list__tax-in">税込</span>
+            </dd>
+            <dt>内消費税</dt>
+            <dd class="total-tax">
+              {%- if fee_shipping == 77000 -%}
+                ({{ total_tax | round | plus: 7000 | money }})
+              {%- else -%}
+                ({{ total_tax | round | money }})
+              {%- endif -%}
+            </dd>
+            {% if customer %}
+              <dt class="detail-list__point{% if hide_online_store %} hidden{% endif %}" data-checkout-target="point">付与fポイント</dt>
+              <dd class="detail-list__point{% if hide_online_store %} hidden{% endif %}" data-checkout-target="point">
+                {%- unless shop.metafields.loyalty.easy_points_attributes.value.stealth_mode -%}
+                  {% render 'epa-checkout-points', use_cart: true %}
+                {%- endunless -%}
+              </dd>
+            {% endif %}
+          </dl>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Contact information",
+  "settings": [
+    {
+      "type": "textarea",
+      "id": "zipcode",
+      "label": "Zip code does not support shipping for product type 大型家具"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,38 @@
+<div id="child-inputs-{{child_num}}" class="grid-cols-2 child-input-section">
+    <div class="child-input-container">
+        <label class="input-form__label col-span-1 child-input-label">お子様のお名前（{{child_num}}人目)</label>
+        <input id="customer-modal-child{{child_num}}-name" autocomplete="name" class="col-span-1 child-name-input child-input" data-question="お子様のお名前（{{child_num}}人目)" data-action="change->event-reservation#validateText" name="name" required type="text">
+        <span class="error hide col-span-1 hide" id="error-child{{child_num}}-name">入力必須項目です。</span>
+    </div>
+    <div class="child-input-container">
+        <label class="input-form__label col-span-1 child-input-label">お子様の年齢（{{child_num}}人目)</label>
+        <select id="customer-modal-child{{child_num}}-age" class="col-span-1 child-age-input child-input" data-question="お子様の年齢（{{child_num}}人目)" required>
+            <option disabled selected>選択してください</option>
+            <option>0歳1ヶ月</option>
+            <option>0歳2ヶ月</option>
+            <option>0歳3ヶ月</option>
+            <option>0歳4ヶ月</option>
+            <option>0歳5ヶ月</option>
+            <option>0歳6ヶ月</option>
+            <option>0歳7ヶ月</option>
+            <option>0歳8ヶ月</option>
+            <option>0歳9ヶ月</option>
+            <option>0歳10ヶ月</option>
+            <option>0歳11ヶ月</option>
+            <option>1歳</option>
+            <option>2歳</option>
+            <option>3歳</option>
+            <option>4歳</option>
+            <option>5歳</option>
+            <option>6歳</option>
+            <option>7歳</option>
+            <option>8歳</option>
+            <option>9歳</option>
+            <option>10歳</option>
+            <option>11歳</option>
+            <option>12歳</option>
+        </select>
+        <span class="error hide col-span-1 hide" id="error-child{{child_num}}-age">入力必須項目です。</span>
+    </div>
+    
+</div>

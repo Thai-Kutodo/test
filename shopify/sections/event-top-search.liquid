@@ -1,0 +1,98 @@
+{% assign search_categories = settings.event_search_categories | split: "," %}
+{% assign event_products = products | map: "metafields" | where: "event_ticketing" %}
+{% assign event_collections = "" %}
+
+{% comment %} get collections with products that have event_ticketing metafields {% endcomment %}
+{% for collection in collections %}
+    {% if collection.products.first.metafields.event_ticketing.event_v2 %}
+      {% unless event_collections == "" %}
+        {% assign event_collections = event_collections | append: "," %}
+      {% endunless %}
+      {% assign event_collections = event_collections | append: collection.id %}
+    {% endif %}
+{% endfor %}
+
+{% comment %} set max date limit in days for calendar date picker {% endcomment %}
+{% assign calendarDateLimit = 60 | times: 24 | times: 60 | times: 60 %}
+
+<section>
+<input type="text" id="event_ids" value='{{ event_collections }}' hidden/>
+
+  <form action="/pages/event-results" class="search-event">
+    <div class="search-event__form">
+      <div data-controller="modal-trigger">
+        <label class="search-event__label">日程</label>
+        <input hidden id="selected-dates" name="date">
+        <button id="date-picker" class="button button--select" data-action="click->modal-trigger#open" type="button">
+          {% if has_default_value %}
+            2022/9/4
+          {% else %}
+            すべて
+          {% endif %}
+        </button>
+        <template data-modal-trigger-target="template">
+          <div class="modal modal-center lg:modal-center modal-calendar" data-controller="modal">
+            <div class="modal__header">イベント日程を選択</div>
+            <div class="modal__content">
+              <div class="calendar calendar--multiple-dates" data-calendar-max-date-value="{{ 'now' | date: '%s' | plus: calendarDateLimit | date: '%Y-%m-%d' }}" data-calendar-multiple-dates-value="true" data-controller="calendar"></div>
+            </div>
+          </div>
+        </template>
+      </div>
+      <div data-controller="modal-trigger">
+        <label class="search-event__label">店舗エリア</label>
+        <input hidden id="selected-areas" name="area">
+        <input hidden id="selected-stores" name="store">
+        <button id="area-picker" class="button button--select" data-action="click->modal-trigger#open" type="button" data-link_img_prefix="{{ '' | file_url | split: '?' | first }}">
+            エリア選択なし
+        </button>
+        <template data-modal-trigger-target="template">
+          <div class="modal modal-full lg:modal-full modal-store-list" data-controller="modal">
+            <div class="modal__header">
+              <button aria-label="閉じる" class="modal__close-button" data-action="modal#close" type="button">{% render 'icon-close' %}</button>
+            </div>
+            <div class="container gap-30 lg:gap-60">
+              <h1 class="modal__title">エリア・店舗を選択</h1>
+              <div class="modal__content">
+                <form>
+                  <ul class="store-list" id="store-list">
+                    <li class="accordion" data-controller="store-list">
+                      <div class="accordion__button accordion__button--has-icon accordion__button--has-no-arrow">
+                        <label  class="radio-button radio-button--full-width" data-action="click->store-list#reset">
+                          <input id="reset-input" checked name="area" type="radio" value="エリア選択なし">
+                          <span></span>
+                        </label>
+                        <span>エリア選択なし</span>
+                      </div>
+                    </li>
+                  </ul>
+                  <div class="submit-button submit-button--stickable grid-cols-3">
+                    <input id="reset-button" class="button button--light col-span-1" type="reset" value="リセット" >
+                    <button class="button button--cta col-span-2" data-action="modal#close" type="button">決定する</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </template>
+      </div>
+      <div>
+        <label class="search-event__label">イベント内容</label>
+        <select id="category-picker" name="category">
+        {% for category in search_categories %}
+          <option>{{category}}</option>
+        {% endfor %}
+        </select>
+      </div>
+    </div>
+    <label class="checkbox text-center">
+      <input id="available-checkbox" name="available" type="checkbox">
+      <span>{% render 'icon-checkbox' %}</span>
+      予約可能なイベントのみ表示
+    </label>
+    <div class="submit-button grid-cols-4">
+      <input class="button button--light col-span-1" onclick="document.getElementById('selected-dates').nextElementSibling.innerText = 'すべて'; document.getElementById('selected-stores').nextElementSibling.innerText = 'エリア選択なし'" type="reset" value="リセット">
+      <button class="button button--cta col-span-3" type="submit">この条件で検索</button>
+    </div>
+  </form>
+</section>

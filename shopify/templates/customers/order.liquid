@@ -1,0 +1,386 @@
+{% assign hmac = customer.id | hmac_sha256: settings.SALT %}
+{% assign item = order.line_items | first %}
+{% assign tracking_number = item.fulfillment.tracking_number %}
+
+{% comment %} payment gateways for displaying payment methods {% endcomment %}
+{% assign gift_card_total = 0 %}
+{% assign gatewaysString = "" %}
+{% assign partialPoints = false%}
+{%- for transaction in order.transactions -%}
+  {% comment %} Ignore failed transactions {% endcomment %}
+  {% if transaction.status != "success" and transaction.status != "pending" %}
+    {% continue %}
+  {% endif %}
+  {%- if transaction.gateway -%}
+    {% unless transaction.gateway contains "gift_card" %}
+      {% assign partialPoints = true %}
+    {% endunless %}
+    {% unless gatewaysString contains transaction.gateway%}
+      {% if forloop.index > 1 %}
+        {% assign gatewaysString = gatewaysString | append: "," %}
+      {% endif %}
+      {% assign gatewaysString = gatewaysString | append: transaction.gateway %}
+    {% endunless %}
+  {%- endif -%}
+{%- endfor -%}
+{% assign gatewaysList = gatewaysString | split: "," %}
+
+{% comment %} get gift wrapping and shopping bag totals from order {% endcomment %}
+{% assign gift_wrapping_total = 0 %}
+{% assign gift_wrapping_price = 16500 %}
+{% assign shopping_bag_total = 0 %}
+{% assign shopping_bag_price = 5500 %}
+
+{% assign isPointsItemOrder = false %}
+
+{% for line_item in order.line_items %}
+  {% if line_item.product.handle == 'ラッピング' %}
+    {% assign gift_wrapping_item  = line_item %}
+    {% assign gift_wrapping_total = gift_wrapping_total | plus: gift_wrapping_price | times: line_item.quantity %}
+  {% endif %}
+  {% if line_item.product.handle == '998002' %}
+    {% assign shopping_bag_total = shopping_bag_total | plus: shopping_bag_price | times: line_item.quantity %}
+  {% endif %}
+  {% comment %} check for points item in order {% endcomment %}
+  {% if line_item.product.tags contains "ポイント交換商品" and order.total_price == 0 %}
+    {% assign isPointsItemOrder = true %}
+  {% endif %}
+{% endfor %}
+
+{% comment %} check if points were used in order by checking order attributes {% endcomment %}
+{% assign pointsRedeemed = 0 %}
+{% assign pointsRedeemedInYen = 0 %}
+{% if order.attributes["ポイント利用"] != blank %}
+  {% assign pointsRedeemed = order.attributes["ポイント利用"] %}
+{% endif %}
+{% if order.attributes["利用ポイント"] != blank %}
+  {% assign pointsRedeemed = order.attributes["利用ポイント"] %}
+{% endif %}
+{% assign pointsRedeemedInYen = pointsRedeemed |  times: 1.1 | times: 100 %}
+
+{% comment %} check if points were fefunded in order by checking order attributes {% endcomment %}
+{% assign pointsRefunded = 0 %}
+{% assign pointsRefundedInYen = 0 %}
+{% if order.attributes["ポイント返金"] != blank %}
+  {% assign pointsRefunded = order.attributes["ポイント返金"] %}
+{% endif %}
+{% if order.attributes["返金ポイント"] != blank %}
+  {% assign pointsRefunded = order.attributes["返金ポイント"] %}
+{% endif %}
+{% assign pointsRefundedInYen = pointsRefunded |  times: 1.1 | times: 100 %}
+
+{% assign totalPointsRedeemedInYen =  pointsRedeemedInYen | minus: pointsRefundedInYen %}
+{% comment %} variables for displaying delivery information {% endcomment %}
+{% assign isSystemOrder = false %}
+{% if order.tags contains "客注システム" %}
+  {% assign isSystemOrder = true %}
+{% endif %}
+{% assign isTicketOrder = false %}
+{% if order.line_items.first.product.type == "Ticket" %}
+  {% assign isTicketOrder = true %}
+{% endif %}
+{% assign isOnlineOrder = false %}
+{% if order.attributes["注文店舗"] contains "ONLINE SHOP" %}
+  {% assign isOnlineOrder = true %}
+{% endif %}
+{% assign isVoidedOrder = false %}
+{% if order.financial_status == "refunded" or order.cancelled == true %}
+  {% assign isVoidedOrder = true %}
+{% endif %}
+{% assign isStorePickupOrder = false %}
+{% if order.attributes["店舗受取"] != blank %}
+  {% assign isStorePickupOrder = true %}
+{% endif %}
+<div id="order-info" data-customer="{{ customer.id }}" data-order="{{ order.id}}" hidden></div>
+
+<link rel="stylesheet" href="{{ 'print.css' | asset_url }}" media="print">
+<main class="mypage mypage-order-history">
+  <div class="container gap-40 pt-40 lg:pt-60">
+    <h1 class="mypage__title">ご注文履歴詳細</h1>
+    <div class="container gap-70 lg:gap-160 pb-70 lg:pb-160">
+      <div class="order-history-item">
+        <div class="order-history-item__header mb-30">
+          <div>
+            <div class="order-history-item__date-title">ご注文日</div>
+            <div class="order-history-item__date">{{ order.created_at | date: "%Y.%m.%d" }}</div>
+          </div>
+        </div>
+        {% unless isOnlineOrder == false or isTicketOrder or isSystemOrder or isStorePickupOrder %}
+          <div class="pt-20 mb-40">
+            <div class="stepper-wrapper" data-controller="stepper">
+              <div class="stepper-bar" data-stepper-target="bar">
+                <div class="stepper-bar__bg" data-stepper-target="bg"></div>
+                <div class="stepper-bar__progress" data-stepper-target="progress"></div>
+              </div>
+
+              {% comment %} set order status for stepper {% endcomment %}
+              {% comment %} TO DO: add logic for order packed? {% endcomment %}
+              {% if order.line_items.first.fulfillment.tracking_numbers.size > 0 %}
+                {% assign order_status = 2 %}
+              {% elsif order.fulfillment_status == "fulfilled"%}
+                {% assign order_status = 1 %}
+              {% else %}
+                {% assign order_status = 0 %}
+              {% endif %}
+              <ul class="stepper" data-stepper-target="stepper">
+                <li class="stepper__item {% if order_status == 0 %}stepper__item--current{% endif %}">
+                  <span class="stepper__circle"></span>
+                  <span class="stepper__title">商品準備中</span>
+                </li>
+                <li class="stepper__item {% if order_status == 1 %}stepper__item--current{% endif %}">
+                  <span class="stepper__circle"></span>
+                  <span class="stepper__title">発送完了</span>
+                </li>
+                <li class="stepper__item {% if order_status == 2 %}stepper__item--current{% endif %}">
+                  <span class="stepper__circle"></span>
+                  <span class="stepper__title">配送中</span>
+                </li>
+                <li class="stepper__item {% if order_status == 3 %}stepper__item--current{% endif %}">
+                  <span class="stepper__circle"></span>
+                  <span class="stepper__title">配送完了</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+           {% endunless %}
+        
+        {% comment %} shipping status text removed for now 06/18/2022 {% endcomment %}
+        {% comment %} <div class="order-history-item__description mb-40">配送センターにてご注文を確認中です。しばらくお待ち下さい。</div> {% endcomment %}
+        <div class="container gap-20 lg:gap-30">
+          {% unless isOnlineOrder == false or isTicketOrder or isSystemOrder or isStorePickupOrder %}
+            <hr>
+            <dl class="description-list grid-cols-3 lg:grid-cols-8">
+              <dt>配送会社</dt>
+              <dd class="col-span-2 lg:col-span-7">{{ order.line_items.first.fulfillment.tracking_company }}</dd>
+              <dt>伝票番号</dt>
+              <dd class="col-span-2 lg:col-span-7">
+                <a href="{{ order.line_items.first.fulfillment.tracking_url }}">{{ order.line_items.first.fulfillment.tracking_number }}</a>
+              </dd>
+            </dl>
+            <div class="expander" data-controller="expander">
+              <button class="expander__content1 expander__expand-button" data-action="expander#toggle" data-expander-target="content1" type="button">配送状況を確認</button>
+              <div class="expander__content2" data-expander-target="content2">
+                <dl class="order-status" id="trackings">
+                </dl>
+                <button class="expander__close-button expander__close-button--arrow-top" data-action="expander#toggle" type="button">閉じる</button>
+              </div>
+            </div>
+          {% endunless %}
+          <dl class="description-list grid-cols-3 lg:grid-cols-8">
+            {% comment %} <dt>お届け予定日</dt>
+            <dd class="col-span-2 lg:col-span-7">{{ order.line_items.first.fulfillment.created_at | date: "%Y.%m.%d" }}</dd> {% endcomment %}
+            <dt>ご注文番号</dt>
+            <dd class="col-span-2 lg:col-span-7">{{ order.order_number}}</dd>
+            <dt>ご注文金額</dt>
+            <dd class="col-span-2 lg:col-span-7">{{ order.total_price | money }}
+              <span class="description-list__tax-in">税込</span>
+            </dd>
+            {% assign order_status = order.fulfillment_status_label %}
+            {% if order.cancelled == true %}
+              {% assign order_status = "キャンセル済み" %}
+            {% endif %}
+            {% if order.fulfillment_status == "partially_refunded" or order.fulfillment_status == "refunded" %}
+              {% assign order_status = "返品受付" %}
+            {% endif %}
+            <dt>ご注文状態</dt>
+            <dd class="col-span-2 lg:col-span-7">{{ order_status }}</dd>
+
+            {% assign store_name = "-" %}
+            {% if order.attributes["注文店舗"] != blank %}
+              {% assign store_name = order.attributes["注文店舗"]| split: " " | first %}
+              {% if store_name contains "ONLINE" %}
+                {% assign store_name = "ONLINE STORE" %}
+              {% endif %}
+            {% endif %}
+
+            {% assign pickup_store_name = "-" %}
+            {% if order.attributes["店舗受取"] != blank %}
+              {% assign pickup_store_name = order.attributes["店舗受取"]| split: " " | first %}
+              {% if pickup_store_name contains "ONLINE" %}
+                {% assign pickup_store_name = "ONLINE STORE" %}
+              {% endif %}
+            {% endif %}
+
+            <dt>購入店名</dt>
+            {% if store_name != "-" %}
+                <dd class="col-span-2 lg:col-span-7">{{store_name}}</dd>
+            {% endif %}
+            {% if pickup_store_name != "-" %}
+              <dt>受取店舗</dt>
+              <dd class="col-span-2 lg:col-span-7">{{ pickup_store_name }}</dd>
+            {% endif %}
+          </dl>
+          <hr>
+        </div>
+        {% comment %} hide receipt button if: not online shop purchase, not made by credit card, delivery must be completed {% endcomment %}
+        {% if gatewaysList contains "shopify_payments" and isOnlineOrder and order.fulfillment_status == "fulfilled" and isVoidedOrder == false %}
+          <a class="button mt-50 lg:mt-80" href="/account?view=receipt&id={{ order.id }}" target="_blank">領収書</a>
+        {% endif %}
+      </div>
+      <div class="mypage__info-list">
+        <div class="mypage__info">
+          <h2 class="mypage__sub-title">ご注文商品</h2>
+          {% unless order.cancelled == true %}
+            {% render 'order-item-list', list_title: "包装なし" %}
+            {% comment %} look for items in wrapping groups 1-10 and display {% endcomment %}
+            {% for i in (1..10) %}
+              {% for line_item in order.line_items %}
+                {% assign item_wrapping_group_number = line_item.properties["梱包区分"] | minus: 0 %}
+                {% if item_wrapping_group_number == i %}
+                  {% assign list_title = "ギフト包装" | append: i %}
+                  {% render 'order-item-list', list_title: list_title, wrapping_group_number: i , gift_wrapping_item: gift_wrapping_item%}
+                  {% break %}
+                {% endif %}
+              {% endfor %}
+            {% endfor %}
+          {% endunless %}    
+        </div>
+        {% unless isTicketOrder == true or isStorePickupOrder == true %}
+          <div class="mypage__info">
+            <h4>お届け先情報</h4>
+            <div class="mypage__body">
+              {{ order.shipping_address.last_name }} {{ order.shipping_address.first_name }} 様<br>
+              〒{{ order.shipping_address.zip }}<br>
+              {{ order.shipping_address.province }}
+              {{ order.shipping_address.city }} {{ order.shipping_address.address1 }}<br>
+              {% if order.shipping_address.address2 != blank %}
+                {{ order.shipping_address.address2 }}<br>
+              {% endif %}
+              {{ order.shipping_address.phone }}
+            </div>
+          </div>
+        {% endunless %}
+        <div class="mypage__info">
+          <h4>ご注文者様の情報</h4>
+          <div class="mypage__body">
+            {{ order.billing_address.last_name }} {{ order.billing_address.first_name }} 様<br>
+            〒{{ order.billing_address.zip }}<br>
+            {{ order.billing_address.province }}
+            {{ order.billing_address.city }} {{ order.billing_address.address1 }}<br>
+            {% if order.billing_address.address2 != blank %}
+              {{ order.billing_address.address2 }}<br>
+            {% endif %}
+            {{ order.billing_address.phone }}
+          </div>
+        </div>
+        <div class="mypage__info">
+          <h4>支払い方法</h4>
+          <div class="mypage__body">
+            {% if isPointsItemOrder == true %}
+              全額ポイント決済
+            {% elsif isTicketOrder == true %}
+              店頭支払い
+            {% elsif isStorePickupOrder == true %}
+              店頭支払い
+            {% else %}
+              {% for gateway in gatewaysList %}
+                {% assign gatewayName = "" %}
+                {% comment %} only display points gateway if only points are used {% endcomment %}
+                {% if gateway contains "gift_card" and partialPoints == false %}
+                  {% assign gatewayName = "全額ポイント決済" %}
+                {% endif %}
+                {% if gateway == "manual" %}
+                  {% assign gatewayName = "店舗決済" %}
+                {% endif %}
+                {% if gateway == "shopify_payments" %}
+                  {% assign gatewayName = "クレジットカード決済" %}
+                {% endif %}
+                {% if gateway == "Smaregi" %}
+                  {% assign gatewayName = "店頭支払い" %}
+                {% endif %}
+                {% if gateway == "代金引換" %}
+                  {% assign gatewayName = "代金引換" %}
+                {% endif %}
+                {% if gatewayName != "" %}
+                  {{gatewayName}}
+                  <br>
+                {% endif %}
+              {% endfor %}
+            {% endif %}
+          </div>
+        </div>
+        <div class="mypage__info">
+          {%if isStorePickupOrder == true %}
+            <h4>お受け取り日時</h4>
+            <div class="mypage__body">
+              商品のご用意ができ次第、メールにてお知らせいたします。
+            </div>
+            {% else %}
+            <h4>お届け日時</h4>
+            <dl class="description-list grid-cols-2 lg:grid-cols-8">
+              <dt class="lg:col-span-2">希望お届け日</dt>
+              <dd class="lg:col-span-6">{{ order.attributes["お届け希望日"] }}</dd>
+              <dt class="lg:col-span-2">希望お届け時間</dt>
+              <dd class="lg:col-span-6">{{ order.attributes["お届け希望時間"] }}</dd>
+            </dl>
+          {% endif %}
+        </div>
+        <div class="mypage__info">
+          <h4>金額明細</h4>
+          <div class="detail-list">
+            <dl class="description-list grid-cols-2 lg:grid-cols-8">
+            {% comment %} item subtotal Price {% endcomment %}
+              <dt class="lg:col-span-2">商品小計</dt>
+              <dd class="lg:col-span-6">
+                <span>{{ order.subtotal_price | minus: gift_wrapping_total | minus: shopping_bag_total| money }}</span>
+                <span class="detail-list__tax-in">税込</span>
+              </dd>
+              {% comment %} gift wrapping price {% endcomment %}
+              <dt class="lg:col-span-2">ギフト包装</dt>
+              <dd class="lg:col-span-6">
+                <span>{{ gift_wrapping_total | money }}</span>
+                <span class="detail-list__tax-in">税込</span>
+              </dd> 
+              {% comment %} shopping bag price {% endcomment %}
+              <dt class="lg:col-span-2">ショッピングバッグ</dt>
+              <dd class="lg:col-span-6">
+                <span>{{ shopping_bag_total | money }}</span>
+                <span class="detail-list__tax-in">税込</span>
+              </dd>
+              {% comment %} points redeemed {% endcomment %}
+              <dt class="lg:col-span-2">fポイント利用</dt>
+              <dd id="ts-order-used-points" class="lg:col-span-6">{{ pointsRedeemed }}pts</dd>
+              {% comment %} subtotal with gift/bag/points discount{% endcomment %}
+              <dt class="lg:col-span-2">小計</dt>
+              <dd class="lg:col-span-6">
+                <span>{{ order.subtotal_price | minus: pointsRedeemedInYen | money }}</span>
+                <span class="detail-list__tax-in">税込</span>
+              </dd>
+              {% comment %} delivery price {% endcomment %}
+              <dt class="lg:col-span-2">送料</dt>
+              <dd class="lg:col-span-6">
+                <span>{{ order.shipping_price | money }}</span>
+                <span class="detail-list__tax-in">税込</span>
+              </dd>
+              {% comment %} consumption tax {% endcomment %}
+              <dt class="lg:col-span-2">内消費税</dt>
+              <dd class="lg:col-span-6">{{ order.tax_price | money }}</dd>
+              {% comment %} refunded amount {% endcomment %}
+              {% if order.total_refunded_amount > 0 %}
+                <dt class="lg:col-span-2">返金</dt>
+                <dd class="lg:col-span-6">-{{ order.total_refunded_amount | minus: pointsRefundedInYen | money }}</dd>
+              {% endif %}
+              {% comment %} refunded points {% endcomment %}
+              {% if pointsRefunded > 0 %}
+                <dt class="lg:col-span-2">fポイント返金</dt>
+                <dd class="lg:col-span-6">-{{ pointsRefunded }}pts</dd>
+              {% endif %}
+              {% comment %} final total {% endcomment %}
+              <dt class="lg:col-span-2 detail-list__prices">お支払い合計</dt>
+              <dd class="lg:col-span-6 detail-list__prices">
+                <span class="detail-list__price">{{ order.total_net_amount| minus: totalPointsRedeemedInYen | money }}</span>
+                <span class="detail-list__tax-in">税込</span>
+              </dd>
+              {% comment %} points earnt {% endcomment %}
+              <dt class="lg:col-span-2 detail-list__point">付与fポイント</dt>
+              <dd id="ts-order-earned-points" class="lg:col-span-6 detail-list__point">0pts</dd>
+            </dl>
+          </div>
+        </div>
+        <a class="button button--has-icon-arrow-left" href="/account?view=history">注文履歴一覧にもどる</a>
+      </div>
+    </div>
+  </div>
+</main>
+
+<div id="params" data-email="{{ customer.email }}" data-id="{{ customer.id }}" data-tracking="{{ tracking_number }}" data-hmac="{{ hmac }}"></div>

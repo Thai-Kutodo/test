@@ -1,0 +1,45 @@
+<input type="text" id="customer" data-id="{{ customer.id }}" data-email="{{ customer.email }}" data-product="{{ product.id }}" hidden/>
+<main class="mypage mypage-favorites">
+  <div class="container gap-30 lg:gap-60 pt-40 lg:pt-80 pb-70 lg:pb-160">
+    <h1 class="mypage__title">お気に入り</h1>
+    <div class="container gap-70 lg:gap-160">
+      <div class="mypage-favorites__list">
+        <div class="mypage-favorites__header">
+          <h2 class="mypage__sub-title">Item</h2>
+          <div id="fav-item-count-product" class="mypage-favorites__item-count"></div>
+        </div>
+        <ul class="item-list item-list--product">
+          {% comment %} fav items loaded here from favorites.ts {% endcomment %}
+        </ul>
+        <div class="mypage-favorites__footer">
+          <button id="js-load-more-product" class="button button--light hidden button--has-icon-arrow-bottom" data-page="1" type="button">もっと見る</button>
+        </div>
+      </div>
+      <div class="mypage-favorites__list">
+        <div class="mypage-favorites__header">
+          <h2 class="mypage__sub-title">Contents</h2>
+          <div class="mypage-favorites__item-count" id="fav-item-count-content"></div>
+        </div>
+        <ul class="item-list item-list--content">
+          {% comment %} fav collections loaded here from favorites.ts {% endcomment %}
+        </ul>
+        <div class="mypage-favorites__footer">
+          <button id="js-load-more-content" class="button hidden button--light button--has-icon-arrow-bottom" data-page="1" type="button">もっと見る</button>
+        </div>
+      </div>
+        {% comment %} TODO: W4 app for favoriting news articles {% endcomment %}
+      <div class="mypage-favorites__list">
+        <div class="mypage-favorites__header">
+          <h2 class="mypage__sub-title">News & Topics</h2>
+          <div class="mypage-favorites__item-count" id="fav-item-count-article"></div>
+        </div>
+        <ul class="item-list item-list--article">
+          
+        </ul>
+        <div class="mypage-favorites__footer">
+          <button id="js-load-more-article" class="button button--light hidden button--has-icon-arrow-bottom" data-page="1" type="button">もっと見る</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>

@@ -1,0 +1,180 @@
+{%- capture contentForQuerystring -%}{{ content_for_header }}{%- endcapture -%}
+{%- assign customerId = contentForQuerystring | split:'"pageurl":"' | last | split:'"' | first | replace:'\/','/' | replace:'%20',' ' | replace:'\u0026','&' | split: "/" -%}
+{% assign hmac = customerId[3] | hmac_sha256: settings.cart_api_salt %}
+<input type="text" id="hmac" value="{{ hmac }}" hidden/>
+{% comment %} ENTER ACTIVATION DETAILS TAB {% endcomment %}
+<main id="activate-details" class="mypage">
+  <div class="mypage-register-stepper mt-20 lg:mt-30">
+    <ul class="stepper">
+      {% assign items = "利用規約,メール認証,情報登録,完了" | split: ',' %}
+      {% for item in items %}
+        <li class="stepper__item{% if forloop.index0 == 2 %} stepper__item--current{% elsif forloop.index0 < 2 %} stepper__item--done{% endif %}">
+          <span class="stepper__title">{{ item }}</span>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <form id="details">
+  <div class="mypage-register">
+    <div class="container gap-50 lg:gap-60 pt-50 lg:pt-80">
+      <h1 class="mypage__title">アカウント情報登録</h1>
+      <div class="container gap-50 lg:gap-90">
+        <div class="container gap-20">
+          <h4>ログイン情報</h4>
+          <div class="input-form">
+            <h2 id="error-message" hidden>
+              <span class="visually-hidden">エラー </span>
+              <svg aria-hidden="true" focusable="false" role="presentation" viewBox="0 0 13 13">
+              <circle cx="6.5" cy="6.50049" r="5.5" stroke="white" stroke-width="2"></circle>
+              <circle cx="6.5" cy="6.5" r="5.5" fill="#EB001B" stroke="#EB001B" stroke-width="0.7"></circle>
+              <path d="M5.87413 3.52832L5.97439 7.57216H7.02713L7.12739 3.52832H5.87413ZM6.50076 9.66091C6.88091 9.66091 7.18169 9.37267 7.18169 9.00504C7.18169 8.63742 6.88091 8.34917 6.50076 8.34917C6.12061 8.34917 5.81982 8.63742 5.81982 9.00504C5.81982 9.37267 6.12061 9.66091 6.50076 9.66091Z" fill="white"></path>
+              <path d="M5.87413 3.17832H5.51535L5.52424 3.537L5.6245 7.58083L5.63296 7.92216H5.97439H7.02713H7.36856L7.37702 7.58083L7.47728 3.537L7.48617 3.17832H7.12739H5.87413ZM6.50076 10.0109C7.06121 10.0109 7.5317 9.57872 7.5317 9.00504C7.5317 8.43137 7.06121 7.99918 6.50076 7.99918C5.94031 7.99918 5.46982 8.43137 5.46982 9.00504C5.46982 9.57872 5.94031 10.0109 6.50076 10.0109Z" fill="white" stroke="#EB001B" stroke-width="0.7">
+              </path></svg>
+              <p id="error-text"></p>
+            </h2>
+            <div class="grid-cols-2">
+              <label class="input-form__label col-span-2">ログインID（メールアドレス）</label>
+              <input id="details-email" class="col-span-2" disabled name="email-address" type="text" value="">
+            </div>
+            <div class="grid-cols-2">
+              <label class="input-form__label col-span-2">パスワード*</label>
+              <p class="input-form__caption col-span-2">半角英数字8文字以上でご入力下さい。</p>
+              <input id="details-password" class="col-span-2" name="customer[password]" required type="password">
+                <span class="error hide col-span-1 hide" id="error-password"></span>
+            </div>
+            <div class="grid-cols-2">
+              <label class="input-form__caption col-span-2">確認のため、もう一度ご入力ください。</label>
+              <input id="details-password-confirm" class="col-span-2" name="customer[password_confirmation]" required type="password">
+              <span class="error hide col-span-1 hide" id="error-password-confirm"></span>
+            </div>
+          </div>
+        </div>
+        <div id="customer-details-container" class="container gap-20">
+          <h4>お客様情報</h4>
+          <div class="input-form">
+            {% render 'input-form' %}
+            <div class="grid-cols-2">
+              <label class="input-form__label col-span-2">性別</label>
+              <div class="col-span-2 radio-button-group">
+                {% assign items = "女性,男性,登録しない" | split: ',' %}
+                {% for item in items %}
+                  <label class="radio-button">
+                    <input name="gender" type="radio" value="{{ item }}" {% if forloop.first %} checked {% endif %}>
+                    <span></span>
+                    {{ item }}
+                  </label>
+                {% endfor %}
+              </div>
+            </div>
+            <div class="grid-cols-2">
+              <label class="input-form__label col-span-2">生年月日</label>
+              <div class="col-span-2">
+                {% render 'date-selector', year_min: 1900, year_default: 1970 %}
+              </div>
+            </div>
+            <div class="grid-cols-2">
+              <label class="input-form__label col-span-2">今後ファミリアからのメールでのご案内を受け取る</label>
+              <div class="col-span-2 radio-button-group">
+                <label class="radio-button">
+                  <input checked name="receive-news-letter" type="radio" value="はい">
+                  <span></span>
+                  はい
+                </label>
+                <label class="radio-button">
+                  <input name="receive-news-letter" type="radio" value="いいえ">
+                  <span></span>
+                  いいえ
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="mypage__footer">
+          <button id="go-to-confirm" class="button button--cta" name="確認する">確認する</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  </form>
+</main>
+
+{% comment %} CONFIRM ACTIVATION DETAILS TAB {% endcomment %}
+
+<main id="activate-confirm" class="mypage" hidden>
+  <div class="mypage-register-stepper mt-20 lg:mt-30">
+    <ul class="stepper">
+      {% assign items = "利用規約,メール認証,情報登録,完了" | split: ',' %}
+      {% for item in items %}
+        <li class="stepper__item{% if forloop.index0 == 2 %} stepper__item--current{% elsif forloop.index0 < 2 %} stepper__item--done{% endif %}">
+          <span class="stepper__title">{{ item }}</span>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+  <div class="mypage-register">
+    <div class="container gap-50 lg:gap-60 pt-50 lg:pt-80 pb-70 lg:pb-160">
+      <h1 class="mypage__title">アカウント情報登録</h1>
+      <div class="container gap-50 lg:gap-80">
+        <div class="container gap-20">
+          <h4>ログイン情報</h4>
+          <div class="description-list grid-cols-3 lg:grid-cols-8">
+            <dt class="lg:col-span-2">ログインID</dt>
+            <dd id="confirm-email" class="col-span-2 lg:col-span-6"></dd>
+            <dt class="lg:col-span-2">パスワード</dt>
+            <dd id="confirm-password" class="col-span-2 lg:col-span-6"></dd>
+          </div>
+        </div>
+        <div id="confirm-details-container" class="container gap-20">
+          <h4>お客様情報</h4>
+          <div class="description-list grid-cols-3 lg:grid-cols-8">
+            <dt class="lg:col-span-2">お名前</dt>
+            <dd id="confirm-name" class="col-span-2 lg:col-span-6"></dd>
+            <dt class="lg:col-span-2">お名前（カナ）</dt>
+            <dd id="confirm-kana" class="col-span-2 lg:col-span-6"></dd>
+            <dt class="lg:col-span-2">郵便番号</dt>
+            <dd id="confirm-postcode" class="col-span-2 lg:col-span-6">000-0000</dd>
+            <dt class="lg:col-span-2">都道府県</dt>
+            <dd id="confirm-province" class="col-span-2 lg:col-span-6">東京都</dd>
+            <dt class="lg:col-span-2">市区町村</dt>
+            <dd id="confirm-address1" class="col-span-2 lg:col-span-6">渋谷区恵比寿</dd>
+            <dt class="lg:col-span-2">番地</dt>
+            <dd id="confirm-address2" class="col-span-2 lg:col-span-6">1-20-4</dd>
+            <dt class="lg:col-span-2">建物名・部屋番号</dt>
+            <dd id="confirm-building" class="col-span-2 lg:col-span-6">SreedEBISU 2F</dd>
+            <dt class="lg:col-span-2">電話番号</dt>
+            <dd id="confirm-tel" class="col-span-2 lg:col-span-6">000-0000-0000</dd>
+            <dt class="lg:col-span-2">性別</dt>
+            <dd id="confirm-gender" class="col-span-2 lg:col-span-6">女性</dd>
+            <dt class="lg:col-span-2">生年月日</dt>
+            <dd id="confirm-birthday" class="col-span-2 lg:col-span-6">1000年10月10日</dd>
+            <dt class="lg:col-span-2">メールでのご案内を受け取る</dt>
+            <dd id="confirm-marketing" class="col-span-2 lg:col-span-6">はい</dd>
+          </div>
+        </div>
+        <div class="mypage__footer container gap-20">
+          {% form 'activate_customer_password', id: "hidden-activate-form", return_to: "/account/register?view=completed" %}
+            <input id="hidden-password"  type="password" name="customer[password]" hidden>
+            <input id="hidden-password-confirm"  type="password" name="customer[password_confirmation]" hidden>
+            <button type="submit" id="system-order-complete" class="button button--cta">登録する</button>
+          {% endform %}
+
+          <form id="metafields_form">
+            <input type="hidden" id="acc-id" name="customer[id]" >
+            <input type="hidden" id="acc-first-name" name="customer[first_name]" placeholder="First name" />
+            <input type="hidden" id="acc-last-name" name="customer[last_name]" placeholder="Last name" />
+            <input type="hidden" id="acc-first-kana" name="metafield[additional.kana_first_name]"  placeholder="First Kana" />
+            <input type="hidden" id="acc-last-kana" name="metafield[additional.kana_last_name]" placeholder="Last Kana" />
+            <input type="hidden" id="acc-gender" name="metafield[additional.gender]"/>
+            <input type="hidden" id="acc-year" name="metafield[additional.birth_year]"/>
+            <input type="hidden" id="acc-month" name="metafield[additional.birth_month]"/>
+            <input type="hidden" id="acc-day" name="metafield[additional.birth_day]" />
+            <input type="hidden" id="accepts-marketing" name="customer[accepts_marketing]"/>
+            <button type="submit" id="activate-complete" class="button button--cta">登録する</button>
+          </form>
+          <button id="go-back" class="button button--has-icon-arrow-left" data-action="back-button#goBack" data-controller="back-button" type="button">修正する</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>

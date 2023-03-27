@@ -1,0 +1,122 @@
+<div class="container gap-50 lg:gap-80 pt-40 lg:pt-50 pb-70 lg:pb-160">
+	<h1 class="store__title">{{ page.title | default: 'Store' }}</h1>
+	<hr>
+
+	{% if section.blocks.size > 0 %}
+		{% for block in section.blocks %}
+
+			{% case block.type %}
+
+				{% when "store" %}
+
+					<div class="container gap-30 lg:gap-60">
+						<h1 class="store__name">{{ block.settings.store_name }}</h1>
+						<div class="lg:grid-cols-2">
+						<div class="store__image">
+							{%- if block.settings.image -%}
+								<img src="{{ block.settings.image | img_url: 'master' }}">
+							{%- endif -%}
+						</div>
+						<div class="store__info">
+							<dl>
+							<dt>
+								<img alt="Address" height="18" src="{{ 'icon_address.svg' | asset_url }}" width="18">
+							</dt>
+							<dd>
+								<a href="{{ block.settings.link_address | default: 'https://www.google.com/maps/search/?api=1&query=33-2+Nishicho,+Chuo-ku,+Kobe,+Japan+650-0038' }}" target="_blank"> {{ block.settings.address }} </a>
+							</dd>
+							<dt>
+								<img alt="How to access" height="18" src="{{ 'icon_access.svg' | asset_url }}" width="18">
+							</dt>
+							<dd> {{ block.settings.address_2 }} </dd>
+							<dt>
+								<img alt="Phone number" height="18" src="{{ 'icon_tel.svg' | asset_url }}" width="18">
+							</dt>
+							<dd>
+								<a class="tel-link" href="tel:{{ block.settings.phone }}">{{ block.settings.phone | default: "+81 (0)78 321-2468" }} (direct line)</a>
+							</dd>
+							<dt>
+								<img alt="Business hours" height="18" src="{{ 'icon_hours.svg' | asset_url }}" width="18">
+							</dt>
+							<dd> {{ block.settings.work_day }} </dd>
+							<dt>
+								<img alt="Non-business day" height="18" src="{{ 'icon_calendar.svg' | asset_url }}" width="18">
+							</dt>
+							<dd>{{ block.settings.schedule }}</dd>
+							</dl>
+						</div>
+						</div>
+					</div>
+
+				{% endcase %}
+
+				{% unless forloop.last %}
+					<hr />
+				{% endunless %}
+
+			{% endfor %}
+    {% endif %}
+
+  </div>
+
+  {% schema %}
+{
+  "name": "Store Page",
+  "tag": "section",
+  "class": "section",
+  "settings": [],
+  "blocks": [
+		{
+			"type": "store",
+			"name": "Store local",
+			"settings": [
+			    {
+					"type": "text",
+					"id": "store_name",
+					"label": "Store Name"
+				},
+				{
+					"type":"image_picker",
+					"id": "image",
+					"label": "画像"
+				},
+				{
+					"type":"html",
+					"id": "address",
+					"default": "33-2 Nishicho, Chuo-ku, Kobe, Japan 650-0038",
+					"label": "Address"
+				},
+				{
+					"type": "url",
+					"id": "link_address",
+					"label": "Link Address"
+				},
+				{
+					"type": "html",
+					"id": "address_2",
+					"default": "JR Motomachi Station<br>Subway Kaigan Line Kyukyoryuchi-Daimarumae Station",
+					"label": "Address 2"
+				},
+				{
+					"type": "text",
+					"id": "phone",
+					"label": "Phone"
+				},
+				{
+					"type": "html",
+					"id": "work_day",
+					"default": "Mon - Thu 10:30 - 18:00<br>Fri - Sun ＆ national holidays 10:30 - 19:00",
+					"label": "Work Day"
+				},
+				{
+					"type": "text",
+					"id": "schedule",
+					"default": "Irregular holidays",
+					"label": "Schedule"
+				}
+			]
+		}
+  ]
+
+}
+{% endschema %}

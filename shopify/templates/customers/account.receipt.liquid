@@ -1,0 +1,80 @@
+{%- capture contentForQuerystring -%}{{ content_for_header }}{%- endcapture -%}
+{%- assign pageUrl = contentForQuerystring | split:'"pageurl":"' | last | split:'"' | first | replace:'\/','/' | replace:'%20',' ' | replace:'\u0026','&' -%}
+{%- assign pageQuerystring = pageUrl | split:'?' | last | replace:'=','&' -%}
+{%- assign receiptId = pageQuerystring | split:'&'| last -%}
+{% for order in customer.orders %}
+    {% assign orderId = order.id | strip %}
+    {% if orderId contains receiptId %}
+    {% comment %} check if points were used in order by checking order attributes {% endcomment %}
+    {% assign pointsRedeemed = 0 %}
+    {% if order.attributes["利用ポイント"] != blank %}
+    {% assign pointsRedeemed = order.attributes["利用ポイント"] %}
+    {% endif %}
+    {% comment %} get total credit card amount minus refunds {% endcomment %}
+    {% assign credit_card_total = 0 %}
+    {% for transaction in order.transactions %}
+        {% if transaction.gateway == "shopify_payments"%}
+            {% if transaction.kind == "refund" %}
+                {% assign credit_card_total = credit_card_total | minus: transaction.amount %}
+            {% endif %}
+            {% if transaction.kind == "authorization" %}
+                {% assign credit_card_total = credit_card_total | plus: transaction.amount %}
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+        <div id="order-info" data-customer="{{ customer.id }}" data-order="{{ order.id}}" hidden></div>
+        <main class="receipt_container">
+            <div class="receipt">
+                <div class="receipt__header mb-70">
+                    <h1>領収書</h1>
+                    <div class="receipt__info">
+                        {% render 'icon-logo' %}
+                        <p>ファミリアオンラインショップ</p>
+                        <p>〒651-0086<br>兵庫県神戸中央区磯上通43-10<br>TEL:0120-371-970<br>Email:customercenter@familiar-ltd.com</p>
+                    </div>
+                    </div>
+                    <div class="container gap-15 mb-60">
+                    <h2>{{ order.customer.last_name }} {{ order.customer.first_name}} 様</h2>
+                    <div>下記、正に領収しました。</div>
+                    </div>
+                    <div class="container gap-10 mb-50">
+                    <dl>
+                        <dt>
+                        <h3>金額</h3>
+                        </dt>
+                        <dd>
+                        <h3>{{ order.total_net_amount | money }}</h3>
+                        </dd>
+                    </dl>
+                    <hr>
+                    <div>但 商品代として</div>
+                    </div>
+                    <div class="container gap-10">
+                    <div>内訳</div>
+                    <hr>
+                    <dl>
+                        <dt>税抜金額</dt>
+                        <dd>{{ order.subtotal_price | money }}</dd>
+                        <dt>配送</dt>
+                        <dd>{{ order.shipping_price | money }}</dd>
+                        <dt>消費税等(10%)</dt>
+                        <dd>{{ order.tax_price | money }}</dd>
+                        {% if order.total_refunded_amount > 0 %}
+                            <dt>返金</dt>
+                            <dd>-{{ order.total_refunded_amount | money }}</dd>
+                        {% endif %}
+                    </dl>
+                    <hr>
+                    <dl>
+                        <dt>クレジットカード支払い</dt>
+                        <dd>{{ credit_card_total | money }}</dd>
+                        <dt>利用ポイント</dt>
+                        <dd id="ts-order-used-points">{{pointsRedeemed}}pt</dd>
+                    </dl>
+                </div>
+            </div>
+        </main>
+        {% break %}
+    {% endif %}
+{% endfor %}
+

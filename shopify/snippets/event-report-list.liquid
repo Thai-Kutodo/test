@@ -1,0 +1,13 @@
+<section class="event-list">
+  {% if title %}
+    <h2 class="event-list__title">{{ title }}</h2>
+  {% endif %}
+  <ul class="event-list__list">
+  {% comment %} Gets blocks from main-event section {% endcomment %}
+  {% for block in section.blocks %}
+    <li>
+      {% render 'event-item', event: block.settings.event, report_url: block.settings.report_url %}
+    </li>
+  {% endfor %}
+  </ul>
+</section>

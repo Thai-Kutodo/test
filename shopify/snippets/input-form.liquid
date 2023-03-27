@@ -1,0 +1,57 @@
+<div class="input-form">
+  {% if is_selectable_addresses == true %}
+    <div class="grid-cols-2">
+      <label class="input-form__label col-span-2">
+        登録したお届け先から選ぶ
+      </label>
+      <select name="province" class="col-span-2">
+        <option>選択してください</option>
+      </select>
+    </div>
+    <hr>
+  {% endif %}
+  <div class="grid-cols-2">
+    <label class="input-form__label col-span-2">お名前*</label>
+    <div>
+      <input autocomplete="family-name" class="col-span-1" name="family-name" placeholder="姓" required type="text" {% if has_name %} value="{{ customer.last_name }}" {% endif %}>
+      <span class="error hide col-span-1 hide" id="error-family-name">お名前をを入力してください</span>
+    </div>
+    <div>
+      <input autocomplete="given-name" class="col-span-1" name="given-name" placeholder="名" required type="text" {% if has_name %} value="{{ customer.first_name }}" {% endif %}>
+      <span class="error hide col-span-1 hide" id="error-given-name">お名前をを入力してください</span>
+    </div>
+  </div>
+  <div class="grid-cols-2">
+    <label class="input-form__label col-span-2">お名前（カナ）*</label>
+    <div>
+      <input class="col-span-1" name="family-name-kana" placeholder="セイ" required type="text" {% if has_name %} value="{{ customer.metafields.additional.kana_last_name }}" {% endif %}>
+      <span class="error hide col-span-1 hide" id="error-family-kana">お名前（カナ）をを入力してください</span>
+    </div>
+    <div>
+      <input class="col-span-1" name="given-name-kana" placeholder="メイ" required type="text" {% if has_name %} value="{{ customer.metafields.additional.kana_first_name }}" {% endif %}>
+      <span class="error hide col-span-1 hide" id="error-given-kana">お名前（カナ）をを入力してください</span>
+    </div>
+    <p class="input-form__caption col-span-2">全角で入力してください。</p>
+  </div>
+  <div class="grid-cols-2" data-controller="address">
+    <label class="input-form__label col-span-2">ご住所*</label>
+    <input autocomplete="postal-code" class="col-span-1" data-address-target="postalCode" maxlength="7" inputmode="numeric" name="postal-code" placeholder="郵便番号" required type="text">
+    <button class="col-span-1 button button--small" data-action="address#fetch" type="button">住所自動入力</button>
+    <span class="error hide col-span-1 hide" id="error-postal-code">郵便番号を入力してください</span>
+    <select autocomplete="address-level1" disabled class="col-span-2" data-address-target="prefecture" name="prefecture" placeholder="都道府県" required>
+      {% render 'prefecture-list' %}
+    </select>
+    <span class="error hide col-span-1 hide" id="error-prefecture">お問い合わせタイプを選択してください</span>
+    <input autocomplete="address-level2" class="col-span-2" data-address-target="address" name="address-line1" maxlength="16" placeholder="市区町村" required type="text">
+    <span class="error hide col-span-1 hide" id="error-city">市区町村を入力してください</span>
+    <input autocomplete="address-level3" class="col-span-2" name="address-line2" placeholder="番地" maxlength="16" type="text">
+    <span class="error hide col-span-1 hide" id="error-address-1">番地をを入力してください</span>
+    <input autocomplete="address-level3" class="col-span-2" name="building" placeholder="建物名・部屋番号" maxlength="16" type="text">
+    <span class="error hide col-span-1 hide" id="error-building">建物名・部屋番号を入力してください</span>
+  </div>
+  <div class="grid-cols-2">
+    <label class="input-form__label col-span-2">電話番号*</label>
+    <input autocomplete="tel" class="col-span-2" name="tel" maxlength="14" onkeyup="this.value=this.value.replace(/[^\d]/g,'')" placeholder="電話番号" required type="text">
+    <span class="error hide col-span-1 hide" id="error-tel">電話番号を入力してください</span>
+  </div>
+</div>

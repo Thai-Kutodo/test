@@ -1,0 +1,34 @@
+{
+    "sections": {
+        "event-header": {
+            "type": "event-top-header",
+            "settings": {}
+        },
+        "event-search": {
+            "type": "event-top-search",
+            "settings": {}
+        },
+        "event-recommendations": {
+            "type": "event-list",
+            "settings": {}
+        },
+        "event-reports": {
+            "type": "event-list",
+            "settings": {}
+        },
+        "event-articles": {
+            "type": "news-topics",
+            "settings": {
+                "heading": "News & Topics",
+                "link": "shopify:\/\/blogs\/ニュース"
+            }
+        }
+    },
+    "order": [
+        "event-header",
+        "event-search",
+        "event-recommendations",
+        "event-reports",
+        "event-articles"
+    ]
+}

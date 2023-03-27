@@ -1,0 +1,25 @@
+<section class="about-gift">
+  <h2 class="about-gift__title">{{ title }}</h2>
+  <hr>
+  <div class="about-gift__section-shipping-list">
+    <div class="about-gift__content">
+      <h3 class="about-gift__section-title">{{ sub_title }}</h3>
+      <p class="about-gift__section-sub-title">{{ content_subtitle }}</p>
+    </div>
+    <div class="about-gift__image">
+      {{ icon }}
+    </div>
+  </div>
+  <hr>
+  {%- for _block in block -%}
+  <div class="about-gift__section">
+    <img alt="ギフト包装" class="lazy animated about-gift__section-image" data-src="{{ _block.settings.image | img_url:'master' }}" width="330" height="254">
+    <div class="about-gift__section-content">
+      <h3 class="about-gift__section-title">{{ _block.settings.title }}</h3>
+      <p class="about-gift__section-body">{{ _block.settings.content }}</p>
+    </div>
+  </div>
+  <hr> 
+  {%- endfor -%}
+  <a href="{{ btn_url }}" class="button button--has-icon-arrow-right">{{ btn_title }}</a>
+</section>

@@ -1,0 +1,95 @@
+{% comment %}
+  Params:
+  - name: {String}
+  - soldout: {Boolean}
+  - size: {String}
+  - new: {Boolean}
+  - preorder: {Boolean}
+  - price: {Number}
+  - price_min: {Number}
+  - price_max: {Number}
+  - lazyload: {Boolean}
+{% endcomment %}
+{% assign soldout = true %}
+{% assign badge_sale = false %}
+{% assign badge_few_in_stock = false %}
+{% if card_product.available %}
+  {% assign soldout = false %}
+{% endif %}
+
+{%- if card_product.type == "セール品" -%}
+  {% assign badge_sale = true %}
+{%- endif -%}
+{%- for variant in card_product.variants -%}
+  {%- if variant.available and variant.inventory_quantity < 10 -%}
+    {% assign badge_few_in_stock = true %}
+    {% break %}
+  {%- endif -%}
+{%- endfor -%}
+<figure class="product-item{% if soldout %} product-item--soldout{% endif %} show">
+  <a
+    href="{{ card_product.url }}"
+    class="full-unstyled-link"
+    data-id="{{ card_product.id }}$$">
+    <div class="product-item__image">
+      <div class="product-item__tags">
+        {% if badge_sale %}
+          <span class="product-item__tag product-item__tag--sale">SALE</span>
+        {% endif %}
+        {% if badge_few_in_stock %}
+        <span class="product-item__tag">在庫わずか</span>
+        {% endif %}
+        {% if card_product.tags contains "NEW" %}
+          <span class="product-item__tag">NEW</span>
+        {% endif %}
+        {% if card_product.tags contains "予約商品" %}
+          <span class="product-item__tag">予約商品</span>
+        {% endif %}
+      </div>
+      {% if lazyload != false and card_product.featured_media %}
+        <img
+          alt="{{ card_product.featured_media.alt }}"
+          class="lazy animated"
+          data-src="{{ card_product.featured_media | img_url: 'master' }}">
+      {% else %}
+        <img
+          alt="{{ name }}"
+          class="no-image"
+          src="{{ card_product.featured_media | img_url: 'master' }}">
+      {% endif %}
+    </div>
+  </a>
+  <figcaption>
+    <h3 class="product-item__name">
+      <a href="{{ card_product.url }}" class="full-unstyled-link">
+        {{ card_product.title | escape }}
+      </a>
+    </h3>
+
+    {%- liquid
+      assign product_ep_metafield = card_product.metafields.loyalty.easy_points_attributes
+      assign point_cost = product_ep_metafield.value.point_exchange.point_cost
+      assign point_cost = product_ep_metafield.point_exchange.point_cost | default: point_cost
+    -%}
+
+    {%- if point_cost -%}
+      <p class="cart-item__price" {% render 'easy_points_point_exchange_product', product: card_product %}>
+        {{ point_cost | times: 100 | money_without_currency }}
+        <span class="easy-points__text easy-points__text--suffix">
+          {{ 'easypoints.points' | t }}
+        </span>
+      </p>
+    {%- endif -%}
+
+    {%- unless point_cost and card_product.price == 0 -%}
+      <p class="product-item__price">
+        {%- if card_product.price_min == card_product.price_max -%}
+          {{ card_product.price | money }}
+        {%- else -%}
+          {{ card_product.price_min | money }} - {{ card_product.price_max | money }}
+        {%- endif -%}
+        <span class="product-item__tax-in">税込</span>
+      </p>
+    {%- endunless -%}
+  </figcaption>
+</figure>

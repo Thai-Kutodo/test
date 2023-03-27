@@ -1,0 +1,166 @@
+{% assign total_tax = 0 %}
+{% assign discount_staff_account = 1 %}
+{% assign tag_sale_staff_discount = false %}
+{% assign invalid_go_to_next_step = true %}
+
+{%- for line_item in cart.items -%}
+  {%- for tag in line_item.product.tags -%}
+    {%- if tag contains '社販セール品' -%}
+      {% assign tag_sale_staff_discount = true %}
+    {%- endif -%}
+  {%- endfor -%}
+
+  {%- unless line_item.variant.available -%}
+    {% assign invalid_go_to_next_step = false %}
+  {%- endunless -%}
+{%- endfor -%}
+
+{%- if customer.tags contains '社員' and customer -%}
+  {%- if tag_sale_staff_discount -%}
+    {% assign discount_staff_account = 0.5 %}
+  {%- else -%}
+    {% assign discount_staff_account = 0.65 %}
+  {%- endif -%}
+{%- endif -%}
+
+{%- for item in cart.items -%}
+  {%- if item.product.tags contains '軽減税率対象' -%}
+    {% assign origin_price_line_item = item.final_line_price | times: discount_staff_account | divided_by: 1.08  %}
+    {% assign tax_line_item = item.final_line_price | times: discount_staff_account | minus: origin_price_line_item %}
+    {% assign total_tax = total_tax | plus: tax_line_item %}
+  {%- else -%}
+    {% assign origin_price_line_item = item.final_line_price | times: discount_staff_account | divided_by: 1.1 %}
+    {% assign tax_line_item = item.final_line_price | times: discount_staff_account | minus: origin_price_line_item %}
+    {% assign total_tax = total_tax | plus: tax_line_item %}
+  {%- endif -%}
+{%- endfor -%}
+
+{%- render 'header-checkout', media: 'sp', url: '/cart?view=contact_information' -%}
+{%- render 'breadcrumbs-checkout', class: "lg:mt-30 sp" -%}
+
+<button aria-expanded="false" class="checkout-accordion-button checkout-accordion-button--cart mt-50 sp" data-accordion-target="trigger" data-action="accordion#toggle" type="button">
+  {% render 'icon-cart' %}
+  <span>ご注文内容を表示</span>
+  <p class="checkout-price">
+    {{ cart.total_price | times: discount_staff_account | money }}
+    <span class="checkout-price__tax-in">税込</span>
+  </p>
+</button>
+
+<div class="checkout__wrapper" data-controller="pickup" data-link_img_prefix="{{ '' | file_url | split: '?' | first }}" data-cart_null="{% if cart.item_count > 0 %}false{% else %}true{% endif %}">
+  <div class="checkout__container">
+    {%- render 'header-checkout', media: 'pc', url: '/cart?view=contact_information' -%}
+    {%- render 'breadcrumbs-checkout',class: "lg:mt-30 pc" -%}
+
+    <div class="checkout__content">
+      <div class="container gap-50 lg:gap-80 pt-50 lg:pt-80">
+        <div class="container gap-20 lg:gap-40">
+          <h1>受取店舗選択</h1>
+          <div class="checkout-store-description">
+            <p data-controller="modal-trigger">
+              <button class="underlined-button" data-action="modal-trigger#open" type="button">店舗受取について</button>
+              <template data-modal-trigger-target="template">
+                <div class="modal modal-center lg:modal-center modal-about-pickup" data-controller="modal">
+                  <div class="modal__header">
+                    <button aria-label="閉じる" class="modal__close-button" data-action="modal#close" type="button">{% render 'icon-close' %}</button>
+                  </div>
+                  <div class="container gap-40 pb-30 lg:pb-50">
+                    <h1 class="modal__title">店舗受取について</h1>
+                    <div class="modal__content">
+                      <div class="modal-about-pickup__container">
+                        <div class="modal-about-pickup__image">
+                          <img alt="店舗受取について" src="{{ 'about-pickup.png' | asset_url }}">
+                        </div>
+                        <div class="modal-about-pickup__body">
+                          <p>
+                            オンラインショップで気になる商品をファミリアショップで受け取ることができるサービスです。<br>ファミリアショップで実際に商品をご確認いただき、気にいった商品だけご購入いただけます。
+                          </p>
+                          <ul>
+                            <li>送料・手数料無料</li>
+                            <li>お支払いはファミリアショップにてお願いいたします。</li>
+                            <li>入荷連絡はメールまたは電話にて差し上げます。</li>
+                            <li>ファミリアショップでのお取り置き期限は入荷連絡日から一週間です。<br>1週間経過後は自動的にキャンセルとさせていただきます。</li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </template>
+            </p>
+          </div>
+        </div>
+
+        <ul class="store-list pt-30 center">読み込んでいます...</ul>
+        <a class="button button--has-icon-arrow-left sp" href="/cart?view=contact-information">受取選択へ戻る</a>
+      </div>
+
+      <div class="checkout__footer">
+        <a class="button button--has-icon-arrow-left pc lg:col-span-4" href="/cart?view=contact_information">受取選択へ戻る</a>
+        <a class="button button--cta lg:col-span-4 disabled{% unless invalid_go_to_next_step %} hidden{% endunless %}" href="/cart?view=pickup_confirm">つぎへ進む</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="checkout__sidebar" data-accordion-target="content">
+    <div class="container gap-50 lg:gap-60 pt-20 lg:pt-80 pb-50">
+      <div class="checkout-accordion-button checkout-accordion-button--cart pc">
+        {% render 'icon-cart' %}
+        <span>ご注文内容</span>
+        <p class="checkout-price">
+          {{ cart.total_price | times: discount_staff_account | money }}
+          <span class="checkout-price__tax-in">税込</span>
+        </p>
+      </div>
+
+      <h2 class="has-divider has-button" data-controller="alert-trigger">
+        ご注文商品
+        <button data-action="alert-trigger#open" type="button">カートに戻って修正する</button>
+        <template data-alert-trigger-target="template">
+          <div class="alert" data-controller="alert">
+            <div class="alert__title">入力内容が消えますが<br>よろしいでしょうか？</div>
+            <a class="button button--cta" href="/cart">内容削除してカートを修正</a>
+            <button class="button button--light" data-action="alert#close" type="button">購入フローに戻る</button>
+          </div>
+        </template>
+      </h2>
+
+      <div class="container gap-15 lg:gap-20">
+        {% for item in cart.items %}
+          {% render 'order-item-checkout', item: item, show_qty: true, slash: true, tag_sale_staff_discount: tag_sale_staff_discount %}
+        {% endfor %}
+      </div>
+
+      <div class="container gap-20 pc">
+        <hr>
+        <div class="detail-list">
+          <dl class="description-list grid-cols-2">
+            <dt>商品小計</dt>
+            <dd>
+              <span>{{ cart.items_subtotal_price | times: discount_staff_account | money }}</span>
+              <span class="detail-list__tax-in">税込</span>
+            </dd>
+            {% render 'easy_points_point_exchange_checkout_total' %}
+            <dt>小計</dt>
+            <dd>
+              <span>{{ cart.items_subtotal_price | times: discount_staff_account | money }}</span>
+              <span class="detail-list__tax-in">税込</span>
+            </dd>
+            <dt>送料</dt>
+            <dd>¥0 <span class="detail-list__tax-in"> 税込</span></dd>
+
+            <dt class="detail-list__prices">お支払い合計</dt>
+            <dd class="detail-list__prices">
+              <span class="detail-list__price">{{ cart.total_price | times: discount_staff_account | money }}</span>
+              <span class="detail-list__tax-in">税込</span>
+            </dd>
+            <dt>内消費税</dt>
+            <dd>({{ total_tax | money }})</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% render 'store-locator-restrictions' %}

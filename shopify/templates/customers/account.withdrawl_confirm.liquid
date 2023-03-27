@@ -1,0 +1,63 @@
+{% assign hmac = customer.id | hmac_sha256: settings.SALT %}
+<input type="text" id="hmac" value="{{ hmac }}" hidden/>
+
+<main id="withdrawl_confirm" class="mypage mypage-leave">
+  <button id='hidden-logout-button' href="/account/logout" hidden></button>
+  <div class="container gap-50 lg:gap-60 pt-40 lg:pt-60">
+    <h1 class="mypage__title">退会手続き</h1>
+    <div class="mypage__description mypage__description--large">全ての会員情報が削除となりますが、<br class="sp">よろしいですか？</div>
+    <div class="mypage-leave__buttons">
+      <button class="button button--has-icon-arrow-left" data-action="back-button#goBack" data-controller="back-button" type="button">もどる</button>
+      {% comment %} TODO: delete account function {% endcomment %}
+      {% comment %} <a class="button button--cta" id="delete__account" href="/account?view=withdrawl_complete" data-email="{{customer.email}}" data-customer-id="{{ customer.id}}">退会する</a> {% endcomment %}
+      <form action='{{settings.redirection_url}}' method='post' id='delete_me-button'>
+        <button class="button button--cta" id='delete-account-button' type='submit' data-email='{{ customer.email }}' data-customer-id='{{ customer.id }}'><span>退会する</span></button>
+      </form>
+    </div>
+  </div>
+</main>
+
+<main id="withdrawl_complete" class="mypage mypage-leave" hidden>
+  <div class="container gap-50 lg:gap-60 pt-40 lg:pt-60 pb-70 lg:pb-160">
+    <h1 class="mypage__title">退会手続き</h1>
+    <div class="mypage__description mypage__description--large">ファミリアメンバーズのご利用、<br class="sp">誠に有難うございました。</div>
+    <div class="mypage__footer">
+      <a class="button button--has-icon-arrow-left" href="/">TOPへ</a>
+    </div>
+  </div>
+</main>
+
+{% comment %} <script id='delete_me-js-script'>
+  document.addEventListener('DOMContentLoaded', function(event) {
+    const deleteAccountButton = document.getElementById('delete-account-button');
+    const logoutBtn = document.querySelector("a[href='/account/logout']");
+
+    if (deleteAccountButton) {
+      deleteAccountButton.addEventListener('click', function(event) {
+        event.preventDefault();
+        const xmlHttp = new XMLHttpRequest();
+        const { email, customerId } = deleteAccountButton.dataset;
+        const x = confirm('{{ settings.customer_delete_confirmation }}');
+
+        if (x) {
+          $.post('/apps/deleteme/customer-delete', {
+              delete_id: customerId,
+              delete_email: email
+          }).done(function() {
+              alert('{{ settings.customer_deleted_success }}');
+          }).done(function() {
+              //location.href = '{{ settings.redirection_url }}';
+              location.href = "/account?view=withdrawl_complete";
+          }).fail(function(data) {
+              if (data.responseText === 'Customer Subscribed') {
+                  alert('{{ settings.customer_subscribed_error }}');
+              } else {
+                  alert('{{ settings.customer_delete_global_error }}');
+              }
+          })
+        }
+      })
+    }
+  });
+</script> {% endcomment %}
+

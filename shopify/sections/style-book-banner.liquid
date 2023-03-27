@@ -1,0 +1,41 @@
+<section class="page-header">
+  <div class="page-header__hero">
+    {%- if section.settings.style_banner -%}
+      <img
+        alt="{{ section.settings.style_banner.alt | default: 'STYLEBOOK'  }}"
+        class="lazy animated"
+        data-src="{{ section.settings.style_banner | img_url: 'master' }}">
+    {% else %}
+      {{ 'image' | placeholder_svg_tag: 'my-custom-class' }}
+    {%- endif -%}
+  </div>
+  {% if section.settings.banner_description != blank %}
+    <p class="page-header__description">{{ section.settings.banner_description | newline_to_br }}</p>
+  {% endif %}
+  {% if section.settings.banner_caution != blank %}
+    <p class="page-header__caution">{{ section.settings.banner_caution | newline_to_br }}</p>
+  {% endif %}
+</section>
+
+{% schema %}
+  {
+    "name": "t:sections.styleboook.banner.name",
+    "class": "section-style-book-banner",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "style_banner",
+        "label": "t:sections.styleboook.banner.settings.style_banner"
+      }, {
+        "type": "text",
+        "id": "banner_description",
+        "label": "t:sections.styleboook.banner.settings.banner_description"
+      }, {
+        "type": "text",
+        "id": "banner_caution",
+        "label": "t:sections.styleboook.banner.settings.banner_caution"
+      }
+    ],
+    "blocks": []
+  }
+{% endschema %}

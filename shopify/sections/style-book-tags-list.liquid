@@ -1,0 +1,33 @@
+<form action="#" id="filterStyleBook" name="filterStyleBook" data-stylebook-collection-target="filterStyleBook" >
+	<ul class="category-tab">
+		{% assign items = "すべて,男の子,女の子" | split: ',' %}
+		
+		{% for item in items %}
+			<li class="category-tab__item">
+			<label>
+				<input name="gender" type="radio" value="{{ item | handle }}" {% if forloop.first %} checked {% endif %}>
+				<span>{{ item }}</span>
+			</label>
+			</li>
+		{% endfor %}
+	</ul>
+	<ul class="stylebook__tag-list">
+		{% assign items = "#New born,#Baby,#Toddler,#School,#Dress,#Admission & Graduation" | split: ',' %}
+		{% for item in items %}
+			<li>
+			<label class="tag tag--large">
+				<input name="category"  value="{{ item | remove: "#" | handle }}" type="checkbox">
+				<span>{{ item }}</span>
+			</label>
+			</li>
+		{% endfor %}
+	</ul>
+</form>
+{% schema %}
+{
+  "name": "t:sections.styleboook.tags.name",
+  "class": "section-tags-list",
+  "settings": [],
+  "blocks": []
+}
+{% endschema %}

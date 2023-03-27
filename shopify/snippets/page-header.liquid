@@ -1,0 +1,11 @@
+<section class="page-header">
+	<div class="page-header__hero">
+	  <img alt="{{ title }}" class="lazy animated" data-src="{{ image | img_url:'master' }}">
+	</div>
+	{% if description %}
+	  <p class="page-header__description">{{ description | newline_to_br }}</p>
+	{% endif %}
+	{% if caution %}
+	  <p class="page-header__caution">{{ caution | newline_to_br }}</p>
+	{% endif %}
+</section>

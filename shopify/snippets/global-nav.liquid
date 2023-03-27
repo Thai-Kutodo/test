@@ -1,0 +1,51 @@
+<nav class="global-nav" data-global-nav-target="globalNav">
+  <div class="global-nav__header">
+    <button aria-label="メニューを閉じる" class="global-nav__back-button" data-action="global-nav#close" type="button">{% render 'icon-arrow-left' %}</button>
+  </div>
+
+  <div class="global-nav__sns">
+    <a href="{{ settings.social_instagram_link }}" data-sns="Instagram" rel="noopener" target="_blank">
+      {% render 'icon-instagram' %}
+    </a>
+  </div>
+
+  <div class="global-nav__menu">
+    <ul class="global-nav__menu-primary">
+      {%- if request.locale.iso_code == 'ja' -%}
+        {%- for link in linklists[settings.menu_top_sidebar].links -%}
+          <li {% if link.title contains ":en" %}lang="en"{% endif %}>
+            <a href="{{ link.url }}" {% if link.title contains ":_blank" %}target="_blank"{% endif %}>{{ link.title | remove: ":en" | remove: ":_blank" }}</a>
+          </li>
+        {%- endfor -%}
+      {%- else -%}
+        {%- for link in settings.menu_en.links -%}
+          <li>
+        <a href="{{ link.url }}" {% if link.title contains 'OnlineStore : FARFETCH familiar' %}target="_blank"{% endif %}>{{ link.title }}</a>
+          </li>
+        {%- endfor -%}
+      {%- endif -%}
+    </ul>
+    {%- if request.locale.iso_code == 'ja' -%}
+      <ul class="global-nav__menu-secondary">
+        {%- for link in linklists[settings.menu_sidebar].links -%}
+          <li {% if link.title contains ":en" %}lang="en"{% endif %}>
+            <a href="{{ link.url }}" {% if link.title contains ":_blank" %}target="_blank"{% endif %}>{{ link.title | remove: ":en" | remove: ":_blank" }}</a>
+          </li>
+        {%- endfor -%}
+      </ul>
+
+      <ul class="global-nav__menu-tertiary">
+        {%- for link in linklists[settings.menu_guide].links -%}
+          <li>
+            <a href="{{ link.url }}">{{ link.title }}</a>
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+    <div class="global-nav__language">
+      <a {% if request.locale.iso_code contains 'ja' %}class="global-nav__language--current"{% endif %} href="/">JAPANESE</a>
+      /
+      <a {% if request.locale.iso_code contains 'en' %}class="global-nav__language--current"{% endif %} href="/en">ENGLISH</a>
+    </div>
+  </div>
+</nav>

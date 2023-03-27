@@ -1,0 +1,13 @@
+
+{%- if section.settings.image_completed -%}
+<section class="link-image">
+	<a href="{{ section.settings.url_completed | default: '#' }}">
+	  <div class="tagged-image">
+		<img alt="{{ section.settings.tag_completed }}" class="lazy animated" data-src="{{ section.settings.image_completed | img_url: 'master' }}" />
+		{%- if section.settings.tag_completed != blank -%}
+		<span class="tag tag--small">{{ section.settings.tag_completed }}</span>
+		{%- endif -%}
+	  </div>
+	</a>
+</section>
+{%- endif -%}

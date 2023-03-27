@@ -1,0 +1,137 @@
+{% assign sales_end_date = line_item.product.metafields.pre-order.sales_end_date.value | default: line_item.product.metafields.custom.sales_end_date.value %}
+{% assign convert_sales_end_date = sales_end_date | date: '%s' | plus: 0 %}
+{% assign current_time = 'now' | date: '%s' | plus: 0 %}
+{% assign discount_staff_account = 1 %}
+{% assign tag_sale_staff_discount = false %}
+
+{%- for tag in line_item.product.tags -%}
+  {%- if tag contains '社販セール品' -%}
+    {% assign tag_sale_staff_discount = true %}
+  {%- endif -%}
+{%- endfor -%}
+
+{%- if customer.tags contains '社員' and customer -%}
+  {%- if tag_sale_staff_discount -%}
+    {% assign discount_staff_account = 0.5 %}
+  {%- else -%}
+    {% assign discount_staff_account = 0.65 %}
+  {%- endif -%}
+{%- endif -%}
+
+{% comment %} get variant color translation from hiden inputs {% endcomment %}
+
+
+{% for product_option in line_item.product.options_with_values %}
+  {%- if product_option.name == "サイズ" -%}
+    {% assign target_position_size = product_option.position | minus: 1 %}
+  {%- endif -%}
+
+  {%- if product_option.name == "カラー" -%}
+    {% assign target_position_color = product_option.position | minus: 1 %}
+  {%- endif -%}
+{% endfor %}
+
+{% assign first_letter = line_item.variant.options[target_position_size] | first | plus: 0 %}
+
+{%- if first_letter == 0 -%}
+  {% assign variant_size = line_item.variant.options[target_position_size] | slice: 1, 2 %}
+{%- else -%}
+  {% assign variant_size = line_item.variant.options[target_position_size] %}
+{%- endif -%}
+
+<div class="cart-item">
+  <div class="cart-item__image">
+    <a href="{{ line_item.url }}">
+      {%- if line_item.variant.featured_image != blank -%}
+        <img alt="{{ line_item.product.title }}" src="{{ line_item.variant.featured_image | image_url: width: 500 }}" />
+      {%- elsif line_item.product.featured_image != blank -%}
+        <img alt="{{ line_item.product.title }}" src="{{ line_item.product.featured_image | image_url: width: 500 }}" />
+      {%- else -%}
+        <img alt="{{ line_item.product.title }}" src="" />
+      {%- endif -%}
+    </a>
+  </div>
+  <div class="cart-item__body">
+    <p class="cart-item__name"><a href="{{ line_item.url }}">{{ line_item.product.title }}</a></p>
+    <p class="cart-item__id"><a href="{{ line_item.url }}">商品番号 {{ line_item.product.handle }}</a></p>
+
+    {%- if target_position_color == blank and target_position_size == blank and line_item.product.has_only_default_variant == false -%}
+      {%- for option in line_item.product.options_with_values -%}
+        <p class="cart-item__size"><a href="{{ line_item.url }}">{{ option.name }} ：{{ line_item.variant.options[forloop.index0] }}</a></p>
+      {%- endfor -%}
+    {%- endif -%}
+
+    {%- if variant_size != blank -%}
+      <p class="cart-item__size"><a href="{{ line_item.url }}">サイズ ：{{ variant_size }}</a></p>
+    {%- endif -%}
+
+    {% comment %} get variant color translation {% endcomment %}
+    {%- if line_item.variant.options[target_position_color] != blank -%}
+      {% assign variant_color_code = line_item.variant.options[target_position_color] | handle %}
+      {% unless variant_color_code == blank %}
+        {% assign variant_color_text_array = variant_color_text | split: ","  %}
+        {% if FAMILIAR.localeCode == "en" %}
+          <p class="cart-item__color"><a href="{{ line_item.url }}-en">カラー ：<span data-handle-name="{{variant_color_code}}"></span></a></p>
+        {% else %}
+          <p class="cart-item__color"><a href="{{ line_item.url }}">カラー ：<span data-handle-name="{{variant_color_code}}"></span></a></p>
+        {% endif %}
+      {% else %}
+        <p class="cart-item__color"><a href="{{ line_item.url }}">カラー ：{{ line_item.variant.options[target_position_color] }}</a></p>
+      {% endunless %}
+    {%- endif -%}
+
+    {%- if line_item.properties != blank -%}
+      <p class="cart-item__properties cart-item__color">
+        {% for property in line_item.properties %}
+          {%- if property.first != "_line_item" -%}
+            <a href="{{ line_item.url }}">{{ property.first }}: {{ property.last }}</a>
+            {%- unless forloop.last -%}<br>{%- endunless -%}
+          {%- endif -%}
+        {% endfor %}
+      </p>
+    {%- endif -%}
+
+    {%- liquid
+      assign product_ep_metafield = line_item.product.metafields.loyalty.easy_points_attributes
+      assign point_cost = product_ep_metafield.value.point_exchange.point_cost
+      assign point_cost = product_ep_metafield.point_exchange.point_cost | default: point_cost
+    -%}
+
+    {%- if point_cost -%}
+      <p class="cart-item__price" {% render 'easy_points_point_exchange_product', product: line_item.product %}>
+        {{ point_cost | times: 100 | money_without_currency }}
+        <span class="easy-points__text easy-points__text--suffix">
+          {{ 'easypoints.points' | t }}
+        </span>
+      </p>
+    {%- endif -%}
+
+    {%- unless point_cost and line_item.variant.price == 0 -%}
+      <p class="cart-item__price">
+        <a href="{{ line_item.url }}">
+          {{ line_item.variant.price | times: discount_staff_account | money }}
+          <span class="cart-item__tax-in">税込</span>
+        </a>
+      </p>
+    {%- endunless -%}
+
+    {%- if current_time < convert_sales_end_date and convert_sales_end_date != 0 -%}
+      <p class="cart-item__expiration">販売期間：{{ sales_end_date | date: '%Y/%m/%d' }}まで</p>
+    {%- endif -%}
+
+
+    <div class="cart-item__footer" data-controller="quantity">
+      <div class="item-counter">
+        <button aria-label="個数を減らす" class="item-counter__decrement" {% if line_item.variant.price == 0 %}{% render 'easy_points_point_exchange_product', product: line_item.product %}{% endif %} data-key="{{ line_item.key }}" data-action="quantity#decrement" data-quantity-target="decrement" type="button"></button>
+        <input class="item-counter__value" data-quantity-target="value" max="{% if line_item.product.metafields.additional.max_qty != blank %}{{ line_item.product.metafields.additional.max_qty }}{% else %}9{% endif %}" min="1" type="number" value="{{ line_item.quantity }}">
+        <button aria-label="個数を増やす" class="item-counter__increment" {% if line_item.variant.price == 0 %}{% render 'easy_points_point_exchange_product', product: line_item.product %}{% endif %} data-key="{{ line_item.key }}" data-action="quantity#increment" data-inventory="{{ line_item.variant.inventory_quantity }}" data-quantity-target="increment" type="button"></button>
+      </div>
+      <div class="cart-item__delete">
+        <button class="underlined-button" {% render 'easy_points_point_exchange_product', product: line_item.product %} data-qty="{{ line_item.quantity }}" data-key="{{ line_item.key }}" data-title="{{ line_item.product.title }}" data-id="{{ line_item.product.id }}" data-price="{{ line_item.variant.price }}" data-color="{{ line_item.variant.options[target_position_color] }}" data-action="quantity#removeItem" type="button">
+          <!-- {{ line_item.url_to_remove }} -->
+          <a href="">削除</a>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,22 @@
+{
+	"sections": {
+	  "main": {
+		"type": "style-book-banner"
+	  },
+	  "tags":{
+		"type": "style-book-tags-list"
+	  },
+	  "book-default":{
+		"type": "main-list-collections-stylebook"
+	  },
+	  "stylebook-top": {
+		"type": "style-book-default"
+	  }
+	},
+	"order": [
+	  "main",
+	  "tags",
+	  "book-default",
+	  "stylebook-top"
+	]
+  }

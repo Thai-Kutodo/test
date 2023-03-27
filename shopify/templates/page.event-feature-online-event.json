@@ -1,0 +1,16 @@
+{
+    "sections": {
+        "event-feature-header": {
+            "type": "event-feature-header",
+            "settings": {}
+        },
+        "event-feature-list": {
+            "type": "event-list",
+            "settings": {}
+        }
+    },
+    "order": [
+        "event-feature-header",
+        "event-feature-list"
+    ]
+}

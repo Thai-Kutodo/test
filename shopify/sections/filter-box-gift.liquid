@@ -1,0 +1,80 @@
+  {% assign min = section.settings.min %}
+  {% assign max = section.settings.max %}
+  {% assign step = section.settings.step %}
+  {% assign value = section.settings.value %}
+  {% assign banner = section.settings.banner %}
+  {% assign description = section.settings.description %}
+    <div>
+      <div class="container gap-50 lg:gap-80">
+        <section class="page-header">
+          <div class="page-header__hero">
+            <img alt="{{ title }}" class="lazy animated" data-src="{{ banner | img_url:'master' }}">
+          </div>
+          {% if description %}
+          <p class="page-header__description">{{ description | newline_to_br }}</p>
+          {% endif %}
+        </section>
+        {% render 'search-gift', min: min, max: max, step: step, value: value %}
+      </div>
+    </div>
+  {% schema %}
+  {
+    "name": "t:sections.filter_box_gift.name",
+    "settings": [
+      {
+        "type": "header",
+        "content": "t:sections.filter_box_gift.settings.banner.content"
+      },
+      {
+        "type": "image_picker",
+        "id": "banner",
+        "label": "t:sections.filter_box_gift.settings.banner.content"
+      },
+ 
+      {
+        "type": "textarea",
+        "id": "description",
+        "label": "t:sections.filter_box_gift.settings.description.label",
+        "default": "ファミリアのご出産祝い。<br> おすすめのセットやギフトの選び方をご提案します。"
+      },
+      {
+        "type": "header",
+        "content": "t:sections.filter_box_gift.settings.config_price_range.label"
+      },
+ 
+      {
+        "type": "text",
+        "id": "min",
+        "label": "t:sections.filter_box_gift.settings.min_price.label",
+        "default": "0"
+      },
+      {
+        "type": "text",
+        "id": "step",
+        "label": "t:sections.filter_box_gift.settings.step.label",
+        "default": "1000"
+      },
+      {
+        "type": "text",
+        "id": "max",
+        "label": "t:sections.filter_box_gift.settings.max_price.label",
+        "default": "50000"
+      },
+      {
+        "type": "header",
+        "content": "t:sections.filter_box_gift.settings.config_category.content"
+      },
+      {
+        "type": "textarea",
+        "id": "value",
+        "label": "t:sections.filter_box_gift.settings.values.label",
+        "default": "お洋服,名入れギフト,雑貨,人気のギフト"
+      } 
+    ],
+    "presets": [
+      {
+        "name": "t:sections.filter_box_gift.name"
+      }
+    ]
+  }
+  {% endschema %}

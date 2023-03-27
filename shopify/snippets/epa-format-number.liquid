@@ -1,0 +1,14 @@
+{%- comment -%} START EASYPOINTS - DO NOT MODIFY! 変更しないでください! INFO @ https://bit.ly/2Dn7ESM {%- endcomment -%}
+{%- liquid
+  assign number = number | default: '0' | strip_newlines | strip
+  assign digits = number | split: ''
+  for digit in digits
+    assign threeFromEnd = digits.size | minus: forloop.index | modulo: 3
+    if threeFromEnd == 2 and forloop.index != 1
+      echo digit | prepend: ','
+    else
+      echo digit
+    endif
+  endfor
+-%}
+{%- comment -%} END EASYPOINTS {%- endcomment -%}

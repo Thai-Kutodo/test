@@ -1,0 +1,104 @@
+
+<!-- Define the template use filter -->
+{% assign checkTypeFilter = '' %}  
+{% assign countItem = '' %}
+{% assign resultItem = '' %}
+{% if typeFilter == "collection" %}
+  {%- liquid
+    assign checkTypeFilter = collection
+    assign countItem = collection.products_count
+    assign resultItem = collection.products
+  -%}
+{% else %}
+  {%- liquid
+    assign checkTypeFilter = search
+    assign countItem = search.results_count
+    assign resultItem = search.results
+  -%}
+{% endif  %}
+
+<div class="search-list-line"></div>
+<section class="product-list" data-controller="search-result">
+  <div class="product-list__header product-filter__header">
+    <ul class="product-list__category-tab category-tab">
+      {% assign items = "すべて,男の子,女の子" | split: ',' %}
+      {% for item in items %}
+        <li class="category-tab__item">
+          <label>
+            <input name="sex" type="radio" value="{{ item }}" class="name-gender" data-type="{{ collection.url }}" data-action="input->search#clickInputGender" {% if valueGender == item %}checked{% endif %}>
+            <span>{{ item }}</span>
+          </label>
+        </li>
+      {% endfor %}
+    </ul>
+    <div class="product-list__item-count">
+      <span id="ProductCount">
+        {{ countItem }} {% if countItem > 1 %} items {% else %} item {% endif %}
+        </span> 
+      </div>
+    <div class="product-list__control">
+      <label class="checkbox">
+        <input name="filter.v.availability" type="checkbox" class="name-stock" data-type="{{ collection.url }}" id="name-stock"  {% if hasStock %} checked {% endif %} data-action="input->search#clickInputStock">
+        <span>{% render 'icon-checkbox' %}</span>
+        在庫ありのみ表示
+      </label>
+      <div class="sort-button__container" data-controller="popup">
+       
+        <button aria-expanded="false" class="sort-button" data-action="popup#toggle" data-popup-target="button" type="button">並び替え</button>
+        <div class="sort-button__popup" data-popup-target="popup">
+          {% if typeFilter == "collection" %}
+            {%- assign sort_by = collection.sort_by | default: collection.default_sort_by -%}
+            <label class="radio-button">
+              <input name="order-by" type="radio" data-type="{{ collection.url }}" value="created-descending" {% if sort_by == 'created-descending' %} checked {% endif %} data-action="input->search#clickSortBy">
+              <span></span> 新着順 
+            </label>
+            <label class="radio-button">
+              <input name="order-by" type="radio" data-type="{{ collection.url }}" value="manual" {% if sort_by == 'manual' %}  checked {% endif %} data-action="input->search#clickSortBy">
+              <span></span> おすすめ順 
+            </label>
+            <label class="radio-button">
+              <input name="order-by" type="radio" data-type="{{ collection.url }}" value="best-selling" {% if sort_by == 'best-selling' %}  checked {% endif %} data-action="input->search#clickSortBy">
+              <span></span> 人気順 
+            </label>
+          {% else %}
+            {%- assign sort_by = search.sort_by | default: search.default_sort_by -%}
+            {%- for option in checkTypeFilter.sort_options -%}
+              <label class="radio-button">
+                <input name="order-by" type="radio" data-type="{{ collection.url }}" value="{{ option.value | escape }}" {% if  option.value  == sort_by %} checked {% endif %} data-action="input->search#clickSortBy">
+                <span></span>
+                {{ option.name | escape }}
+              </label>
+            {% endfor %}
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="product-list-result">
+    <div class="{%- if countItem == 0 -%}item-list-empty{% else %}item-list--product{%- endif -%}" data-controller="product-list">
+      {%- if countItem == 0 -%}
+        <p class="product-list__no-items">該当するアイテムがありませんでした</p>
+      {%- else -%}
+        {%- for item in resultItem -%}
+          {% assign lazy_load = false %}
+					{%- if forloop.index > 2 -%}
+						{%- assign lazy_load = true -%}
+					{%- endif -%}
+          <div>
+            {%- render 'product-item', 
+            card_product: item,
+            media_aspect_ratio: true,
+            show_secondary_image: true,
+            lazyload: lazy_load 
+            -%}
+          </div>
+        {%- endfor -%}  
+      {%- endif -%}
+    </div>
+    {%- if paginate.pages > 1 -%}
+      <div class="mt-90">
+        {% render 'pagination-product', paginate: paginate %}
+      </div>
+    {%- endif -%}
+  </div>
+</section>

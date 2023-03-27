@@ -1,0 +1,61 @@
+<section class="gallery is-loading" data-controller="gallery">
+  {%- for _block in block -%}
+  {% assign type_style = _block.settings.type_style %}
+  {% assign revise_style = _block.settings.revise_style %}
+  {% if type_style == 'type_1' %}
+    {% assign type_style = 'top' %}
+  {% elsif type_style == 'type_2'  %}
+    {% assign type_style = 'a' %}
+  {% else %}
+    {% assign type_style = 'b' %}
+  {% endif %}
+  {% if revise_style == 'right' %}
+    {% assign revise_style = '-reverse' %}
+  {% else %}
+    {% assign revise_style = '' %}
+  {% endif %}
+      <ul class="gallery__grid gallery__grid-{{ type_style }}{{ revise_style }}">
+        {% if _block.settings.image1.size > 0  %}
+          <li>
+            <a href="{{  _block.settings.url_1 }}">
+              <div class="gallery__image tagged-image">
+                <img alt="{{  _block.settings.tag_1 }}" data-src="{{ _block.settings.image1 | img_url:'master' }}">
+                <span class="tag tag--small">{{ _block.settings.tag_1 }}</span>
+              </div>
+            </a>
+          </li>
+          {% endif %}
+          {% if _block.settings.image2.size > 0  %}
+          <li>
+            <a href="{{  _block.settings.url_2 }}">
+              <div class="gallery__image tagged-image">
+                <img alt="{{  _block.settings.tag_2 }}" data-src="{{ _block.settings.image2 | img_url:'master' }}">
+                <span class="tag tag--small">{{ _block.settings.tag_2}}</span>
+              </div>
+            </a>
+          </li>
+          {% endif %}
+          {% if _block.settings.image3.size > 0  %}
+          <li>
+            <a href="{{  _block.settings.url_3 }}">
+              <div class="gallery__image tagged-image">
+                <img alt="{{  _block.settings.tag_3 }}" data-src="{{ _block.settings.image3 | img_url:'master' }}">
+                <span class="tag tag--small">{{ _block.settings.tag_3 }}</span>
+              </div>
+            </a>
+          </li>
+          {% endif %}
+          {% if _block.settings.image4.size > 0  %}
+          <li>
+            <a href="{{  _block.settings.url_4}}">
+              <div class="gallery__image tagged-image">
+                <img alt="{{  _block.settings.tag_4 }}" data-src="{{ _block.settings.image4 | img_url:'master' }}">
+                <span class="tag tag--small">{{  _block.settings.tag_4 }}</span>
+              </div>
+            </a>
+          </li>
+          {% endif %}
+      </ul>
+  {%- endfor -%}
+
+</section>

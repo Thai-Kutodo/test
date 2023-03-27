@@ -1,0 +1,13 @@
+{
+  "sections": {
+    "item": {
+      "type": "checkout-contact-information",
+      "settings": {
+
+      }
+    }
+  },
+  "order": [
+    "item"
+  ]
+}

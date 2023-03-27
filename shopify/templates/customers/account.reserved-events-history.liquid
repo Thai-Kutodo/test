@@ -1,0 +1,43 @@
+<main class="mypage mypage-reserved-events">
+  <div class="container gap-40 lg:gap-80 pt-40 lg:pt-60 pb-70 lg:pb-160">
+    <h1 class="mypage__title">過去に参加したイベント</h1>
+    <div class="mypage-reserved-events__list">
+      {% for order in customer.orders %}
+        {% assign firstLineItem = order.line_items | first %}
+        {% if firstLineItem.product.type == "Ticket"  and order.financial_status != "refunded" and order.cancelled == false %}
+          {% assign ticket = firstLineItem.product %}
+          {% assign eventData = ticket.metafields.event_ticketing.event_v2.value %}
+          {% assign eventDate = eventData.date | date: "%Y-%m-%d" %}
+          {% assign eventStartTime = eventData.starts_at | replace: "-08:00", "+09:00" %}
+          {% assign eventEndTime = eventData.ends_at | replace: "-08:00", "+09:00" %}
+          {% assign eventStartTime24 = eventStartTime | date: "%H:%M"%}
+          {% assign eventEndTime24 = eventEndTime | date: "%H:%M" %}
+          {% assign eventDay = eventStartTime | date: "%A" %}
+          {% assign dayKanji = "events.event_reservations." | append: eventDay %}
+          {% assign currentDateDate = "now" | date: "%s" %}
+          {% assign ticketEndDate = eventEndTime | date: "%s" %}
+          {% if currentDateDate > ticketEndDate %}
+            <div class="mypage-reserved-events__item">
+              <h2 class="mypage__sub-title">マタニティセミナー</h2>
+              <dl class="description-list grid-cols-3 lg:grid-cols-10">
+                <dt class="lg:col-span-2">開催日時</dt>
+                <dd class="col-span-2 lg:col-span-8">{{eventDate | replace: "-", "/" }}（{{ dayKanji | t }}）{{eventStartTime24}}-{{eventEndTime24}}</dd>
+                <dt class="lg:col-span-2">開催場所</dt>
+                <dd class="col-span-2 lg:col-span-8">{{ eventData.venue.name }}</dd>
+                <dt class="lg:col-span-2">予約枠数</dt>
+                <dd class="col-span-2 lg:col-span-8">{{ firstLineItem.quantity }}枠</dd>
+                <dt class="lg:col-span-2">参加料金/1枠</dt>
+                <dd class="col-span-2 lg:col-span-8">{{ firstLineItem.final_price | money_without_currency }}円</dd>
+              </dl>
+            </div>
+            {% endif %}
+        {% endif %}
+      {% endfor %}
+      <div class="container gap-30 lg:gap-40">
+        <a class="button button--has-icon-arrow-left"  href="/account/?view=reserved-events">予約中のイベントにもどる</a>
+        <a class="button" href="/account" >マイページへ</a>
+      </div>
+    </div>
+  </div>
+</main>
+

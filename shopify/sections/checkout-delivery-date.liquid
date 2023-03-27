@@ -1,0 +1,321 @@
+{% assign product_shopping_bag = all_products['998002'] %}
+{% assign qty_shopping_bag = 0 %}
+{% assign product_type = '' %}
+{% assign hide_date_time = false %}
+{% assign hide_date = false %}
+{% assign large_furniture = false %}
+{% assign total_number_gift = 0 %}
+{% assign array_shopping_bag = '' %}
+{% assign is_separate_item = false %}
+{% assign hide_gift_wrapping = true %}
+{% assign heading_delivery_step = '包装指定・お届け日時指定' %}
+{% assign hide_shopping_bag = false %}
+{% assign discount_staff_account = 1 %}
+{% assign tag_sale_staff_discount = false %}
+{% assign invalid_go_to_next_step = true %}
+
+{%- for _item in cart.items -%}
+  {%- if _item.product.handle == '998002' -%}
+    {% assign qty_shopping_bag = _item.quantity %}
+  {%- endif -%}
+
+  {%- unless _item.variant.available -%}
+    {% assign invalid_go_to_next_step = false %}
+  {%- endunless -%}
+
+  {%- if _item.product.handle != 'ラッピング' -%}
+    {%- unless _item.product.tags contains 'ギフト包装不可' -%}
+      {% assign total_number_gift = total_number_gift | plus: _item.quantity %}
+    {%- endunless -%}
+  {%- endif -%}
+
+  {%- for tag in _item.product.tags -%}
+    {%- if tag contains '社販セール品' -%}
+      {% assign tag_sale_staff_discount = true %}
+    {%- endif -%}
+  {%- endfor -%}
+
+  {%- if _item.properties["梱包区分"] != blank and _item.properties["梱包区分"] != '0' -%}
+    {%- unless array_shopping_bag contains _item.properties["梱包区分"] -%}
+      {% assign array_shopping_bag = array_shopping_bag | append: _item.properties["梱包区分"] | append: ',' %}
+    {%- endunless -%}
+  {%- endif -%}
+
+  {%- if _item.product.type == '大型家具' -%}
+    {% assign large_furniture = true %}
+  {%- endif -%}
+
+  {%- if _item.product.type == 'メーカー直送' or _item.product.type == '大型家具' -%}
+    {% assign hide_shopping_bag = true %}
+  {%- endif -%}
+
+  {%- if _item.product.type != '大型家具' and _item.product.type != 'メーカー直送' and _item.product.type != 'セール品' -%}
+    {%- unless _item.product.tags contains 'ギフト包装不可' -%}
+      {% assign hide_gift_wrapping = false %}
+    {%- endunless -%}
+  {%- endif -%}
+
+  {%- if _item.product.type == '大型家具' or _item.product.type == 'メーカー直送' or _item.product.type == 'セール品' or _item.product.tags contains 'ギフト包装不可' -%}
+    {% assign heading_delivery_step = 'お届け日時指定' %}
+  {%- endif -%}
+
+  {%- unless product_type contains _item.product.type -%}
+    {% assign product_type = product_type | append: _item.product.type %}
+
+    {%- unless forloop.last -%}
+      {% assign product_type = product_type | append: ',' %}
+    {%- endunless -%}
+  {%- endunless -%}
+
+  {%- if _item.properties["_line_item"] != blank -%}
+    {% assign is_separate_item = true %}
+  {%- endif -%}
+{%- endfor -%}
+
+{% assign array_product_type = product_type | split: ',' %}
+
+{%- for product_type in array_product_type -%}
+  {%- if product_type == 'メーカー直送' -%}
+    {% assign hide_date_time = true %}
+  {%- elsif product_type == 'オーダー品' or product_type == '予約品' -%}
+    {% assign hide_date = true %}
+  {%- endif -%}
+{%- endfor -%}
+
+{% assign maximum_shopping_bag = array_shopping_bag | remove_last: ',' | split: ',' | size %}
+
+{% capture shopping_bag %}
+  <li class="checkout-order-item-list__item checkout-order-item-list__item--shopping-bag{% if hide_shopping_bag %} hidden{% endif %}">
+    <div class="order-item">
+      <div class="order-item__image">
+        {%- if product_shopping_bag.featured_image != blank -%}
+          <img alt="ショッピングバッグ" height="110" src="{{ product_shopping_bag.featured_image | image_url: width: master }}" width="82">
+        {%- else -%}
+          <img alt="ショッピングバッグ" height="110" src="" width="82">
+        {%- endif -%}
+      </div>
+      <div class="order-item__body">
+        <p class="order-item__name">{{ product_shopping_bag.title }}</p>
+        <p class="order-item__price">
+          {{ product_shopping_bag.price | money }}
+          <span class="order-item__price-info">税込 / 1枚</span>
+        </p>
+      </div>
+    </div>
+    <div class="counter">
+      <button class="counter__decrement" data-action="checkout#decrementItem" data-checkout-target="decrement" type="button"></button>
+      <input class="counter__value" data-checkout-target="value" max="{% if maximum_shopping_bag == 0 %}1{% else %}{{ maximum_shopping_bag | plus: 1 }}{% endif %}" min="0" type="number" value="{% if hide_shopping_bag %}0{% else %}{{ qty_shopping_bag }}{% endif %}">
+      <button class="counter__increment" data-action="checkout#incrementItem" data-checkout-target="increment" type="button"></button>
+    </div>
+    <p class="checkout-order-item-list__caution">
+      ショッピングバッグの枚数は<br>自宅包装：最大1枚　ギフト包装：包装個数＋1枚<br>ご選択いただけます。
+    </p>
+  </li>
+{% endcapture %}
+
+{%- if hide_gift_wrapping -%}
+  <script type="text/javascript">
+    if (location.search.includes('&packaging=gift')) {
+      location.href = '/cart?view=delivery_date&method=shipping&packaging=normal';
+    }
+  </script>
+{%- endif -%}
+
+<div class="js-extraDay" data-extra_day="{{ large_furniture }}"></div>
+<div data-packaging-target="cartItem" class="hidden">{{ cart.items | json }}</div>
+
+<div class="header header--simplified">
+  <div class="header__left">
+    <a aria-label="戻る" href="/cart?view=contact_information" class="header__left-button{% if is_separate_item %} merge-lineItem{% endif %}" {% if is_separate_item %}data-action="packaging#processGiftWrapping"{% endif %} id="nav-button">{% render 'icon-arrow-left' %}</a>
+  </div>
+  <div class="header__logo">
+    <a href="/">
+      {% render 'icon-logo' %}
+    </a>
+  </div>
+  <div class="header__right"></div>
+</div>
+
+{%- render 'breadcrumbs-checkout',class: "mt-20 lg:mt-30", hide_online_store: false -%}
+
+<div class="checkout__single-column mt-50 lg:mt-80" data-controller="delivery-date" data-cart_null="{% if cart.item_count > 0 %}false{% else %}true{% endif %}">
+  <div class="container gap-50 lg:gap-80">
+    <div class="container gap-50 lg:gap-40">
+      <h1 class="text-center">{{ heading_delivery_step }}</h1>
+
+      <div class="container gap-50 hidden banner-gift-wrapping">
+        <div class="accordion checkout-about-gift-wrapping" data-controller="accordion">
+          <button aria-expanded="true" class="accordion__button" data-accordion-target="trigger" data-action="accordion#toggle" type="button">
+            ギフト包装
+          </button>
+          <div class="accordion__content" data-accordion-target="content">
+            <div class="container gap-20 lg:gap-40">
+              <div class="checkout-about-gift-wrapping__container">
+                <figure>
+                  {%- if section.settings.banner != blank -%}
+                    <div class="checkout-about-gift-wrapping__image">
+                      <img alt="ギフト包装" src="{{ section.settings.banner | image_url: width: 1200 }}">
+                    </div>
+                    <figcaption>※ 写真はイメージです</figcaption>
+                  {%- endif -%}
+                </figure>
+                <ul>
+                  <li>ギフト包装代：1包装あたり ¥165 税込</li>
+                  <li>商品の形状によりラッピング方法が異なります。</li>
+                  <li>箱包装・熨斗の取り扱いはございません。</li>
+                </ul>
+              </div>
+              <button class="accordion__close-button" data-accordion-target="trigger" data-action="accordion#toggle" type="button">閉じる</button>
+            </div>
+          </div>
+        </div>
+        <hr class="full-width sp">
+      </div>
+
+      <div class="container gap-30 lg:gap-40">
+        <h2 class="has-divider has-button">
+          ご注文商品
+          <div data-controller="alert-trigger">
+            <button data-action="alert-trigger#open" type="button">カートに戻って修正する</button>
+            <template data-alert-trigger-target="template">
+              <div class="alert" data-controller="alert packaging">
+                <div class="alert__title">入力内容が消えますが<br>よろしいでしょうか？</div>
+                <a class="button button--cta" href="/cart">内容削除してカートを修正</a>
+                <button class="button button--light" data-action="alert#close" type="button">購入フローに戻る</button>
+              </div>
+            </template>
+          </div>
+        </h2>
+
+        <ul class="checkout-order-item-list">
+          {% for item in cart.items %}
+            {% assign properties_gift_wrap = item.properties['梱包区分'] | plus: 0 %}
+
+            {%- if item.product.handle != '998002' and item.product.handle != 'ラッピング' -%}
+              {%- capture custom_property -%}
+                  {
+                    {%- for property in item.properties -%}
+                      "{{ property.first }}": "{{ property.last }}"{%- unless forloop.last -%},{%- endunless -%}
+                    {%- endfor -%}
+                  }
+              {%- endcapture -%}
+              <li class="checkout-order-item-list__item order-item" data-checkout-target="itemOrder" data-properties='{{- custom_property -}}'>
+                {% render 'order-item-checkout', item: item, tag_sale_staff_discount: tag_sale_staff_discount %}
+
+                {%- unless item.product.tags contains 'ギフト包装不可' and item.product.price > 0 -%}
+                  {%- if item.product.price > 0 -%}
+                    <div class="container gap-10 select-type-packaging hidden">
+                      <h4 class="lg:small">包装を選択*</h4>
+                      <select data-line_item="{{ forloop.index }}" data-action="checkout#addGiftWrapping" data-qty="{{ item.quantity }}">
+                        <option value="0" {% if properties_gift_wrap == 0 %}selected{% endif %}>通常包装</option>
+                        {%- for number in (1..total_number_gift) limit: 10 -%}
+                          <option value="{{ number }}" {% if properties_gift_wrap == number %}selected{% endif %}>ギフト包装 {{ number }}</option>
+                        {%- endfor -%}
+                      </select>
+                    </div>
+                  {%- endif -%}
+                {%- endunless -%}
+              </li>
+            {%- endif -%}
+          {% endfor %}
+
+          <li class="checkout-order-item-list__item checkout-order-item-list__item--button change-to-gift-wrapping{% if hide_shopping_bag %} mb-0{% endif %}">
+            {%- if hide_gift_wrapping == 'false' or invalid_go_to_next_step -%}
+              <a class="button lg:col-span-2" data-packaging-separate_item-param="{{ is_separate_item }}" data-action="packaging#processGiftWrapping" href="/cart?view=delivery_date&method=shipping&packaging=gift">ギフト包装をご希望の方はこちら</a>
+            {%- endif -%}
+          </li>
+
+          {{ shopping_bag }}
+        </ul>
+      </div>
+    </div>
+
+    <!-- choose delivery -->
+    <div class="container gap-20 lg:gap-30">
+      <h2>お届け日時指定</h2>
+      <div class="checkout-date{% if hide_date_time %} hidden{% endif %}">
+        <div class="container gap-10{% if hide_date %} hidden{% endif %}">
+          <h4 class="lg:small">お届け希望日</h4>
+          <div data-controller="dds" data-large_furniture="{{ large_furniture }}" data-is_loggedin="{%- if customer -%}true{%- else -%}false{%- endif -%}">
+            <input class="calendar" hidden>
+            <p>
+              <span></span>
+              お届け可能日
+            </p>
+          </div>
+        </div>
+        <hr class="sp{% if hide_date %} hidden{% endif %}">
+        <div class="container gap-20 lg:gap-40">
+          <div class="container gap-10">
+            <h4 class="lg:small">お届け希望時間</h4>
+            <select name="shipping-schedule" data-action="delivery-date#changeDeliveryTime">
+              {%- if large_furniture -%}
+                <option value="指定なし" selected>指定なし</option>
+                <option value="午前">午前</option>
+                <option value="午後">午後</option>
+                <option value="12:00～15:00">12:00〜15:00</option>
+                <option value="15:00～18:00">15:00〜18:00</option>
+                <option value="18:00〜21:00">18:00〜21:00</option>
+              {%- else -%}
+                <option value="指定なし" selected>指定なし</option>
+                <option value="午前中">午前中</option>
+                <option value="14:00～16:00">14:00〜16:00</option>
+                <option value="16:00～18:00">16:00〜18:00</option>
+                <option value="18:00〜20:00">18:00〜20:00</option>
+                <option value="19:00〜21:00">19:00〜21:00</option>
+              {%- endif -%}
+            </select>
+          </div>
+          <hr class="sp">
+          <ul class="checkout-caution-list hidden">
+            <li>ご注文日の翌4～10営業日内でのお届け日指定が可能です。（セール品・受注生産品のご注文を除く）</li>
+            <li>お届け日指定がない場合、通常ご注文日の翌1～4営業日で発送いたします。</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="message-calendar{% unless hide_date_time %} hidden{% endunless %}">配送日時指定は承れません</div>
+    </div>
+    <hr>
+
+    <!-- note cart -->
+    <div class="container gap-20 lg:gap-30">
+      <h2>ご要望</h2>
+      <textarea rows="3" maxlength="200" class="note-customer">{{ cart.note }}</textarea>
+      <div class="error-note-format hidden">使用できない記号が含まれています。</div>
+      <hr class="sp">
+      <ul class="checkout-caution-list">
+        <li>ご注文へのご要望がございましたらご入力ください。（200文字以内）</li>
+        <li>メッセージカードの内容は次ページで指定いただけます。</li>
+        <li>ご要望内容によっては添いかねる場合がございます。</li>
+        <li>お届け可能日以外のご指定については対応いたしかねます。</li>
+      </ul>
+    </div>
+    <hr class="full-width">
+    <a class="button button--has-icon-arrow-left sp" href="/cart?view=contact_information">配送情報の指定へ戻る</a>
+  </div>
+
+  <div class="checkout__footer">
+    <a class="button button--has-icon-arrow-left pc lg:col-span-3{% if is_separate_item %} merge-lineItem{% endif %}" {% if is_separate_item %}data-action="packaging#mergeProductNormal"{% endif %} href="/cart?view=contact_information">配送情報の指定へ戻る</a>
+    <a class="button button--cta lg:col-span-5 next-step disabled{% unless invalid_go_to_next_step %} hidden{% endunless %}" data-action="delivery-date#addNote" href="/cart?view=confirm">つぎに進む</a>
+  </div>
+</div>
+
+{% if hide_shopping_bag %}
+  <script type="text/javascript">
+    localStorage.removeItem("qtyShoppingBag");
+  </script>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Delivery date",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "banner",
+      "label": "Banner"
+    }
+  ]
+}
+{% endschema %}

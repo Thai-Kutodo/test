@@ -1,0 +1,157 @@
+{% assign special_shipping_large_furniture = false %}
+{% assign qty_large_furniture = 0 %}
+{% assign discount_staff_account = 1 %}
+{% assign tag_sale_staff_discount = false %}
+{% assign total_tax = 0 %}
+
+{%- for line_item in cart.items -%}
+  {%- for tag in line_item.product.tags -%}
+    {%- if tag contains '社販セール品' -%}
+      {% assign tag_sale_staff_discount = true %}
+    {%- endif -%}
+  {%- endfor -%}
+{%- endfor -%}
+
+{%- liquid
+  assign easypoint_metafield = shop.metafields.loyalty.easy_points_attributes
+  assign easypoint_metafield = easypoint_metafield.value | default: easypoint_metafield
+  assign point_cost_pdp = 0
+  assign point_cost_pdp_count = 0
+  assign line_items = cart.items | default: checkout.line_items
+
+  for line_item in line_items
+    assign product_ep_metafield = line_item.product.metafields.loyalty.easy_points_attributes
+    assign unit_point_cost_pdp = product_ep_metafield.value.point_exchange.point_cost
+    assign unit_point_cost_pdp = product_ep_metafield.point_exchange.point_cost | default: unit_point_cost_pdp
+
+    if unit_point_cost_pdp
+      assign line_item_point_cost_pdp = unit_point_cost_pdp | times: line_item.quantity
+      assign point_cost_pdp = point_cost_pdp | plus: line_item_point_cost_pdp
+      assign point_cost_pdp_count = point_cost_pdp_count | plus: 1
+    endif
+  endfor
+-%}
+
+{% assign point_cost_pdp = point_cost_pdp | times: 100 %}
+
+{%- if customer.tags contains '社員' and customer -%}
+  {%- if tag_sale_staff_discount -%}
+    {% assign discount_staff_account = 0.5 %}
+  {%- else -%}
+    {% assign discount_staff_account = 0.65 %}
+  {%- endif -%}
+{%- endif -%}
+
+{%- for _item in cart.items -%}
+  {%- if _item.product.type == '大型家具' -%}
+    {% assign special_shipping_large_furniture = true %}
+    {% assign qty_large_furniture = qty_large_furniture | plus: _item.quantity %}
+  {%- endif -%}
+
+  {%- if point_cost_pdp > 0 -%}
+    {%- if item.product.tags contains '軽減税率対象' -%}
+      {% assign origin_price_line_item = item.final_line_price | times: discount_staff_account | divided_by: 1.08  %}
+      {% assign tax_line_item = item.final_line_price | times: discount_staff_account | minus: origin_price_line_item %}
+      {% assign total_tax = total_tax | plus: tax_line_item %}
+    {%- else -%}
+      {% assign origin_price_line_item = item.final_line_price | times: discount_staff_account | divided_by: 1.1 %}
+      {% assign tax_line_item = item.final_line_price | times: discount_staff_account | minus: origin_price_line_item %}
+      {% assign total_tax = total_tax | plus: tax_line_item %}
+    {%- endif -%}
+  {%- endif -%}
+{%- endfor -%}
+
+<div class="container gap-30 pt-30 lg:pt-40">
+  <h1 class="cart__title">カート</h1>
+
+  {%- if cart.item_count == 0 -%}
+    <div class="cart-body">
+      <div class="cart__body cart__center">
+        カートの中は空です
+      </div>
+    </div>
+  {%- else -%}
+    <div class="cart-body">
+      <div class="cart__body">
+        <ul class="cart__item-list">
+          {%- for line_item in cart.items -%}
+            <li>
+              {%- render 'cart-item', line_item: line_item -%}
+            </li>
+          {%- endfor -%}
+        </ul>
+
+        <p class="cart__note">ご購入完了までは、在庫は確保されておりません。</p>
+      </div>
+    </div>
+  {%- endif -%}
+
+  <div class="cart-footer main--cart-footer cart__footer">
+    <div class="{% if cart.item_count == 0 %} hidden{% endif %}" data-cart-target="cartFooter">
+      {% render 'easy_points_point_exchange_sidecart_total' %}
+
+      <div class="easy-points__subtotal" data-loyal-target="subtotal">
+        <div class="cart__total">
+          <div class="cart__item-count">計{{ cart.item_count }}点</div>
+          <div class="cart__prices">
+            <span class="cart__sub-total">小計</span>
+            <span
+              class="cart__price"
+              data-loyal-target="total_price"
+              data-loyal-total-price="{{ cart.total_price | times: discount_staff_account }}"
+            >
+              {{ cart.total_price | times: discount_staff_account | money }}
+            </span>
+            <span class="cart__tax-in">税込</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="cart__free-shipping">
+        {%- if special_shipping_large_furniture -%}
+          送料
+          {%- if qty_large_furniture == 1 -%}
+            <span class="cart__free-shipping-price">{{ 880000 | money }}</span>
+            <span class="cart__free-shipping-tax-in">税込</span>
+          {%- else -%}
+            {% assign qty_large_furniture_2 = qty_large_furniture | minus: 1 %}
+            <span class="cart__free-shipping-price">{{ 550000 | times: qty_large_furniture_2 | plus: 880000 | money }}</span>
+            <span class="cart__free-shipping-tax-in">税込</span>
+          {%- endif -%}
+        {%- else -%}
+          {% assign cart_total_price = cart.total_price | minus: total_tax | plus: point_cost_pdp | times: discount_staff_account %}
+
+          {%- if point_cost_pdp > 0 -%}
+            {% assign maximum_shipping_fee = 1000000 %}
+          {%- else -%}
+            {% assign maximum_shipping_fee = 1100000 %}
+          {%- endif -%}
+
+          {%- if cart_total_price >= maximum_shipping_fee -%}
+            送料無料
+          {%- else -%}
+            あと
+            <span class="cart__free-shipping-price">
+              {% assign amount_shipping = maximum_shipping_fee | minus: cart_total_price %}
+
+              {%- if amount_shipping >= 0  -%}
+                {{ amount_shipping | money }}
+              {%- endif -%}
+            </span>
+            <span class="cart__free-shipping-tax-in">税込 で送料無料</span>
+          {%- endif -%}
+        {%- endif -%}
+      </p>
+      <a id="checkout" class="button button--cta button--has-icon-cart" href="/cart?view=contact_information">ご購入手続きへ</a>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.main-cart-items.name",
+  "settings": [
+
+  ]
+}
+{% endschema %}

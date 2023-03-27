@@ -1,0 +1,22 @@
+{% comment %}
+Params:
+  - text: {String}
+  - sub_text: {String}
+{% endcomment %}
+
+<div class="lazy animated product-category-item">
+    <div class="product-category-item__image">
+        <a href="{{ link }}">
+       {% if image %}
+        <img alt="{{ text }}" class="lazy animated" data-src="{{ image | image_url: width: 1400 }}" alt="">
+      {% endif %}
+      </a>
+    </div>
+    <div class="product-category-item__body">
+      <a href="{{ link }}">
+        <p class="product-category-item__text">{{ text }}</p>
+        <p class="product-category-item__sub-text">{{ sub_text }}</p>
+      </a>
+    </div>
+  </div>
+  

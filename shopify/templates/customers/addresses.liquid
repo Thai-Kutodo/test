@@ -1,0 +1,207 @@
+{% assign hmac = customer.id | hmac_sha256: settings.cart_api_salt %}
+{% assign kanaData = customer.metafields.address.kana_info.value %}
+{% assign index = 0 %}
+
+<input type="text" id="hmac" value="{{ hmac }}" hidden/>
+<input type="text" id="acc-id" value="{{ customer.id }}" hidden/>
+<input type="text" id="acc-kana-metafield" value='{{ customer.metafields.address.kana_info }}' hidden/>
+{% for address in customer.addresses %}
+  {% if address.id != customer.default_address.id %}
+  <div 
+  id="{{address.id}}" 
+  data-zip="{{ address.zip}}"
+  data-province="{{ address.province}}"
+  data-city="{{ address.city}}"
+  data-address1="{{ address.address1}}"
+  data-address2="{{ address.address2}}"
+  data-building="{{ address.building}}"
+  data-phone="{{ address.phone}}"
+  hidden></div>
+  {% endif %}
+{% endfor %}
+
+{% capture modal_new %}
+  <div class="modal modal-nav-bar lg:modal-nav-bar" data-controller="modal">
+    <div class="modal__logo">
+      {% render 'icon-logo' %}
+    </div>
+    <div class="modal__header">
+      <button class="modal__nav-button" data-action="modal#close" type="button">
+        {% render 'icon-arrow-left' %}
+        お届け先情報
+      </button>
+    </div>
+    <div class="modal__content mypage">
+      <div class="container gap-50 lg:gap-80 pt-40 lg:pt-0 pb-70 lg:pb-160">
+        <h1 class="mypage__title">お届け先情報の登録</h1>
+        <div class="mypage-addresses__item">
+          <h4>お届け先{{ customer.addresses.size }}</h4>
+          {% render 'input-form' %}
+        </div>
+        <div class="mypage__footer" data-controller="alert-trigger">
+          <p>上記内容で登録される場合、<br>「登録する」ボタンを押してください。</p>
+          <button id="validate-new-add-button" class="button button--cta" type="button">登録する</button>
+          <button id="confirm-new-add-button" class="button button--cta" data-action="alert-trigger#open" type="button" style="display: none;">登録する</button>
+          <button class="button button--has-icon-arrow-left" data-action="modal#close" type="button">もどる</button>
+          <template data-alert-trigger-target="template">
+            <div class="alert" data-alert-close-modal-value="true" data-controller="alert">
+              <div class="alert__title">登録完了しました</div>
+              {% comment %} first button reloads the page to update the address list {% endcomment %}
+              <a class="button button--cta" href="/account/addresses">閉じる</a>
+              <a class="button" href="/account">マイページへ</a>
+            </div>
+          </template>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endcapture %}
+
+{% capture modal_edit %}
+  <div class="modal modal-nav-bar lg:modal-nav-bar" data-controller="modal">
+    <div class="modal__logo">
+      {% render 'icon-logo' %}
+    </div>
+    <div class="modal__header">
+      <button class="modal__nav-button" data-action="modal#close" type="button">
+        {% render 'icon-arrow-left' %}
+        お届け先情報
+      </button>
+    </div>
+    <div class="modal__content mypage">
+      <div class="container gap-50 lg:gap-80 pt-40 lg:pt-0 pb-70 lg:pb-160">
+        <h1 class="mypage__title">お届け先情報の登録</h1>
+        <div class="mypage-addresses__item">
+          <h4 id="edit-num">お届け先１</h4>
+          {% render 'input-form' %}
+          <input type="text" id="edit-add-id" hidden/>
+        </div>
+        <div class="mypage__footer" data-controller="alert-trigger">
+          <p>上記内容で登録される場合、<br>「登録する」ボタンを押してください。</p>
+          <button id="validate-edit-add-button" class="button button--cta" type="button">登録する</button>
+          <button id="confirm-edit-add-button" class="button button--cta" data-action="alert-trigger#open" type="button" style="display: none;">登録する</button>
+          <button class="button button--has-icon-arrow-left" data-action="modal#close" type="button">もどる</button>
+          <template data-alert-trigger-target="template">
+            <div class="alert" data-alert-close-modal-value="true" data-controller="alert">
+              <div class="alert__title">登録完了しました</div>
+              {% comment %} first button reloads the page to update the address list with changes {% endcomment %}
+              <a class="button button--cta" href="/account/addresses">閉じる</a>
+              <a class="button" href="/account">マイページへ</a>
+            </div>
+          </template>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endcapture %}
+
+<main class="mypage mypage-addresses" data-controller="modal-trigger alert-trigger">
+  <div class="container gap-50 lg:gap-80 pt-40 lg:pt-60 pb-70 lg:pb-160">
+    <h1 class="mypage__title">お届け先情報</h1>
+    {% if customer.default_address %}
+      <div class="mypage-addresses__item">
+        <h4 class="has-button">
+          <span>会員登録住所</span>
+          <a href="/account?view=info">会員情報を修正する</a>
+        </h4>
+        <dl class="description-list grid-cols-2 lg:grid-cols-8">
+          <dt class="lg:col-span-2">お名前</dt>
+          <dd class="lg:col-span-6">{{ customer.default_address.last_name }} {{ customer.default_address.first_name }}</dd>
+          <dt class="lg:col-span-2">お名前（カナ）</dt>
+          <dd class="lg:col-span-6">{{ customer.metafields.additional.kana_last_name }} {{ customer.metafields.additional.kana_first_name }}</dd>
+          <dt class="lg:col-span-2">郵便番号</dt>
+          <dd class="lg:col-span-6">{{ customer.default_address.zip }}</dd>
+          <dt class="lg:col-span-2">都道府県</dt>
+          <dd class="lg:col-span-6">{{ customer.default_address.province }}</dd>
+          <dt class="lg:col-span-2">市区町村</dt>
+          <dd class="lg:col-span-6">{{ customer.default_address.city }}</dd>
+          <dt class="lg:col-span-2">番地</dt>
+          <dd class="lg:col-span-6">{{ customer.default_address.address1 }}</dd>
+          <dt class="lg:col-span-2">建物名・部屋番号</dt>
+          <dd class="lg:col-span-6">{{ customer.default_address.address2 }}</dd>
+          <dt class="lg:col-span-2">電話番号</dt>
+          <dd class="lg:col-span-6">{{ customer.default_address.phone }}</dd>
+        </dl>
+      </div>
+      {% comment %} get kana info metafield for addresses {% endcomment %}
+      {% for address in customer.addresses %}
+        {% if address.id != customer.default_address.id %}
+          {% assign index = index | plus: 1 %}
+          {% assign address_id = address.id | append: '' %}
+          {% assign addressFamilyKana = kanaData[address_id].kana_last_name %}
+          {% assign addressGivenKana = kanaData[address_id].kana_first_name %}
+
+          <div class="mypage-addresses__item">
+            <h4 class="has-button">
+              <span>お届け先 {{ index }} </span>
+              <div>
+                <button class="delete-address" data-action="alert-trigger#open" type="button" data-id="{{ address.id }}">削除する</button>
+                <button class="edit-address" data-action="modal-trigger#open" type="button" data-id="{{ address.id }}" data-num="{{ index }}">修正する</button>
+                <template data-modal-trigger-target="template">
+                  {{ modal_edit }}
+                </template>
+              </div>
+            </h4>
+            <dl class="description-list grid-cols-2 lg:grid-cols-8">
+              <dt class="lg:col-span-2">お名前</dt>
+              <dd id="name" class="lg:col-span-6">{{ address.last_name }} {{ address.first_name }}</dd>
+              <dt class="lg:col-span-2">お名前（カナ）</dt>
+              <dd id="name-kana" class="lg:col-span-6">{{ addressFamilyKana }} {{ addressGivenKana }}</dd>
+              <dt class="lg:col-span-2">郵便番号</dt>
+              <dd id="zip" class="lg:col-span-6">{{ address.zip }}</dd>
+              <dt class="lg:col-span-2">都道府県</dt>
+              <dd id="province" class="lg:col-span-6">{{ address.province }}</dd>
+              <dt class="lg:col-span-2">市区町村</dt>
+              <dd id="city" class="lg:col-span-6">{{ address.city }}</dd>
+              <dt class="lg:col-span-2">番地</dt>
+              <dd id="address1" class="lg:col-span-6">{{ address.address1 }}</dd>
+              <dt class="lg:col-span-2">建物名・部屋番号</dt>
+              <dd id="address2" class="lg:col-span-6">{{ address.address2 }}</dd>
+              <dt class="lg:col-span-2">電話番号</dt>
+              <dd id="phone" class="lg:col-span-6">{{ address.phone }}</dd>
+            </dl>
+          </div>
+        {% endif %}
+      {% endfor %}
+    {% else %}
+      <div class="mypage__description mypage__description--large">会員情報の住所登録を行なってください。</div>
+    {% endif %}
+    <div class="mypage__footer" data-controller="modal-trigger">
+      {% if customer.default_address == blank %}
+        <a class="button button--cta" href="/account?view=info">
+          会員住所を登録する
+        </a>
+      {% else %}
+        <button id="open-new-add-button" class="button button--has-icon-plus" data-action="modal-trigger#open" type="button">
+          {% if customer.addresses_count == 1 %}
+            お届け先の編集
+          {% else %}
+            お届け先の追加
+          {% endif %}
+        </button>
+
+         <template data-modal-trigger-target="template">
+          {{ modal_new }}
+        </template>
+      {% endif %}
+    </div>
+  </div>
+
+  <template data-alert-trigger-target="template">
+    <div class="alert" data-controller="alert">
+      <div class="alert__title">本当に削除しますか？</div>
+      <div data-controller="alert-trigger">
+        <button id="confirm-delete-add-button" class="button button--cta" type="button">削除する</button>
+        <button id="complete-delete-add-button" class="button button--cta" data-action="alert#close alert-trigger#open" type="button" style="display: none;">削除する</button>
+        <button class="button" data-action="alert#close" type="button">もどる</button>
+
+        <template data-alert-trigger-target="template">
+          <div class="alert" data-controller="alert">
+            <div class="alert__title">削除完了しました</div>
+            <a class="button button--cta" data-action="alert#close" href="/account/addresses">閉じる</a>
+          </div>
+        </template>
+      </div>
+    </div>
+  </template>
+</main>

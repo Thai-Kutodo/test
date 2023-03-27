@@ -1,0 +1,43 @@
+<hr>
+<div class="container gap-70 lg:gap-160 pt-50 lg:pt-80 pb-70 lg:pb-160">
+    <div class="stylebook-detail__scroll-item-list">
+        <div class="scroll-item-list">
+            <h2 class="scroll-item-list__title">関連スタイリング</h2>
+          <div class="scroll-item-list__images" data-controller="scrollable">
+          <button aria-label="左にスクロールする" class="scroll-item-list__button scroll-item-list__button--left" data-action="scrollable#scrollLeft" data-scrollable-target="leftButton" type="button"></button>
+          <ul class="scroll-image-list" data-scrollable-target="content">
+			{%- for collection in collections -%}
+			    {% assign collection_categoty = collection.metafields.custom.category | handleize %}
+			    {% if collection.metafields.custom.parent == 'stylebook' and collection_categoty contains category and collection.id != collection_current %}
+					<li>
+						{%- if collection.featured_image -%}
+							<a href="{{ collection.url | default:'#' }}" alt="{{ collection.handle }}">
+							<img alt="STYLEBOOK" class="lazy animated" data-src="{{ collection.featured_image | img_url: 'master' }}"> 
+							</a>
+						{%- else -%}
+							<a href="{{ collection.url | default:'#' }}" alt="{{ collection.handle }}">
+							{{ 'product-1' | placeholder_svg_tag }}
+							</a>
+						{%- endif -%}
+					</li>
+				{% endif %}
+			{%- endfor -%} 
+          </ul>
+          <button aria-label="右にスクロールする" class="scroll-item-list__button scroll-item-list__button--right" data-action="scrollable#scrollRight" data-scrollable-target="rightButton" type="button"></button>
+          </div>
+        </div>
+        </div>
+        <div class="stylebook-detail__footer">
+        <a class="button button--light" href="/collections/style-book" alt="style-book">STYLE BOOK TOPへ</a>
+    </div>
+</div>
+{%- if count_items <= 4 -%}
+<style type="text/css">
+.scroll-image-list{
+	justify-content: center;
+}
+.scroll-item-list__button--right{
+	opacity: 0;
+}
+</style>
+{%- endif -%}

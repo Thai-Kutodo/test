@@ -1,0 +1,11 @@
+{
+    "sections": {
+        "event-detail": {
+            "type": "event-detail",
+            "settings": {}
+        }
+    },
+    "order": [
+        "event-detail"
+    ]
+}

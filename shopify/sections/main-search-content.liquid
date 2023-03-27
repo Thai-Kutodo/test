@@ -1,0 +1,51 @@
+
+{%- liquid
+  assign sort_by = search.sort_by | default: search.default_sort_by
+  assign terms = search.terms | escape
+-%}
+{% unless section.settings.banner.size > 0  %}
+{% assign margin_top = 'has_mrg' %}
+{% endunless %}
+<div id="template-search-tag" >
+  <div class="search-product mb-10 lg:mb-20"> 
+    <form action="#" data-action="submit->search#submitFormNormal">  
+      <input class="search-form search-form-input" id="search-form" data-action="focusin->search#toggleInputSearch" data-search-target="searchValue" name="q" value="{{ terms | remove: '*' | replace: 'hashtag_', '#' }}" placeholder="サイト全体検索" type="search">
+    </form>
+  </div>
+  <div class="container gap-30 lg:gap-60">
+    {% if section.settings.banner.size > 0  %}
+    <section class="page-header">
+      <div class="page-header__hero">
+        <img alt="Banner search product and article" class="lazy animated" data-src="{{ section.settings.banner | img_url:'master' }}">
+      </div>
+    </section>
+    {% endif %}
+    <div class="row">
+      <span id="ProductCount" class="hidden">
+        {{ search.results_count }} {% if search.results_count > 1 %} items {% else %} item {% endif %}
+        </span> 
+      </div>
+    </div>
+    {% paginate search.results by 24 %}
+      {% render 'search-results-tag', paginate: paginate, margin_top: margin_top  %}
+    {% endpaginate %} 
+  </div>
+</div>
+{% schema %}
+{
+  "name": "t:sections.main-search.name",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Banner"
+    },
+    {
+      "type": "image_picker",
+      "id": "banner",
+      "label": "Choose banner"
+    } 
+  ]
+}
+{% endschema %}

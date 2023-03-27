@@ -1,0 +1,50 @@
+{%- assign _blocks = section.blocks -%}
+{% comment %} assign color title/code as style class selector {% endcomment %}
+{% comment %} assign color name to style {% endcomment %}
+{% comment %} add data-handle-name="color code" to element to display translated color name {% endcomment %}
+<style type="text/css" media="screen">
+    {%- if _blocks.size > 0 -%}
+        {%- for block in _blocks -%}
+            {%- assign current_block = block.settings -%}
+            {%- if current_block.title != blank and current_block.color_names != blank -%}
+                {%- assign color_name_arr = current_block.color_names | split: ',' -%}
+                {%- assign color_name_handle = current_block.title | handle -%}
+
+                {%- assign color_selector = color_selectors | append: ', [data-handle-name="' | append: color_name_handle | append: '"]::after' -%}
+                {%- assign color_string = color_name_arr| first %}
+                {%- assign color_style = 'content: "' | append: color_string | append:'";' -%}
+                {{ color_selector | replace_first: ',', '' }} { {{ color_style }}}
+
+                {%- assign color_selector_en = color_selectors | append: ', [data-handle-name="' | append: color_name_handle |append: "-en" | append: '"]::after' -%}
+                {%- assign color_string_en = color_name_arr| last %}
+                {%- assign color_style_en = 'content: "' | append: color_string_en | append:'";' -%}
+                {{ color_selector_en | replace_first: ',', '' }} { {{ color_style_en }}}
+            {%- endif -%}
+        {% endfor %}
+    {%- endif -%}
+</style>
+
+{% schema %}
+{
+  "name": "カラー変換",
+  "blocks": [
+    {
+      "type": "color",
+      "name": "Color",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Color Code"
+        },
+        {
+          "type": "text",
+          "id": "color_names",
+          "label": "Color Names",
+          "info": "色名は、日本名を最初に、コンマの後に、英語名（ブラック、black）として格納されます。"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

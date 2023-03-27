@@ -1,0 +1,116 @@
+<div class="container gap-30 lg:gap-60">
+    {% render 'search-product', large: true %}
+    <section class="search-online-shop">
+        <div class="search-online-shop__accordions">
+          <div class="accordion" data-controller="accordion">
+            <button aria-expanded="false" class="accordion__button accordion__button--has-icon-category" data-accordion-target="trigger" data-action="accordion#toggle" type="button">
+              カテゴリから探す
+            </button>
+            <div class="accordion__content" data-accordion-target="content">
+              <div class="container gap-30 lg:gap-60 pt-20 lg:pt-60 pb-40 lg:pb-60">
+                {%- for block in section.blocks -%}
+                 {%- if block.type == 'category-shop-online-list' -%}
+                 {%- liquid
+                    assign title = block.settings.title
+                    assign collection = block.settings.collection
+                    assign link = block.settings.link
+                  -%}
+                {% render 'scroll-item-list', title: title, description: description, collection_gift: collection,  has_header_link: true, link: link %}
+                <hr>
+                {%- endif -%}
+                {%- endfor -%}
+                <button class="accordion__close-button" data-accordion-target="trigger" data-action="accordion#close" type="button">閉じる</button>
+              </div>
+            </div>
+          </div>
+          <div class="accordion" data-controller="accordion">
+            <button aria-expanded="false" class="accordion__button accordion__button--has-icon-item" data-accordion-target="trigger" data-action="accordion#toggle" type="button">
+              アイテムから探す
+            </button>
+            <div class="accordion__content" data-accordion-target="content">
+              <div class="container gap-10 lg:gap-60 pt-20 lg:pt-60 pb-40 lg:pb-60">
+                <ul class="product-category-list">
+
+                  {%- for block in section.blocks -%}
+                  {%- if block.type == 'item-shop-online-list' -%}
+                  {%- liquid
+                    assign title = block.settings.title
+                    assign description = block.settings.description
+                    assign image = block.settings.image
+                    assign collection = block.settings.collection
+                    assign link = block.settings.link
+                  -%}
+                  <li>{% render 'product-category-item', text: title, sub_text: description, link: link, image: image %}</li>
+                  {%- endif -%}
+                  {%- endfor -%}
+                </ul>
+                <button class="accordion__close-button" data-accordion-target="trigger" data-action="accordion#close" type="button">閉じる</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+</div>
+
+
+{% schema %}
+{
+  "name": "t:sections.search_online_shop.name",
+  "tag": "section",
+  "class": "section-item-shop-online",
+  "max_blocks": 15,
+  "blocks": [
+    {
+        "type": "category-shop-online-list",
+        "name": "t:sections.search_online_shop.blocks.category.name",
+        "settings": [
+        {
+            "type": "text",
+            "id": "title",
+            "label": "t:sections.search_online_shop.blocks.category.settings.category_title.label",
+            "default": "Category Title"
+        },
+        {
+            "type": "collection",
+            "id": "collection",
+            "label": "t:sections.search_online_shop.blocks.category.settings.collection.label"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "t:sections.search_online_shop.blocks.category.settings.link.label"
+        }
+        ]
+    },
+    {
+      "type": "item-shop-online-list",
+      "name": "t:sections.search_online_shop.blocks.item.name",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "t:sections.search_online_shop.blocks.item.settings.image.label"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "t:sections.search_online_shop.blocks.item.settings.heading.label",
+          "default": "Item Title"
+        },
+        {
+          "type": "text",
+          "id": "description",
+          "label": "t:sections.search_online_shop.blocks.item.settings.sub_heading.label",
+          "default": "Description"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "t:sections.search_online_shop.blocks.item.settings.link.label"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

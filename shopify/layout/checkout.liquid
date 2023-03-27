@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="{{ locale }}" dir="{{ direction }}" class="{{ checkout_html_classes }}">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, height=device-height, minimum-scale=1.0, user-scalable=0">
+    <meta name="referrer" content="origin">
+
+    {%- if settings.favicon != blank -%}
+      <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
+    {%- endif -%}
+
+    <title>{{ page_title }}</title>
+    <meta name="application-name" content="&nbsp;" />
+    <link rel="apple-touch-icon"  sizes="180x180"  href="{{ settings.favicon | image_url: width: 180, height: 180 }}" />
+    <link rel="apple-touch-icon-precomposed" href="{{ settings.favicon | image_url: width: 180, height: 180 }}" />
+    {{ content_for_header }}
+
+    {{ checkout_stylesheets }}
+    {{ checkout_scripts }}
+
+    {{ 'main.css' | asset_url | stylesheet_tag }}
+    {{ 'checkout.css' | asset_url | stylesheet_tag }}
+
+    <link rel="stylesheet" href="https://use.typekit.net/mho1oje.css">
+    <script src="{{ 'vendor.checkout.js' | asset_url }}" defer></script>
+    <script src="{{ 'checkout.js' | asset_url }}" defer></script>
+    <!-- Google Tag Manager -->
+    {%- if request.host == "familiar-stg.myshopify.com" -%}
+  	  {% assign gtm = "GTM-MPSWCR" %}
+    {%- else -%}
+  	   {% assign gtm = "GTM-TBXH9X" %}
+    {%- endif -%}
+
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      dataLayer.push({
+        'userid': '{{ customer.id }}'
+      });
+      {% if request.path contains "thank_you" %}
+        dataLayer.push({
+            event: "purchase",
+            ecommerce: {
+                transaction_id: "{{ checkout.order_id }}",
+                value: {{ checkout.total_price }} * 0.01,
+                tax: {{ checkout.tax_price }} * 0.01,
+                shipping: {{ checkout.shipping_price }} * 0.01,
+                currency: "JPY",
+              items: [
+                {% for item in checkout_line_items %}
+                  {% for product_option in item.product.options_with_values %}
+                    {%- if product_option.name == "カラー" -%}
+                      {% assign target_position_color = product_option.position | minus: 1 %}
+                    {%- endif -%}
+                  {% endfor %}
+                  {
+                    item_name: '{{ item.product.title  }}',
+                    item_id: '{{ item.product_id }}',
+                    price: {{ item.variant.price }} * 0.01,
+                    item_category: [{% for category in item.product.metafields.custom.category %}'{{ category }}',{% endfor %}],
+                    item_variant: '{{ item.variant.options[target_position_color] }}',
+                    quantity: {{ item.quantity  }}
+                  },
+                {% endfor %}
+              ]
+            }
+        })
+      {% endif %}
+
+      if (window.Shopify.Checkout.step === 'thank_you' || window.Shopify.Checkout.step === undefined) {
+        document.cookie = "cart=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/";
+      }
+    </script>
+
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','{{ gtm }}');</script>
+    <!-- End Google Tag Manager -->
+
+    {% style %}
+      @font-face {
+        font-family: Noto Sans JP;
+        font-style: normal;
+        font-display: swap;
+        font-weight: 400;
+        src: url({{ "noto-sans-jp-japanese-400-normal.woff2" | asset_url }}) format("woff2")
+      }
+
+      @font-face {
+        font-family: Noto Sans JP;
+        font-style: normal;
+        font-display: swap;
+        font-weight: 500;
+        src: url({{ "noto-sans-jp-japanese-500-normal.woff2" | asset_url }}) format("woff2")
+      }
+    {% endstyle %}
+
+    {%- if checkout.order_id != blank or order.order_number != blank -%}
+      <script type="text/javascript">
+        //remove all items in cart page
+        fetch('/cart/clear.js', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+        })
+        .then(response => response.json())
+        .then(data => {
+          localStorage.removeItem("selectedPoints");
+        });
+      </script>
+    {%- endif -%}
+
+    <script type="text/javascript">
+      if (window.Shopify.Checkout.step === 'contact_information') {
+        location.href = "/cart?view=contact_information";
+      }
+    </script>
+  </head>
+
+  <body data-controller="global-nav cart search login">
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id={{ gtm }}"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+
+    {{ skip_to_content_link }}
+
+    {% assign total_gift_wrap = '' %}
+    {% assign count_normal_packaging = 0 %}
+    {% assign qty_shopping_bag = 0 %}
+    {% assign total_points_receive = 0 %}
+    {% assign discount_staff_account = 1 %}
+    {% assign total_price_without_bags = 0 %}
+    {% assign is_separate_item = false %}
+    {% assign is_thank_you = false %}
+    {% assign delivery_date = checkout.attributes['お届け希望日'] | default: checkout.order.attributes['お届け希望日'] %}
+    {% assign delivery_hours = checkout.attributes['お届け希望時間'] | default: checkout.order.attributes['お届け希望時間'] %}
+    {% assign day_of_week = '' %}
+    {% assign checkout_line_items = checkout.line_items %}
+    {% assign checkout_attribute_order = checkout.attributes %}
+    {% assign is_out_of_stock = false %}
+
+    {%- if checkout.order_id != blank or order.order_number != blank -%}
+      {%- unless checkout.line_items[0].title contains order.order_number -%}
+        {% assign is_thank_you = true %}
+      {%- else -%}
+        {%- comment %}
+        	param checkout_line_items use in the case admin edit order
+        {% endcomment -%}
+        {% assign checkout_line_items = checkout.order.line_items %}
+        {% assign checkout_attribute_order = checkout.order.attributes %}
+      {%- endunless -%}
+    {%- endif -%}
+
+    {%- if delivery_date contains '/' -%}
+      {% assign day = delivery_date | date: '%w' | plus: 0 %}
+
+      {%- case day-%}
+        {%- when 0 -%}
+          {% assign day_of_week = '日' %}
+        {%- when 1 -%}
+          {% assign day_of_week = '月' %}
+        {%- when 2 -%}
+          {% assign day_of_week = '火' %}
+        {%- when 3 -%}
+          {% assign day_of_week = '水' %}
+        {%- when 4 -%}
+          {% assign day_of_week = '木' %}
+        {%- when 5 -%}
+          {% assign day_of_week = '金' %}
+        {%- when 6 -%}
+          {% assign day_of_week = '土' %}
+      {%- endcase -%}
+    {%- endif -%}
+
+    {%- if customer.tags contains '社員' and customer -%}
+      {% assign discount_staff_account = 0.65 %}
+    {%- endif -%}
+
+    {%- for _item in checkout_line_items -%}
+      {% assign properties_gift_wrap = _item.properties['梱包区分'] | plus: 0 %}
+
+      {%- if _item.product.handle != 'ラッピング' and _item.product.handle != '998002' -%}
+        {% unless _item.variant.available %}
+          {% assign is_out_of_stock = true %}
+        {% endunless %}
+      {%- endif -%}
+
+      {%- if properties_gift_wrap != 0 -%}
+        {%- unless total_gift_wrap contains _item.properties['梱包区分'] -%}
+          {% assign total_gift_wrap = total_gift_wrap | append: _item.properties['梱包区分'] | append: ',' %}
+        {%- endunless -%}
+      {%- else -%}
+        {%- if _item.product.handle != 'ラッピング' and _item.product.handle != '998002' -%}
+          {% assign count_normal_packaging = count_normal_packaging | plus: 1 %}
+        {%- endif -%}
+      {%- endif -%}
+
+      {%- unless _item.product.tags contains 'no-easy-points' -%}
+        {%- if _item.product.handle != '998002' and _item.product.handle != 'ラッピング' -%}
+          {%- if _item.product.tags contains '軽減税率対象' -%}
+            {% assign points = _item.variant.price | divided_by: 100 | times: discount_staff_account | divided_by: 1.08 | times: 0.05 | round %}
+          {%- else -%}
+            {% assign points = _item.variant.price | divided_by: 100 | times: discount_staff_account | divided_by: 1.1 | times: 0.05 | round %}
+          {%- endif -%}
+
+          {% assign total_points_receive = total_points_receive | plus: points %}
+        {%- endif -%}
+      {%- endunless -%}
+
+      {%- if _item.product.handle != 'ラッピング' and _item.product.handle != '998002' -%}
+        {% assign total_price_without_bags = total_price_without_bags | plus: _item.final_line_price %}
+      {% endif %}
+
+      {%- if _item.product.handle == '998002' -%}
+        {% assign qty_shopping_bag = _item.quantity %}
+      {%- endif -%}
+
+      {%- if _item.product.type == "通常品" or _item.product.type == "セール品" -%}
+        {% assign array_payment = '["gmo"]' %}
+      {%- elsif _item.product.type == "大型家具" or _item.product.type == "メーカー直送" or _item.product.tags contains "カード以外禁止" -%}
+        {% assign array_payment = '["gmo", "cod"]' %}
+      {%- elsif _item.product.type == "オーダー品" or _item.product.type == "予約品" -%}
+        {% assign array_payment = '["creditCard", "cod"]' %}
+      {%- endif -%}
+
+      {%- if _item.properties["_line_item"] != blank -%}
+        {% assign is_separate_item = true %}
+      {%- endif -%}
+    {%- endfor -%}
+
+    {% assign item_properties = total_gift_wrap | remove_last: ',' | split: ',' | sort %}
+
+    {%- if item_properties.size > 0 -%}
+      {% assign total_price_gift_wrapping = 16500 | times: item_properties.size %}
+    {%- endif -%}
+
+    {%- if qty_shopping_bag > 0 -%}
+      {% assign total_price_shopping_bag = 5500 | times: qty_shopping_bag %}
+    {%- endif -%}
+
+    {%- capture info_items -%}
+      {%- for line_item in checkout_line_items -%}
+        {%- if line_item.product.handle != '998002' and line_item.product.handle != 'ラッピング' -%}
+          {
+            "id": {{- line_item.variant_id -}},
+            "quantity": {{- line_item.quantity -}},
+            "properties": {
+              {%- for property in line_item.properties -%}
+                "{{- property.first -}}": "{{- property.last -}}"{%- unless forloop.last -%},{%- endunless -%}
+              {%- endfor -%}
+            },
+            "variant_id": {{ line_item.variant_id }}
+          },
+        {%- endif -%}
+      {%- endfor -%}
+    {%- endcapture -%}
+
+    {%- liquid
+      assign point_cost_total = 0
+      assign point_cost_product_count = 0
+      for line_item in checkout_line_items
+        assign unit_point_cost = line_item.product.metafields.loyalty.easy_points_attributes.point_exchange.point_cost
+        if unit_point_cost
+          assign line_item_point_cost = unit_point_cost | times: line_item.quantity
+          assign point_cost_total = point_cost_total | plus: line_item_point_cost
+          assign point_cost_product_count = point_cost_product_count | plus: 1
+        endif
+      endfor
+    -%}
+
+    <div class="checkout-loading"></div>
+
+    <main class="checkout" role="main" data-controller="checkout payment accordion">
+      <div class="hidden js-arrayPayment" data-payment='{{- array_payment -}}'></div>
+      {%- if customer -%}
+        <div class="hidden js-customer-metafields" data-metafield='{{ customer.metafields.address.kana_info | replace: "=>", ":" }}'></div>
+      {%- endif -%}
+
+        <span class="thank-you-layout hidden">
+          {% section 'header' %}
+          {% section 'thank-you-checkout' %}
+
+          {% render 'global-nav' %}
+          {% render 'mini-cart' %}
+          {% render 'sidebar-search' %}
+          {% render 'popup-login' %}
+
+          {% section 'footer' %}
+        </span>
+
+        <span class="checkout-layout hidden">
+          <div class="js-loggedIn" data-logged_in="{% if customer %}true{% else %}false{% endif %}"></div>
+
+          <div class="header header--simplified sp">
+            <div class="header__left">
+              <a aria-label="戻る" href="/cart?view=confirm" class="header__left-button" id="nav-button">{% render 'icon-arrow-left' %}</a>
+            </div>
+            <div class="header__logo">
+              <a href="/">
+                {% render 'icon-logo' %}
+              </a>
+            </div>
+            <div class="header__right"></div>
+          </div>
+
+          {%- render 'breadcrumbs-checkout', class: "mt-20 sp", hide_online_store: false -%}
+
+          <button aria-expanded="false" class="checkout-accordion-button checkout-accordion-button--cart mt-50 sp" data-accordion-target="trigger" data-action="accordion#toggle" type="button">
+            {% render 'icon-cart' %}
+            <span>ご注文内容を表示</span>
+            <p class="checkout-price">
+              {{ checkout.total_price | money }}
+              <span class="checkout-price__tax-in">税込</span>
+            </p>
+          </button>
+
+          <div class="checkout__wrapper">
+            <div class="checkout__container">
+              <div class="header header--simplified pc">
+                <div class="header__left">
+                  <a aria-label="戻る" href="/cart?view=confirm" class="header__left-button" id="nav-button">{% render 'icon-arrow-left' %}</a>
+                </div>
+                <div class="header__logo">
+                  <a href="/">
+                    {% render 'icon-logo' %}
+                  </a>
+                </div>
+                <div class="header__right"></div>
+              </div>
+
+              {%- render 'breadcrumbs-checkout',class: "lg:mt-30 pc", hide_online_store: false -%}
+
+              <div class="lg:mt-80 lg:has-divider-bottom" data-controller="accordion">
+                <button aria-expanded="false" class="checkout-accordion-button checkout-accordion-button--shipping" data-accordion-target="trigger" data-action="accordion#toggle" type="button">
+                  <img alt="" src="{{ 'icon_shipping.svg' | asset_url }}">
+                  <span>配送情報を表示</span>
+                </button>
+
+                <div class="accordion__content" data-accordion-target="content" data-controller="packaging">
+                  <div data-cart='[{{- info_items | strip | remove_last: "," -}}]' data-packaging-target="cartItem"></div>
+                  <div class="container gap-50 lg:gap-60 pt-20 pb-50 lg:pb-60">
+                    <div class="container gap-15">
+                      <h3>お届け先</h3>
+                      <div class="checkout__body" data-payment-target="addressUser">
+                        {{checkout.shipping_address.last_name}}{{checkout.shipping_address.first_name}} 様<br>
+                        {{checkout.shipping_address.zip}}<br>
+                        {{checkout.shipping_address.province}} {{checkout.shipping_address.city}} {{checkout.shipping_address.address1}} {{checkout.shipping_address.address2}}<br>
+                        {{checkout.shipping_address.phone}}
+                      </div>
+                    </div>
+                    <div class="container gap-15">
+                      <h3>配送方法</h3>
+                      <div class="checkout__body grid-cols-2">
+                        <div class="col-span-1">通常配送</div>
+                        <div class="col-span-1 text-right">
+                          {%- if checkout.shipping_price == 0 -%}
+                            <span class="checkout__price">送料無料</span>
+                          {%- else -%}
+                            <span class="checkout__price">{{ checkout.shipping_price | money }}</span>
+                            <span class="checkout__tax-in">税込</span>
+                          {%- endif -%}
+                        </div>
+                      </div>
+                    </div>
+
+                    <a class="button button--has-icon-arrow-left merge-lineItem" href="/cart?view=contact_information" {% if is_separate_item %}data-action="packaging#mergeProductNormal"{% endif %}>配送情報を修正する</a>
+                    <button class="checkout-accordion-close-button" data-accordion-target="trigger" data-action="accordion#toggle" type="button">閉じる</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="checkout__content">
+                <div class="container gap-50 lg:gap-80 pt-50 lg:pt-80">
+                  <h1 class="heading">お支払いの指定</h1>
+
+                  {%- if customer -%}
+                    <!-- use point -->
+                    <div class="container gap-10 loader-parent">
+                      {% assign points = customer.metafields.loyalty.easy_points_attributes %}
+                      {% assign points_balance = points.balance | minus: point_cost_total | at_least: 0 %}
+                      {% assign points_limit = points_balance | divided_by: 1000 | floor %}
+                      {% assign useable_points = points_limit | times: 1000 %}
+                      {% assign total_price_without_tax = total_price_without_bags | divided_by: 100 | divided_by: 1.1 %}
+
+                        <h4>ポイント利用</h4>
+                        <div class="loader-parent">
+                          <div class="loader-container loader-container--absolute" >
+                              <div class="loader-spinner"></div>
+                          </div>
+                          <ul class="checkout-radio-button-list" data-checkout="{{checkout.id}}" data-customer="{{customer.id}}" data-hash="{{customer.id | hmac_sha256: settings.cart_api_salt }}" data-controller="accordion-group points-select" >
+                            <li class="checkout-radio-button-list__item">
+                              <label class="radio-button" data-accordion-group-target="trigger">
+                                {% assign gift_cards_amount = checkout.gift_cards_amount |  divided_by: 110  %}
+                                <input data-points-select-target="radio"
+                                {% unless gift_cards_amount > 0 %}checked=""{% endunless %} data-action="accordion-group#toggle points-select#selectRadio" name="use-point" type="radio" value="no">
+                                <span></span> 利用しない </label>
+                            </li>
+                            <li class="checkout-radio-button-list__item">
+                              <label class="radio-button" data-accordion-group-target="trigger">
+                                <input data-points-select-target="radio" {% if gift_cards_amount > 0 %}checked=""{% endif %} data-action="accordion-group#toggle points-select#selectRadio" name="use-point" type="radio" value="yes">
+                                <span></span> fポイントを利用する </label>
+                              <div class="checkout-radio-button-list__content">
+                                <div class="checkout-available-point grid-cols-2">
+                                  <div class="checkout-available-point__header col-span-2">ご利用可能ポイント：{{useable_points | times: 100 | money | replace: "¥" : "" | replace: "円" : "" }}pt</div>
+                                  <div class="checkout-available-point__body col-span-2">1,000ポイントから、1,000ポイント単位で<br>ご利用いただけます。</div>
+                                  <div class="col-span-1">
+
+                                    <select name="point" data-points-select-target="points" data-action="points-select#changePoints">
+                                      {% for c in (0..points_limit) %}
+                                        {% assign discount_value = c | times: 1000 %}
+                                        {% if discount_value > total_price_without_tax %}
+                                          {% break%}
+                                        {% endif %}
+                                        <option {% if gift_cards_amount == discount_value %} selected {% endif %} value="{{c | times: 1000}}">{{c | times: 100000 | money | replace: "¥" : "" | replace: "円" : "" }}</option>
+                                      {% endfor %}
+                                    </select>
+                                  </div>
+                                  <div class="checkout-available-point__body col-span-1"> ポイント使用する </div>
+                                </div>
+                              </div>
+                            </li>
+                          </ul>
+                        </div>
+
+                      </div>
+                  {%- endif -%}
+
+                  <!-- info order on mobile -->
+                  <div class="container gap-20 sp">
+                    <h4 class="has-divider sp">金額明細</h4>
+                    <div class="detail-list">
+                      <dl class="description-list grid-cols-2">
+                        <dt>商品小計</dt>
+                        <dd>
+                          <span>{{ checkout.line_items_subtotal_price | minus: total_price_shopping_bag | minus: total_price_gift_wrapping | money }}</span>
+                          <span class="detail-list__tax-in">税込</span>
+                        </dd>
+
+                        {% if customer %}
+                          <dt>fポイント利用</dt>
+                          <dd><span class="js-points-value">{{ checkout.gift_cards_amount | divided_by: 1.1 | money | replace: "¥" : "" | repalce: "円" | "" }}</span>pt</dd>
+                        {% endif %}
+
+                        <dt>小計</dt>
+                        <dd>
+                          <span class="js-payment-subtotal">{{ checkout.line_items_subtotal_price | minus: total_price_shopping_bag | minus: total_price_gift_wrapping | minus: checkout.gift_cards_amount | money }}</span>
+                          <span class="detail-list__tax-in">税込</span>
+                        </dd>
+
+                        {% if item_properties.size > 0 %}
+                          <dt>ギフト包装</dt>
+                          <dd>
+                            <span>{{ 16500 | times: item_properties.size | money }}</span>
+                            <span class="detail-list__tax-in">税込</span>
+                          </dd>
+                        {% endif %}
+
+                        {%- if qty_shopping_bag > 0 -%}
+                          <dt>ショッピングバッグ</dt>
+                          <dd>
+                            <span>{{ 5500 | times: qty_shopping_bag | money }}</span>
+                            <span class="detail-list__tax-in">税込</span>
+                          </dd>
+                        {%- endif -%}
+
+                        <dt>送料</dt>
+                        <dd>
+                          {{ checkout.shipping_price | money }}
+                          <span class="detail-list__tax-in"> 税込</span>
+                        </dd>
+
+                        {% render 'easy_points_point_exchange_checkout_total' %}
+
+                        <dt class="detail-list__prices">お支払い合計</dt>
+                        <dd class="detail-list__prices">
+                          <span class="detail-list__price js-payment-due">{{ checkout.total_price | minus: checkout.gift_cards_amount |  money }}</span>
+                          <span class="detail-list__tax-in">税込</span>
+                        </dd>
+
+                        <dt>内消費税</dt>
+                        {% assign origin_gift_cards_amount = checkout.gift_cards_amount | divided_by: 1.1 %}
+                        {% assign tax_gift_cards = checkout.gift_cards_amount | minus: origin_gift_cards_amount %}
+
+                        <dd class="js-taxOrder">
+                          {%- if checkout.tax_price != 0 -%}
+                            ({{ checkout.tax_price | minus: tax_gift_cards | money }})
+                          {%- else -%}
+                            (¥0)
+                          {%- endif -%}
+                        </dd>
+
+                        {% if customer %}
+                          <dt class="detail-list__point" data-checkout-target="point">付与fポイント</dt>
+                          <dd class="detail-list__point" data-checkout-target="point">
+                            {%- comment -%} START EASYPOINTS - DO NOT MODIFY! 変更しないでください! INFO @ https://bit.ly/2Dn7ESM {%- endcomment -%}
+                              {%- unless shop.metafields.loyalty.easy_points_attributes.value.stealth_mode -%}
+                                {% render 'epa-checkout-points' %}
+                              {%- endunless -%}
+                            {%- comment -%} END EASYPOINTS {%- endcomment -%}
+                          </dd>
+                        {% endif %}
+                      </dl>
+                    </div>
+                  </div>
+
+                  {{ content_for_layout }}
+
+                  <hr class="full-width">
+                  <a class="button button--has-icon-arrow-left sp" href="/cart?view=confirm">包装指定・お届け日時指定へ戻る</a>
+                </div>
+
+                <div class="checkout__footer">
+                  <a class="button button--has-icon-arrow-left pc lg:col-span-4" href="/cart?view=confirm">包装指定・お届け日時指定へ戻る</a>
+                  <a class="button button--cta lg:col-span-4{% if is_out_of_stock %} hidden{% endif %}" data-action="payment#submitForm" href="#">ご注文を確定する</a>
+                </div>
+              </div>
+            </div>
+
+            <div class="checkout__sidebar" data-accordion-target="content">
+              <div class="container gap-50 lg:gap-60 pt-20 lg:pt-80 pb-50">
+                <div class="checkout-accordion-button checkout-accordion-button--cart pc">
+                  {% render 'icon-cart' %}
+                  <span>ご注文内容</span>
+                  <p class="checkout-price">
+                    {{ checkout.total_price | money }}
+                    <span class="checkout-price__tax-in">税込</span>
+                  </p>
+                </div>
+
+                <h2 class="has-divider has-button" data-controller="alert-trigger">
+                  ご注文商品
+                  <button data-action="alert-trigger#open" type="button">カートに戻って修正する</button>
+                  <template data-alert-trigger-target="template">
+                    <div class="alert popup-back-prev-page" data-controller="alert">
+                      <div class="alert__title">入力内容が消えますが<br>よろしいでしょうか？</div>
+                      <a class="button button--cta" href="/cart">内容削除してカートを修正</a>
+                      <button class="button button--light" data-action="alert#close" type="button">購入フローに戻る</button>
+                    </div>
+                  </template>
+                </h2>
+
+                <!-- show normal gift wrapping -->
+                <div class="container gap-15 lg:gap-20{% if count_normal_packaging == 0 %} hidden{% endif %}">
+                  <h3 class="has-icon has-icon--normal-wrapping">通常包装</h3>
+
+                  {%- for line_item in checkout_line_items-%}
+                    {% assign properties_gift_wrap = line_item.properties['梱包区分'] | plus: 0 %}
+                    {%- if properties_gift_wrap == 0 -%}
+                      {%- if line_item.product.handle != '998002' and line_item.product.handle != 'ラッピング' -%}
+                        {% render 'order-item-checkout', item: line_item, show_qty: true, slash: true %}
+                      {%- endif -%}
+                    {%- endif -%}
+                  {%- endfor -%}
+                </div>
+
+                <!-- show gift wrapping -->
+                {%- if item_properties.size > 0 -%}
+                  {%- for _item_property in item_properties -%}
+                    <div class="container gap-15 lg:gap-20">
+                      <h3 class="has-button has-icon has-icon--gift-wrapping">
+                        <span>ギフト包装{{ _item_property }}</span>
+                        <p>¥165<span>税込</span></p>
+                      </h3>
+
+                      {%- for _item in checkout_line_items -%}
+                        {%- if _item.properties['梱包区分'] == _item_property and _item.product.handle != '998002' and line_item.product.handle != 'ラッピング' -%}
+                          {% render 'order-item-checkout', item: _item, show_qty: true, slash: true %}
+                        {%- endif -%}
+
+                        {%- if forloop.last -%}
+                          {% assign type_card = '種類_' | append: _item_property %}
+                          {% assign content_card = 'メッセージ_' | append: _item_property %}
+                          {% assign name_card = '送り主_' | append: _item_property %}
+
+                          {%- if checkout_attribute_order[type_card] != blank or checkout_attribute_order[content_card] != blank or checkout_attribute_order[name_card] != blank -%}
+                            <div class="checkout-message-card-summary">
+                              <h4>メッセージカードの内容</h4>
+                              <dl class="description-list grid-cols-3">
+                                <dt>ギフトの種類</dt>
+                                <dd class="col-span-2">{{ checkout_attribute_order[type_card] }}</dd>
+                                <dt>贈り主のお名前</dt>
+                                <dd class="col-span-2">
+                                  {%- if checkout_attribute_order[content_card] != blank -%}
+                                    {{ checkout_attribute_order[content_card] }}
+                                  {%- else -%}
+                                    空欄
+                                  {%- endif -%}
+                                </dd>
+                                <dt>メッセージ内容</dt>
+                                <dd class="col-span-2">
+                                  {%- if checkout_attribute_order[name_card] != blank -%}
+                                    {{ checkout_attribute_order[name_card] }}
+                                  {%- else -%}
+                                    空欄
+                                  {%- endif -%}
+                                </dd>
+                              </dl>
+                            </div>
+                          {%- endif -%}
+                        {%- endif -%}
+                      {%- endfor -%}
+                    </div>
+                  {%- endfor -%}
+                {%- endif -%}
+
+                <!-- info shopping bag -->
+                <div class="container gap-15 lg:gap-10">
+                  <h3>ショッピングバッグ</h3>
+                  <div class="checkout-shopping-bag">
+                    {{ qty_shopping_bag }}枚
+                    <span class="checkout-shopping-bag__price">{{ 5500 | money }}</span>
+                    <span class="checkout-shopping-bag__tax-in">税込 / 1枚</span>
+                  </div>
+                </div>
+
+                <!-- dds -->
+                <div class="container gap-15 lg:gap-10">
+                  <h3>お届け日時</h3>
+                  <dl class="description-list grid-cols-3">
+                    <dt>お届け希望日</dt>
+                    <dd class="col-span-2" data-payment-target="deliveryDate">
+                      {%- if delivery_date contains '/' -%}
+                        {% assign delevery_schedule = delivery_date | split: '/' %}
+                        {{ delevery_schedule[0] }}年{{ delevery_schedule[1] }}月{{ delevery_schedule[2] }}日
+                      {%- else -%}
+                        {{ delivery_date }}
+                      {%- endif -%}
+
+                      {%- if day_of_week != blank -%}
+                        ({{ day_of_week }})
+                      {%- endif -%}
+                    </dd>
+                    <dt>お届け希望時間</dt>
+                    <dd class="col-span-2" data-payment-target="deliveryTime">{{ delivery_hours }}</dd>
+                  </dl>
+                </div>
+
+                <!-- note order -->
+                {%- if checkout.note != blank -%}
+                  <div class="container gap-15 lg:gap-10">
+                    <h3>ご要望</h3>
+                    <div class="checkout__body">{{ checkout.note | newline_to_br }}</div>
+                  </div>
+                {%- endif -%}
+
+                <!-- info order on desktop -->
+                <div class="pc">
+                  <h4 class="has-divider sp">金額明細</h4>
+                  <div class="detail-list">
+                    <dl class="description-list grid-cols-2">
+                      <dt>商品小計</dt>
+                      <dd>
+                        <span>{{ checkout.line_items_subtotal_price | minus: total_price_shopping_bag | minus: total_price_gift_wrapping | money }}</span>
+                        <span class="detail-list__tax-in">税込</span>
+                      </dd>
+
+                      {% if customer %}
+                        <dt>fポイント利用</dt>
+                        <dd><span class="js-points-value">{{checkout.gift_cards_amount | divided_by: 1.1 | money | replace: "¥" : "" | replace: "円" : "" }}</span>pt</dd>
+                      {% endif %}
+
+                      <dt>小計</dt>
+                      <dd>
+                        <span class="js-payment-subtotal">{{ checkout.line_items_subtotal_price | minus: total_price_shopping_bag | minus: total_price_gift_wrapping | minus: checkout.gift_cards_amount | money }}</span>
+                        <span class="detail-list__tax-in">税込</span>
+                      </dd>
+
+                      {% if item_properties.size > 0 %}
+                        <dt>ギフト包装</dt>
+                        <dd>
+                          <span class="gift-wrapping-price">{{ 16500 | times: item_properties.size | money }}</span>
+                          <span class="detail-list__tax-in">税込</span>
+                        </dd>
+                      {% endif %}
+
+                      {%- if qty_shopping_bag > 0 -%}
+                        <dt>ショッピングバッグ</dt>
+                        <dd>
+                          <span class="shopping-bag-price">{{ 5500 | times: qty_shopping_bag | money }}</span>
+                          <span class="detail-list__tax-in">税込</span>
+                        </dd>
+                      {%- endif -%}
+
+                      <dt>送料</dt>
+                      <dd>
+                        {{ checkout.shipping_price | money }}
+                        <span class="detail-list__tax-in"> 税込</span>
+                      </dd>
+
+                      {% render 'easy_points_point_exchange_checkout_total' %}
+
+                      <dt class="detail-list__prices">お支払い合計</dt>
+                      <dd class="detail-list__prices">
+                        <span class="detail-list__price js-payment-due">{{ checkout.total_price | minus: checkout.gift_cards_amount |  money }}</span>
+                        <span class="detail-list__tax-in">税込</span>
+                      </dd>
+
+                      <dt>内消費税</dt>
+                      {% assign origin_gift_cards_amount = checkout.gift_cards_amount | divided_by: 1.1 %}
+                      {% assign tax_gift_cards = checkout.gift_cards_amount | minus: origin_gift_cards_amount %}
+
+                      <dd class="js-taxOrder">
+                        {%- if checkout.tax_price != 0 -%}
+                          ({{ checkout.tax_price | minus: tax_gift_cards | money }})
+                        {%- else -%}
+                          (¥0)
+                        {%- endif -%}
+                      </dd>
+
+                      {% if customer %}
+                        <dt class="detail-list__point" data-checkout-target="point">付与fポイント</dt>
+                        <dd class="detail-list__point" data-checkout-target="point">
+                          {%- comment -%} START EASYPOINTS - DO NOT MODIFY! 変更しないでください! INFO @ https://bit.ly/2Dn7ESM {%- endcomment -%}
+                            {%- unless shop.metafields.loyalty.easy_points_attributes.value.stealth_mode -%}
+                              {% render 'epa-checkout-points' %}
+                            {%- endunless -%}
+                          {%- comment -%} END EASYPOINTS {%- endcomment -%}
+                        </dd>
+                      {% endif %}
+                    </dl>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </span>
+    </main>
+
+    <div id="modal-container"></div>
+    <div id="alert-container"></div>
+
+    <div class="content hidden" data-content>
+      <div class="wrap">
+        <aside class="sidebar hidden" role="complementary">
+          <div class="sidebar__content">
+            {{ content_for_order_summary }}
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    {{ tracking_code }}
+
+    {%- comment -%} START EASYPOINTS - DO NOT MODIFY! 変更しないでください! INFO @ https://bit.ly/2Dn7ESM {%- endcomment -%}
+     <script>
+       const getRedeemedValue = () => {
+         const redeemedEl = document.querySelector('.js-points-value');
+         if (redeemedEl) {
+           return redeemedEl.innerText.replace(/[^\d]/g, '');
+         }
+         return 0;
+       };
+       let initialRedeemed = 0;
+       document.addEventListener('DOMContentLoaded', () => {
+         initialRedeemed = getRedeemedValue();
+         const callback = (mutationList, observer) => {
+           for (const mutation of mutationList) {
+             if (mutation.type === 'childList' && mutation.target.classList.contains('js-points-value')) {
+               const redeemed = getRedeemedValue();
+               const epDataEl = document.querySelector('.points-after-applied-discount');
+               const opr = Number(epDataEl.dataset.loyalOprRatio);
+               const ptsRedeemed = (redeemed - initialRedeemed) * opr;
+               const ptsEl = epDataEl.querySelector('.easy-points-total__point__value');
+               const ptsRewarded = Number(ptsEl.innerText.replace(/[^\d]/g, ''));
+               document.querySelectorAll('.easy-points-total__point__value')
+                 .forEach((totalPtsEl) => {
+                   totalPtsEl.innerText = ptsRewarded - ptsRedeemed;
+                 });
+               initialRedeemed = redeemed;
+               break;
+             }
+           }
+         };
+         const observer = new MutationObserver(callback);
+         observer.observe(
+           document.querySelector('.checkout__sidebar .detail-list .description-list'),
+           { subtree: true, childList: true }
+         );
+       });
+     </script>
+     {%- comment -%} END EASYPOINTS {%- endcomment -%}
+  </body>
+</html>

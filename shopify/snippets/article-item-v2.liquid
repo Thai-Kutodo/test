@@ -1,0 +1,36 @@
+<div class="article-item">
+  <div class="article-item__content">
+    <p class="article-item__header">
+      {% assign category = article.url | split: "/" %}
+      {% liquid
+          assign prefixCategory = ''
+          assign labelCategory = ''
+          if request.locale.iso_code contains 'ja'
+              assign prefixCategory = category[2] | url_decode | handleize
+              assign labelCategory = category[2] | url_decode
+          else
+              assign prefixCategory = category[3] | url_decode | handleize
+              assign labelCategory = category[3] | url_decode
+          endif
+      %}
+
+      <span class="article-item__category article-item__category--{% if prefixCategory  == 'ニュース'%}news{% else %}{{ prefixCategory }}{% endif %}" data-catgory="{{ prefixCategory }}">{% if prefixCategory  == 'ニュース'%}News{% else %}{{ prefixCategory }}{% endif %}</span>
+      <span class="article-item__date">{{ article.published_at | date: "%Y.%m.%d" }}</span>
+    </p>
+    <p class="article-item__body">
+       {{ article.title | newline_to_br }}
+    </p>
+    {% if caption %}
+      <p class="article-item__caption">
+        {{ caption }}
+      </p>
+    {% endif %}
+  </div>
+  <div class="article-item__image {% if article.image == blank %}blank-image{% endif %}">
+    {%- if article.image != blank -%}
+      <img alt="{{ article.image.alt }}" class="lazy animated" data-src="{{ article.image.src | image_url: width: 500 }}" />
+    {%- else -%}
+      {{ 'image' | placeholder_svg_tag }}
+    {% endif %}
+  </div>
+</div>

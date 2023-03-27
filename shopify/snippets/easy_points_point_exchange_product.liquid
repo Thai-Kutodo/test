@@ -1,0 +1,20 @@
+{%- comment -%} START EASYPOINTS - DO NOT MODIFY! 変更しないでください! INFO @ https://bit.ly/2Dn7ESM {%- endcomment -%}
+  {%- liquid
+    assign product_ep_metafield = product.metafields.loyalty.easy_points_attributes
+    assign point_exchange_product = product_ep_metafield.value.point_exchange
+    assign point_exchange_product = product_ep_metafield.point_exchange | default: point_exchange_product
+  -%}
+  {%- if point_exchange_product -%}
+    {%- if customer -%}
+      {%- assign customer_ep_metafield = customer.metafields.loyalty.easy_points_attributes.value -%}
+      {%- if true or customer_ep_metafield.balance >= point_exchange_product.point_cost -%}
+        {%- raw -%}data-loyal_product_id="{%- endraw -%}{{ product.id }}{%- raw -%}"
+        data-loyal_point_exchange={%- endraw -%}{{ point_exchange_product | json }}
+      {%- else -%}
+        {%- raw -%}disabled{%- endraw -%}
+      {%- endif -%}
+    {%- else -%}
+      {%- raw -%}disabled{%- endraw -%}
+    {%- endif -%}
+  {%- endif -%}
+{%- comment -%} END EASYPOINTS {%- endcomment -%}

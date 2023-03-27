@@ -1,0 +1,380 @@
+{% assign hmac = customer.id | hmac_sha256: settings.SALT %}
+<input type="text" id="hmac" value="{{ hmac }}" hidden/>
+<input type="text" id="customer_id" value="{{ customer.id }}" hidden/>
+<input type="text" id="customer_name" value="{{ customer.last_name }} {{ customer.first_name }}" hidden/>
+<div 
+id="address-data" 
+data-zip="{{ customer.default_address.zip}}"
+data-province="{{ customer.default_address.province}}"
+data-city="{{ customer.default_address.city}}"
+data-address1="{{ customer.default_address.address1}}"
+data-address2="{{ customer.default_address.address2}}"
+data-building="{{ customer.default_address.building}}"
+data-phone="{{ customer.default_address.phone}}"
+hidden></div>
+
+{% capture modal_sent_email %}
+  <div class="modal modal-nav-bar lg:modal-nav-bar" data-controller="modal">
+    <div class="modal__logo">
+      {% render 'icon-logo' %}
+    </div>
+    <div class="modal__header">
+      <button class="modal__nav-button" data-action="modal#close" type="button">
+        {% render 'icon-arrow-left' %}
+        会員情報
+      </button>
+    </div>
+    <div class="modal__content mypage">
+      <div class="container gap-50 lg:gap-60 pt-40 lg:pt-0 pb-70 lg:pb-160">
+        <h1 class="mypage__title">メールアドレスの変更</h1>
+        <div class="container gap-30 lg:gap-35">
+          <p class="mypage__description mypage__description--large">下記のメールアドレスに<br>確認メールを送信致しましたので、<br>記載内容に従い登録手続きを完了してください。</p>
+          <p class="mypage__email">test-change-email@fabrica-inc.jp</p>
+        </div>
+        <div class="mypage__footer">
+          <button class="button button--cta" id="resend-email" type="button">メールを再送する</button>
+          <div class="mypage__footer-note">※ 一定時間が経過しても登録確認メールが届かない場合は、<br>迷惑メールフォルダのご確認もお願いいたします。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endcapture %}
+
+{% capture modal_confirm %}
+  <div class="modal modal-nav-bar lg:modal-nav-bar" data-controller="modal">
+    <div class="modal__logo">
+      {% render 'icon-logo' %}
+    </div>
+    <div class="modal__header">
+      <button class="modal__nav-button" data-action="modal#close" type="button">
+        {% render 'icon-arrow-left' %}
+        会員情報の変更
+      </button>
+    </div>
+    <div class="modal__content mypage">
+      <div class="container gap-50 lg:gap-60 pt-40 lg:pt-0 pb-70 lg:pb-160">
+        <h1 class="mypage__title">会員情報の確認</h1>
+        <div class="container gap-30 lg:gap-40">
+          <div class="mypage-account-info__confirmation">下記の内容でよろしければ、<br class="sp">「登録する」ボタンを押してください。</div>
+          <dl class="mypage-account-info__list description-list grid-cols-3 lg:grid-cols-8">
+            <dt class="lg:col-span-2">ログインID</dt>
+            <dd class="col-span-2 lg:col-span-6">{{ customer.email }}</dd>
+            {% comment %} <dt class="lg:col-span-2">パスワード</dt>
+            <dd class="col-span-2 lg:col-span-6">・・・・・・・・</dd> {% endcomment %}
+            <dt class="lg:col-span-2">会員番号</dt>
+            <dd class="col-span-2 lg:col-span-6">{{ customer.metafields.smaregi.customer_code.value }}</dd>
+            <dt class="lg:col-span-2">お名前</dt>
+            <dd id="confirm-name" class="col-span-2 lg:col-span-6"></dd>
+            <dt class="lg:col-span-2">お名前（カナ）</dt>
+            <dd id="confirm-kana" class="col-span-2 lg:col-span-6">{{ customer.metafields.additonal.kana_last_name }} {{ customer.metafields.additonal.kana_first_name }}</dd>
+            <dt class="lg:col-span-2">郵便番号</dt>
+            <dd id="confirm-postcode" class="col-span-2 lg:col-span-6">{{ customer.address.zip }}</dd>
+            <dt class="lg:col-span-2">都道府県</dt>
+            <dd id="confirm-province" class="col-span-2 lg:col-span-6">{{ customer.address.province}}</dd>
+            <dt class="lg:col-span-2">市区町村</dt>
+            <dd id="confirm-address1" class="col-span-2 lg:col-span-6">渋谷区恵比寿</dd>
+            <dt class="lg:col-span-2">番地</dt>
+            <dd id="confirm-address2" class="col-span-2 lg:col-span-6">1-20-4</dd>
+            <dt class="lg:col-span-2">建物名・部屋番号</dt>
+            <dd id="confirm-building" class="col-span-2 lg:col-span-6">SreedEBISU 2F</dd>
+            <dt class="lg:col-span-2">電話番号</dt>
+            <dd id="confirm-tel"class="col-span-2 lg:col-span-6">000-0000-0000</dd>
+            <dt class="lg:col-span-2">性別</dt>
+            <dd id="confirm-gender" class="col-span-2 lg:col-span-6">女性</dd>
+            <dt class="lg:col-span-2">生年月日</dt>
+            <dd id="confirm-birthday" class="col-span-2 lg:col-span-6">1000年10月10日</dd>
+            <dt class="lg:col-span-2">メールでのご案内を受け取る</dt>
+            <dd id="confirm-marketing" class="col-span-2 lg:col-span-6">はい</dd>
+          </dl>
+        </div>
+
+        <div class="mypage__footer" data-controller="alert-trigger">
+          <button id="activate-complete" class="button button--cta">登録する</button>
+          <button id="open-complete-modal" class="button button--cta" data-action="alert-trigger#open" type="button" style="display: none;">登録する</button>
+          <button class="button button--has-icon-arrow-left" data-action="modal#close" type="button">修正する</button>
+          <template data-alert-trigger-target="template">
+            <div class="alert" data-alert-close-modal-value="true" data-controller="alert">
+              <div class="alert__title">登録完了しました</div>
+              <a class="button button--cta" href="/account?view=info">閉じる</a>
+              <a class="button" href="/account">マイページへ</a>
+            </div>
+          </template>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endcapture %}
+
+{% capture modal_edit_email %}
+  <div class="modal modal-nav-bar lg:modal-nav-bar" data-controller="modal mypage">
+    <div class="modal__logo">
+      {% render 'icon-logo' %}
+    </div>
+    <div class="modal__header">
+      <button class="modal__nav-button" data-action="modal#close" type="button">
+        {% render 'icon-arrow-left' %}
+        会員情報
+      </button>
+    </div>
+    <div class="modal__content mypage">
+      <div class="container gap-50 lg:gap-60 pt-40 lg:pt-0 pb-70 lg:pb-160">
+        <div class="container gap-10 lg:gap-15">
+          <h1 class="mypage__title">メールアドレスの変更</h1>
+          <div class="mypage__description text-center">新しいメールアドレスを入力してください。</div>
+        </div>
+        <div class="input-form">
+          <div class="grid-cols-2">
+            <label class="input-form__label col-span-2">新しいメールアドレス*</label>
+            <input class="col-span-2" name="email-address" data-mypage-target="email" placeholder="you@familiar.co.jp" required type="text">
+            <div class="error-message hidden" data-mypage-target="errorEmail1">
+              正しいメールアドレスを入力してください
+            </div>
+          </div>
+          <div class="grid-cols-2">
+            <label class="input-form__label col-span-2">新しいメールアドレス（確認用の再入力）*</label>
+            <input class="col-span-2" name="email-address" data-mypage-target="repeatEmail" placeholder="you@familiar.co.jp" required type="text">
+            <div class="error-message hidden" data-mypage-target="errorEmail2">
+            メールが一致しません
+          </div>
+          </div>
+        </div>
+        <div class="mypage__footer">
+          <div data-controller="modal-trigger">
+            <button type="button" name="button" data-mypage-target="screenSuccess" data-action="modal-trigger#open"></button>
+            <button class="button button--cta" data-action="mypage#submitForm" type="button">確認メールを送信する</button>
+            <template data-modal-trigger-target="template">
+              {{ modal_sent_email }}
+            </template>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endcapture %}
+
+{% capture modal_edit_password %}
+  <div class="modal modal-nav-bar lg:modal-nav-bar" data-controller="modal">
+    <div class="modal__logo">
+      {% render 'icon-logo' %}
+    </div>
+    <div class="modal__header">
+      <button class="modal__nav-button" data-action="modal#close" type="button">
+        {% render 'icon-arrow-left' %}
+        会員情報
+      </button>
+    </div>
+    <div class="modal__content mypage">
+      <div class="container gap-50 lg:gap-60 pt-40 lg:pt-0 pb-70 lg:pb-160">
+        <div class="container gap-10">
+          <h1 class="mypage__title">パスワードの変更</h1>
+          <div class="mypage__description text-center">新しいパスワードを設定して変更するでお進みください。</div>
+        </div>
+        <div class="input-form">
+          <div class="grid-cols-2">
+            <label class="input-form__label col-span-2">現在のパスワード*</label>
+            <input class="col-span-2" disabled name="password" type="password" value="・・・・・・・">
+          </div>
+          <div class="grid-cols-2">
+            <label class="input-form__label col-span-2">新しいパスワード*</label>
+            <p class="input-form__caption col-span-2">半角英数字8文字以上でご入力下さい。</p>
+            <input class="col-span-2" name="password" required type="password">
+          </div>
+          <div class="grid-cols-2">
+            <label class="input-form__caption col-span-2">確認のため、もう一度ご入力ください。</label>
+            <input class="col-span-2" name="password" required type="password">
+          </div>
+        </div>
+        <div class="mypage__footer" data-controller="alert-trigger">
+          <button class="button button--cta" data-action="alert-trigger#open">変更する</button>
+          <template data-alert-trigger-target="template">
+            <div class="alert" data-alert-close-modal-value="true" data-controller="alert">
+              <div class="alert__title">変更完了しました</div>
+              <button class="button button--cta" data-action="alert#close" type="button">閉じる</button>
+            </div>
+          </template>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endcapture %}
+
+{% capture modal_edit %}
+  <div class="modal modal-nav-bar lg:modal-nav-bar" data-controller="modal">
+    <div class="modal__logo">
+      {% render 'icon-logo' %}
+    </div>
+    <div class="modal__header">
+      <button class="modal__nav-button" data-action="modal#close" type="button">
+        {% render 'icon-arrow-left' %}
+        会員情報
+      </button>
+    </div>
+    <div class="modal__content mypage">
+      <div class="container gap-50 lg:gap-60 pt-40 lg:pt-0 pb-70 lg:pb-160">
+        <h1 class="mypage__title">会員情報の変更</h1>
+        <div class="input-form">
+          <div class="grid-cols-2">
+            <label class="input-form__label col-span-2">ログインID</label>
+            <input class="col-span-2" disabled name="email-address" type="text" value="{{ customer.email }}">
+          </div>
+          {% comment %} <div class="grid-cols-2">
+            <label class="input-form__label col-span-2">パスワード</label>
+            <input class="col-span-2" disabled name="password" type="password" value="・・・・・・・">
+          </div> {% endcomment %}
+          {% render 'input-form', has_name: true %}
+          <div class="grid-cols-2">
+            <label class="input-form__label col-span-2">性別</label>
+            <div class="col-span-2 radio-button-group">
+              {% assign items = "女性,男性,登録しない" | split: ',' %}
+              {% for item in items %}
+                <label class="radio-button">
+                  <input name="gender" type="radio" value="{{ item }}" {% if item contains customer.metafields.additional.gender %} checked {% endif %}>
+                  <span></span>
+                  {{ item }}
+                </label>
+              {% endfor %}
+            </div>
+          </div>
+          <div class="grid-cols-2">
+            <label class="input-form__label col-span-2">生年月日</label>
+            <div class="col-span-2">
+              {% render 'date-selector', year_min: 1900, year_default: 1970 %}
+            </div>
+          </div>
+          <div class="grid-cols-2">
+            <label class="input-form__label col-span-2">今後ファミリアからのメールでのご案内を受け取る</label>
+            <div class="col-span-2 radio-button-group">
+              <label class="radio-button">
+                <input {% if customer.accepts_marketing %}checked{% endif %} name="receive-news-letter" type="radio" value="はい">
+                <span></span>
+                はい
+              </label>
+              <label class="radio-button">
+                <input {% unless customer.accepts_marketing %}checked{% endunless %} name="receive-news-letter" type="radio" value="いいえ">
+                <span></span>
+                いいえ
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="mypage__footer">
+          <p>上記内容で登録される場合、<br>「確認する」ボタンを押してください。</p>
+          <div data-controller="modal-trigger">
+            <button id="validate-button" class="button button--cta" type="button">確認する</button>
+            <button id="open-confirm-button" class="button button--cta" data-action="modal-trigger#open" type="button" style="display: none;">確認する</button>
+            <button class="button button--has-icon-arrow-left" data-action="modal#close" type="button">もどる</button>
+            <template data-modal-trigger-target="template">
+              {{ modal_confirm }}
+            </template>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endcapture %}
+
+<main class="mypage mypage-account-info">
+  <div class="container gap-50 lg:gap-80 pt-40 lg:pt-60 pb-70 lg:pb-160">
+    <h1 class="mypage__title">会員情報</h1>
+    <dl class="mypage-account-info__list description-list grid-cols-3 lg:grid-cols-8">
+      <dt class="lg:col-span-2">ログインID</dt>
+      <dd class="col-span-2 lg:col-span-6">
+        {{ customer.email }}
+      </dd>
+      <div class="mypage-account-info__list-link col-span-3 lg:col-span-8 lg:grid-cols-8" data-controller="modal-trigger">
+        <div>
+          <button data-action="modal-trigger#open" type="button">メールアドレスを変更する</button>
+        </div>
+        <template data-modal-trigger-target="template">
+          {{ modal_edit_email }}
+        </template>
+      </div>
+      <dt class="lg:col-span-2">会員番号</dt>
+      <dd class="col-span-2 lg:col-span-6">{{ customer.metafields.smaregi.customer_code.value }}</dd>
+      <dt class="lg:col-span-2">お名前</dt>
+      <dd class="col-span-2 lg:col-span-6">{{ customer.last_name }} {{ customer.first_name }}</dd>
+      <dt class="lg:col-span-2">お名前（カナ）</dt>
+      <dd class="col-span-2 lg:col-span-6">{{ customer.metafields.additional.kana_last_name }} {{ customer.metafields.additional.kana_first_name }}</dd>
+      <dt class="lg:col-span-2">郵便番号</dt>
+      <dd id="zip" class="col-span-2 lg:col-span-6">{{ customer.default_address.zip }}</dd>
+      <dt class="lg:col-span-2">都道府県</dt>
+      <dd id="province" class="col-span-2 lg:col-span-6">{{ customer.default_address.province }}</dd>
+      <dt class="lg:col-span-2">市区町村</dt>
+      <dd id="city" class="col-span-2 lg:col-span-6">{{ customer.default_address.city }}</dd>
+      <dt class="lg:col-span-2">番地</dt>
+      <dd id="address1" class="col-span-2 lg:col-span-6">{{ customer.default_address.address1 }}</dd>
+      <dt class="lg:col-span-2">建物名・部屋番号</dt>
+      <dd id="address2" class="col-span-2 lg:col-span-6">{{ customer.default_address.address2 }}</dd>
+      <dt class="lg:col-span-2">電話番号</dt>
+      <dd id="phone" class="col-span-2 lg:col-span-6">{{ customer.default_address.phone }}</dd>
+      <dt class="lg:col-span-2">性別</dt>
+      <dd class="col-span-2 lg:col-span-6">{{ customer.metafields.additional.gender }}</dd>
+      <dt class="lg:col-span-2">生年月日</dt>
+      <dd id="birthday" class="col-span-2 lg:col-span-6"
+          data-year="{{ customer.metafields.additional.birth_year }}"
+          data-month="{{ customer.metafields.additional.birth_month }}"
+          data-day="{{ customer.metafields.additional.birth_day}}"
+      >
+        {{ customer.metafields.additional.birth_year }}年{{ customer.metafields.additional.birth_month }}月{{ customer.metafields.additional.birth_day }}日
+      </dd>
+      <dt class="lg:col-span-2">メールでのご案内を受け取る</dt>
+      <dd class="col-span-2 lg:col-span-6">
+        {%- if customer.accepts_marketing -%}
+          はい
+        {%- else -%}
+          いいえ
+        {%- endif -%}
+      </dd>
+    </dl>
+    <div class="mypage__footer" data-controller="modal-trigger">
+      <button id="open-edit-button" class="button" data-action="modal-trigger#open" type="button">会員情報を変更する</button>
+      <a class="underlined-button" href="/account/login#recover">パスワードの変更はこちら</a>
+      <template data-modal-trigger-target="template">
+        {{ modal_edit }}
+      </template>
+    </div>
+  </div>
+  {% comment %} accentuate forms won't submit properly in a capture. So I put them here. {% endcomment %}
+  {% if customer.default_address.id %}
+    <form id="edit_default_address_form">
+      <input type="hidden" id="acc-add-cust-id" name="customer[id]" value="{{ customer.id }}">
+      <input type="hidden" id="acc-add-id" name="customer[address.id]" value="{{ customer.default_address.id }}">
+      <input type="hidden" id="acc-add-given-name" name="customer[address.first_name]" placeholder="First name"/>
+      <input type="hidden" id="acc-add-family-name" name="customer[address.last_name]" placeholder="Last name"/>
+      <input type="hidden" id="acc-add-postal-code" name="customer[address.zip]"/>
+      <input type="hidden" id="acc-add-province" name="customer[address.province]"/>
+      <input type="hidden" id="acc-add-address-1" name="customer[address.city]"/>
+      <input type="hidden" id="acc-add-address-2" name="customer[address.address1]"/>
+      <input type="hidden" id="acc-add-building" name="customer[address.address2]"/>
+      <input type="hidden" id="acc-add-tel" name="customer[address.phone]"/>
+      <button type="submit" id="send-acc-add-button" class="button button--cta" style="display:none">登録する</button>
+    </form>
+  {% endif %}
+
+  <form id="edit_form">
+    <input type="hidden" id="acc-id" name="customer[id]" value="{{ customer.id }}">
+    <input type="hidden" id="acc-given-name" name="customer[first_name]" placeholder="First name" />
+    <input type="hidden" id="acc-family-name" name="customer[last_name]" placeholder="Last name" />
+    <input type="hidden" id="acc-given-kana" name="metafield[additional.kana_first_name]"  placeholder="First Kana" />
+    <input type="hidden" id="acc-family-kana" name="metafield[additional.kana_last_name]" placeholder="Last Kana" />
+    <input type="hidden" id="acc-gender" name="metafield[additional.gender]" />
+    <input type="hidden" id="acc-year" name="metafield[additional.birth_year]" />
+    <input type="hidden" id="acc-month" name="metafield[additional.birth_month]" />
+    <input type="hidden" id="acc-day" name="metafield[additional.birth_day]" />
+    <input type="hidden" id="accepts-marketing" name="customer[accepts_marketing]"/>
+    <button type="submit" id="send-acc-button" class="button button--cta" style="display:none">登録する</button>
+  </form>
+</main>
+
+<script>
+  $(document).on('click', '#resend-email', function() {
+    const url = window.API_URL['generateEmailHash'];
+    const request = JSON.stringify({
+      customerId: $('#customer_id').val(),
+      email: $('.mypage__email').text(),
+      customerName: $('#customer_name').val(),
+      hmac: $('#hmac').val()
+    });
+    $.post(url, request);
+  });
+</script>

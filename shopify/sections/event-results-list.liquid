@@ -1,0 +1,185 @@
+<section class="event-list">
+  <ul id="" class="event-list__list">
+  {%- for i in (1..1) -%}
+    {%- assign page_url = content_for_header | split:'"pageurl":"' | last | split:'"' | first | split: request.host | last | replace:'\/','/' | replace:'%20',' ' | replace:'\u0026','&'  -%}
+    {%- unless page_url contains "?" -%}{% break %}{%- endunless -%}
+    {%- assign query_string = page_url | split:'?' | last -%}
+    {% assign date_param_array = blank %}
+    {% assign area_param = blank %}
+    {% assign store_param_array = blank %}
+    {% assign category_param = blank %}
+    {% assign today_date_time = "now" | date %}
+    {%- assign qry_parts= query_string | split:'&' -%}
+
+    {%- for part in qry_parts -%}
+      {%- assign key_and_value = part | split:'=' -%}
+      {%- if key_and_value.size > 1 -%}
+        {% if key_and_value[0] == 'date' %}
+          {% assign date_param_array = key_and_value[1] | url_decode | split: ","  %}
+        {% endif %}
+        {% if key_and_value[0] == 'area' %}
+          {% assign area_param = key_and_value[1] | url_decode  %}
+        {% endif %}
+        {% if key_and_value[0] == 'store' %}
+          {% assign store_param_array = key_and_value[1] | url_decode| split: ","  %}
+        {% endif %}
+        {% if key_and_value[0] == 'category' %}
+          {% assign category_param = key_and_value[1] | url_decode %}
+        {% endif %}
+        {% if key_and_value[0] == 'available' %}
+          {% assign available_param = key_and_value[1] | url_decode %}
+        {% endif %}
+      {%- endif -%}
+    {%- endfor -%}
+
+    {% comment %} check event based on search params {% endcomment %}
+    {% for collection in collections %}
+      {% comment %} continue if not a ticket product event {% endcomment %}
+      {% unless collection.products.first.metafields.event_ticketing.event_v2 %}
+        {% continue %}
+      {% endunless %}
+
+      {% comment %} check if VIP event {% endcomment %}
+      {% assign is_vip_event = false %}
+      
+      {% for product in collection.products %}
+        {% if product.tags contains "VIPイベント" %}
+          {% assign is_vip_event = true %}
+          {% break %}
+        {% endif %}
+      {% endfor %}
+      {% if is_vip_event == true %}
+        {% comment %} VIP EVENT FOUND<br> {% endcomment %}
+        {% continue %}
+      {% endif %}
+
+      {% comment %} Check for tickets that are available to reserve {% endcomment %}
+      {% if available_param == "on" %}
+        {% comment %} AVAILABLE SEARCH<br> {% endcomment %}
+        {% assign has_available_products = false %}
+
+        {% for product in collection.products %}
+          {% for variant in product.variants %}
+            {% if variant.available %}
+              {% assign has_available_products = true %}
+              {% break %}
+            {% endif %}
+            {% assign ticket_data = variant.metafields.event_ticketing.event_v2.value %}
+            {% assign ticket_start_time = ticket_data.starts_at | replace: "-08:00", "+09:00" | date %}
+            {% assign ticket_reservation_end_time = variant.metafields.event.event_reservation_end_date_time | replace: "-08:00", "+09:00" | date %}
+            {% if ticket_start_time < today_date_time or ticket_reservation_end_time < today_date_time %}
+              {% assign has_available_products = true %}
+              {% break %}
+            {% endif %}
+          {% endfor %}
+        {% endfor %}
+        {% if has_available_products == false %}
+          {% comment %} NO AVAILABLE TICKETS FOUND<br> {% endcomment %}
+          {% continue %}
+        {% endif %}
+      {% endif %}
+
+      {% comment %} Check for category {% endcomment %}
+      {% if category_param != "" and category_param != "すべて" %}
+        {% comment %} CATEGORY SEARCH<br> {% endcomment %}
+        {% assign event_category = collection.metafields.event.category | split: "," %}
+        {% unless event_category contains category_param %}
+          {% comment %} NO MATCHING CATEGORY FOUND<br> {% endcomment %}
+          {% continue %}
+        {% endunless %}
+      {% endif %}
+      
+      {% comment %} check for tickets availabel on searched dates {% endcomment %}
+      {% if date_param_array.size > 0 %}
+        {% comment %} DATE SEARCH<br> {% endcomment %}
+        {% assign date_found = false %}
+        {% for product in collection.products %}
+          {% for variant in product.variants %}
+            {% assign ticket_data = variant.metafields.event_ticketing.event_v2.value %}
+            {% assign ticket_start_time = ticket_data.starts_at | replace: "-08:00", "+09:00" | date %}
+            {% assign event_date = ticket_data.date | replace: "-", "/" %}
+            {% if date_param_array contains event_date %}
+              {% assign date_found = true %}
+              {% break %}
+            {% endif %}
+          {% endfor %}
+        {% endfor %}
+
+        {% if date_found == false %}
+          {% comment %} NO MATCHING DATE FOUND<br> {% endcomment %}
+          {% continue %}
+        {% endif %}
+      {% endif %}
+
+      {% comment %} check for events with searched area /stores using event.area product metafield {% endcomment %}
+      {% if area_param != "" %}
+        {% comment %} AREA SEARCH<br> {% endcomment %}
+        {% assign area_found = false %}
+      
+        {% for product in collection.products %}
+          {% assign event_area = product.metafields.event.area %}
+          {% if area_param == event_area %}
+              {% assign area_found = true %}
+              {% break %}
+          {% endif %}
+        {% endfor %}
+        {% if area_found == false %}
+          {% comment %} NO MATCHING AREA<br> {% endcomment %}
+          {% continue %}
+        {% endif %}
+      {% endif %}
+
+      {% comment %} check for events with searched stores {% endcomment %}
+      {% if store_param_array.size > 0 %}
+        {% comment %} STORE SEARCH<br> {% endcomment %}
+        {% assign store_found = false %}
+        {% for product in collection.products %}
+          {% for variant in product.variants %}
+            {% assign ticket_data = variant.metafields.event_ticketing.event_v2.value %}
+            {% assign store_name = ticket_data.venue.name %}
+            {% if store_param_array contains store_name %}
+              {% assign store_found = true %}
+              {% break %}
+            {% endif %}
+          {% endfor %}
+        {% endfor %}
+        {% if store_found == false %}
+          {% comment %} NO MATCHING STORE<br> {% endcomment %}
+          {% continue %}
+        {% endif %}
+      {% endif %}
+
+      {% comment %} all checks have passed. display html for collection {% endcomment %}
+      
+      <div class="event-item">
+        <div class="event-item__image">
+          {%- if collection.image != blank -%}
+          <img alt="{{ collection.image.alt }}" class="lazy animated" data-src="{{ collection.image | image_url: width: 500 }}" />
+          {%- else -%}
+            {{ 'image' | placeholder_svg_tag }}
+          {% endif %}
+        </div>
+        <div class="event-item__content">
+          <div class="event-item__statuses">
+            {% for tag in collection.metafields.event.tags.value %}
+              {% assign tag_style = ""%}
+              {% if tag.style != "" %}
+                {% assign tag_style = "--" | append: tag.style %}
+              {% endif %}
+              <span class="event-item__status event-item__status{{tag_style}}">{{ tag.name }}</span>
+            {% endfor %}
+          </div>
+          {% if request.locale.iso_code == 'en' and collection.metafields.custom.shop_name_in_english.value != blank %}
+            <div class="event-item__venue">{{ collection.metafields.custom.shop_name_in_english.value }}</div> 
+          {% endif %}
+          <h2 class="event-item__title">{{ collection.title | newline_to_br }}</h2>
+          <div class="event-item__description">{{ collection.description | newline_to_br }}</div>
+          <div class="event-item__button">
+            <a class="button button--has-icon-arrow-right" href="{{ collection.url }}" data-title="{{collection.title}}" data-id="{{collection.id}}">{{ 'events.event_list.button' | t }}</a>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  {%- endfor -%}
+  </ul>
+</section>

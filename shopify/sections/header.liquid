@@ -1,0 +1,92 @@
+<div class="header__left">
+  {% assign backButton = false %}
+  {% comment %} show back button on all /account pages except /account {% endcomment %}
+  {% if template contains "/account" %}
+    {% if template.suffix != blank %}
+      {% assign backButton = true %}
+    {% endif %}
+  {% endif %}
+
+  {% if template contains "/addresses" or template contains "/order" %}
+    {% assign backButton = true %}
+  {% endif %}
+  {% comment %} show back button on the following templates/template suffixes {% endcomment %}
+  {% if template.suffix contains "feature"
+    or template.suffix == "event-results"
+    or template.suffix == "event" 
+    or template == "product" %}
+      {% assign backButton = true %}
+    {% endif %}
+
+  {% if backButton %}
+    <button aria-label="戻る" class="header__left-button" data-action="back-button#goBack" data-controller="back-button" id="nav-button" type="button">{% render 'icon-arrow-left' %}</button>
+  {% else %}
+    <button aria-expanded="false" aria-label="メニューを開く" class="header__left-button" data-action="global-nav#open" data-global-nav-target="hamburgerButton" id="nav-button" type="button">{% render 'icon-hamburger' %}</button>
+  {% endif %}
+</div>
+<div class="header__center">
+  <h1 class="header__logo">
+    <a aria-label="familiar" href="/">
+      {% render 'icon-logo' %}
+    </a>
+  </h1>
+</div>
+<div class="header__right">
+  {%- if request.locale.iso_code contains 'ja' -%}
+    <nav class="top-nav top-nav--hidden-sp">
+      <ul class="top-nav__list">
+        {%- for link in linklists[settings.menu].links -%}
+          <li class="top-nav__item{% if request.path == link.url %} top-nav__item--active{% endif %}">
+            <a href="{{ link.url }}">{{ link.title }}</a>
+          </li>
+        {%- endfor -%}
+      </ul>
+    </nav>
+    {% if hide_menu_buttons != false %}
+      <ul class="header__menu">
+        <li>
+          <button aria-expanded="false" aria-label="検索" data-action="search#open" data-search-target="searchButton" id="search-button" type="button">
+            {% render 'icon-search' %}
+          </button>
+        </li>
+        <li>
+        {% if customer %}
+          <a aria-label="マイページ" href="/account">
+            {% render 'icon-mypage' %}
+          </a>
+        {% else %}
+          <button class="btn-login" aria-label="マイページ" data-action="login#open">
+            {% render 'icon-mypage' %}
+          </button>
+        {% endif %}
+        </li>
+        <li>
+          <button aria-expanded="false" aria-label="カート" class="cart-button{% if request.path == '/cart' %} disabled-event{% endif %}{% if cart.item_count > 0 %} cart-button--has-item{% endif %}" data-action="cart#open" data-cart-target="cartButton" id="cart-button" type="button">
+            {% render 'icon-cart' %}
+          </button>
+        </li>
+      </ul>
+    {% endif %}
+  {%- endif -%}
+</div>
+
+{% if is_top %}
+  <nav class="top-nav top-nav--hidden-pc">
+    {{ top_nav }}
+  </nav>
+{% endif %}
+
+{% schema %}
+{
+  "name": "t:sections.header.name",
+  "class": "header",
+  "tag": "header",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "ロゴ"
+    }
+  ]
+}
+{% endschema %}

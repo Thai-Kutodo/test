@@ -1,0 +1,49 @@
+{% if customer %}
+	<script>
+		window.location.href = '/account';
+	</script>
+{% endif  %}
+
+<main class="mypage" data-controller="checkout">
+  <div class="mypage-register-stepper mt-20 lg:mt-30">
+    <ul class="stepper">
+      {% assign items = "利用規約,会員登録,情報登録,完了" | split: ',' %}
+      {% for item in items %}
+        <li class="stepper__item{% if forloop.last %} stepper__item--current{% else %} stepper__item--done{% endif %}">
+          <span class="stepper__title">{{ item }}</span>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+  <div class="mypage-register-completed">
+    <div class="container gap-70 lg:gap-80 pt-70 lg:pt-80 pb-70 lg:pb-160">
+      <div>
+        <img alt="" class="lazy animated mypage-register-completed__icon" data-src="{{ 'icon_completed.svg' | asset_url }}" height="70" width="70">
+        <h1 class="mypage-register-completed__header">ファミリアメンバーズの<br class="sp">登録が完了しました。</h1>
+        <div class="mypage-register-completed__body">
+          ご登録ありがとうございます。<br>ご購入履歴や配送状況等のご確認は<br class="sp">マイページからご利用いただけます。
+        </div>
+      </div>
+      <div class="mypage-register-completed__buttons">
+        <a class="button button--cta" href="/">TOPへ</a>
+        <a class="button" href="/account">マイページへ</a>
+        <a id="previous-page-button" class="button" href="/previous" hidden>元のページにもどる</a>
+      </div>
+      {% comment %} {% render 'link-image', tag: '#STYLEBOOK' %} {% endcomment %}
+    </div>
+  </div>
+</main>
+
+<script>
+  //if local storage previous page exists - s
+  document.addEventListener('DOMContentLoaded', () => {
+    const prevPage = localStorage.getItem("previous_page");
+    if(!prevPage) return;
+    const prevButton = document.getElementById("previous-page-button");
+    prevButton.hidden = false;
+    prevButton.addEventListener("click", function (e) {
+        e.preventDefault();
+        window.location.href = prevPage;
+    })
+  })
+</script>

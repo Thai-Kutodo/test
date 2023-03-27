@@ -1,0 +1,34 @@
+
+{% assign description = section.settings.description %}
+{% assign banner = section.settings.banner %}
+<section>
+  <div class="container gap-50 lg:gap-80">
+    {% render 'page-header', description: description, image: banner %}
+  </div>
+</section>
+{% schema %}
+  {
+    "name": "t:sections.banner_gift.name",
+    "class": "section-banner-gift",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "banner",
+        "label": "t:sections.banner_gift.settings.banner.label"
+      },
+ 
+      {
+        "type": "textarea",
+        "id": "description",
+        "label":  "t:sections.banner_gift.settings.description.label",
+        "default": "Description"
+      }
+    ],
+    "presets": [
+      {
+        "name": "t:sections.banner_gift.name"
+      }
+    ]
+  }
+{% endschema %}
+  

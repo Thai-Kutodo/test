@@ -1,0 +1,74 @@
+{%- liquid
+  assign shop_ep_metafield = shop.metafields.loyalty.easy_points_attributes.value
+  assign point_cost_total = 0
+  assign point_cost_product_count = 0
+  assign line_items = cart.items | default: checkout.line_items
+
+  for line_item in line_items
+    assign product_ep_metafield = line_item.product.metafields.loyalty.easy_points_attributes
+    assign unit_point_cost = product_ep_metafield.value.point_exchange.point_cost
+    assign unit_point_cost = product_ep_metafield.point_exchange.point_cost | default: unit_point_cost
+
+    if unit_point_cost
+      assign line_item_point_cost = unit_point_cost | times: line_item.quantity
+      assign point_cost_total = point_cost_total | plus: line_item_point_cost
+      assign point_cost_product_count = point_cost_product_count | plus: 1
+    endif
+  endfor
+-%}
+
+<script>
+  var shopEpMetafield = {{ shop_ep_metafield | json }};
+
+  if (shopEpMetafield) {
+    var easyPointsSession = sessionStorage.getItem("easyPoints");
+    easyPointsSession = easyPointsSession ? JSON.parse(easyPointsSession) : {};
+
+    easyPointsSession.widgetHidden = !shopEpMetafield.widget;
+    easyPointsSession.shopMetafieldUpdatedAt = shopEpMetafield.updated_at;
+
+    {% if customer %}
+      var customerEpMetafield = {{ customer.metafields.loyalty.easy_points_attributes.value | json }};
+    {% else %}
+      var customerEpMetafield = null;
+    {% endif %}
+
+    if (customerEpMetafield) {
+      var pointCostTotal = {{ point_cost_total }};
+      easyPointsSession.pointBalance = customerEpMetafield.balance - pointCostTotal;
+      easyPointsSession.expirationDate = customerEpMetafield.expiration_date;
+
+      easyPointsSession.customerPointRulePercentage = parseInt(customerEpMetafield.percentage);
+      easyPointsSession.customerPointRulePointValue = parseInt(customerEpMetafield.point_value);
+      easyPointsSession.customerPointRuleCurrencyValue = parseInt(customerEpMetafield.currency_value);
+      easyPointsSession.tierName = customerEpMetafield.tier;
+
+      if (customerEpMetafield.tier_maintenance_data) {
+        easyPointsSession.rankMaintenanceData = customerEpMetafield.tier_maintenance_data.maintenance_data;
+        easyPointsSession.rankAdvancementData = customerEpMetafield.tier_maintenance_data.advancement_data;
+      }
+
+      if (typeof customerEpMetafield.coupon_value === "number" && customerEpMetafield.coupon_value > 0) {
+        easyPointsSession.appliedDiscount = customerEpMetafield.coupon_value;
+        easyPointsSession.appliedDiscountCurrency = customerEpMetafield.coupon_currency;
+      } else {
+        delete easyPointsSession.appliedDiscount;
+        delete easyPointsSession.appliedDiscountCurrency;
+      }
+    } else {
+      easyPointsSession.customerPointRulePercentage = parseInt(shopEpMetafield.percentage);
+      easyPointsSession.customerPointRulePointValue = parseInt(shopEpMetafield.point_value);
+      easyPointsSession.customerPointRuleCurrencyValue = parseInt(shopEpMetafield.currency_value);
+
+      delete easyPointsSession.pointBalance;
+      delete easyPointsSession.expirationDate;
+      delete easyPointsSession.tierName;
+      delete easyPointsSession.rankMaintenanceData;
+      delete easyPointsSession.rankAdvancementData;
+      delete easyPointsSession.appliedDiscount;
+      delete easyPointsSession.appliedDiscountCurrency;
+    }
+
+    sessionStorage.setItem("easyPoints", JSON.stringify(easyPointsSession));
+  }
+</script>

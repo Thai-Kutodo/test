@@ -1,0 +1,26 @@
+{%- comment -%} START EASYPOINTS - DO NOT MODIFY! 変更しないでください! INFO @ https://bit.ly/2Dn7ESM {%- endcomment -%}
+  {%- liquid
+    assign shop_ep_metafield = shop.metafields.loyalty.easy_points_attributes
+    assign shop_ep_metafield = shop_ep_metafield.value | default: shop_ep_metafield
+    assign point_cost_total = 0
+    assign point_cost_product_count = 0
+    assign line_items = cart.items | default: checkout.line_items
+
+    for line_item in line_items
+      assign product_ep_metafield = line_item.product.metafields.loyalty.easy_points_attributes
+      assign unit_point_cost = product_ep_metafield.value.point_exchange.point_cost
+      assign unit_point_cost = product_ep_metafield.point_exchange.point_cost | default: unit_point_cost
+
+      if unit_point_cost
+        assign line_item_point_cost = unit_point_cost | times: line_item.quantity
+        assign point_cost_total = point_cost_total | plus: line_item_point_cost
+        assign point_cost_product_count = point_cost_product_count | plus: 1
+      endif
+    endfor
+  -%}
+
+  {%- unless shop_ep_metafield.stealth_mode or point_cost_product_count == 0 -%}
+    <dt>消費fポイント</dt>
+    <dd>{{ point_cost_total | times: 100 | money_without_currency }}{{ 'easypoints.points' | t }}</dd>
+  {%- endunless -%}
+{%- comment -%} END EASYPOINTS {%- endcomment -%}

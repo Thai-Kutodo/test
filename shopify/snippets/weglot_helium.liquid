@@ -1,0 +1,15 @@
+<script src="https://cdn.weglot.com/helium.min.js"></script>
+<script>
+  Helium.initialize({
+    enabled: true,
+    design: {
+      position: 'right'
+    },
+    currentLanguage: '{{ shop.locale }}',
+    languages: [
+      {%- for locale in shop.published_locales %}
+      { code: '{{ locale.iso_code }}', primary: {{ locale.primary }} }{% unless forloop.last %},{% endunless -%}
+      {% endfor %}
+    ]
+  });
+</script>

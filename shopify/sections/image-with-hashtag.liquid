@@ -1,0 +1,348 @@
+<div data-lang="{% if section.settings.language %}en{% else %}ja{% endif %}" class="gallery" data-controller="gallery">
+    {%- for block in section.blocks -%}
+      {%- case block.type -%}
+        {%- when 'style_1' -%}
+          <ul class="gallery__grid{% if block.settings.reverse_block_1 %} gallery__grid-top-reverse{% else%} gallery__grid-top{% endif %}">
+            {%- if block.settings.img_1_1 != blank -%}
+              <li>
+                <a href="{{ block.settings.link_1_1 }}">
+                  <div class="gallery__image tagged-image">
+                    <img data-src="{{ block.settings.img_1_1 | image_url: width: 1000 }}" alt="">
+                    {%- if block.settings.hashtag_1_1 != blank -%}
+                      <span class="tag tag--small">#{{ block.settings.hashtag_1_1 }}</span>
+                    {%- endif -%}
+                  </div>
+                </a>
+              </li>
+            {%- endif -%}
+
+            {%- if block.settings.img_1_2 != blank -%}
+              <li>
+                <a href="{{ block.settings.link_1_2 }}">
+                  <div class="gallery__image tagged-image">
+                    <img data-src="{{ block.settings.img_1_2 | image_url: width: 1400 }}" alt="">
+                    {%- if block.settings.hashtag_1_2 != blank -%}
+                      <span class="tag tag--small">#{{ block.settings.hashtag_1_2 }}</span>
+                    {%- endif -%}
+                  </div>
+                </a>
+              </li>
+            {%- endif -%}
+
+            {%- if block.settings.img_1_3 != blank -%}
+              <li>
+                <a href="{{ block.settings.link_1_3 }}">
+                  <div class="gallery__image tagged-image">
+                    <img data-src="{{ block.settings.img_1_3 | image_url: width: 1400 }}" alt="">
+                    {%- if block.settings.hashtag_1_3 != blank -%}
+                      <span class="tag tag--small">#{{ block.settings.hashtag_1_3 }}</span>
+                    {%- endif -%}
+                  </div>
+                </a>
+              </li>
+            {%- endif -%}
+          </ul>
+        {%- when 'style_2' -%}
+          <ul class="gallery__grid{% if block.settings.reverse_block_2 %} gallery__grid-a-reverse{% else%} gallery__grid-a{% endif %}">
+            {%- if block.settings.img_2_1 != blank -%}
+              <li>
+                <a href="{{ block.settings.link_2_1 }}">
+                  <div class="gallery__image tagged-image">
+                    <img data-src="{{ block.settings.img_2_1 | image_url: width: 1400 }}" alt="">
+                    {%- if block.settings.hashtag_2_1 != blank -%}
+                      <span class="tag tag--small">#{{ block.settings.hashtag_2_1 }}</span>
+                    {%- endif -%}
+                  </div>
+                </a>
+              </li>
+            {%- endif -%}
+
+            {%- if block.settings.img_2_2 != blank -%}
+              <li>
+                <a href="{{ block.settings.link_2_2 }}">
+                  <div class="gallery__image tagged-image">
+                    <img data-src="{{ block.settings.img_2_2 | image_url: width: 1400 }}" alt="">
+                    {%- if block.settings.hashtag_2_2 != blank -%}
+                      <span class="tag tag--small">#{{ block.settings.hashtag_2_2 }}</span>
+                    {%- endif -%}
+                  </div>
+                </a>
+              </li>
+            {%- endif -%}
+
+            {%- if block.settings.img_2_3 != blank -%}
+              <li>
+                <a href="{{ block.settings.link_2_3 }}">
+                  <div class="gallery__image tagged-image">
+                    <img data-src="{{ block.settings.img_2_3 | image_url: width: 1400 }}" alt="">
+                    {%- if block.settings.hashtag_2_3 != blank -%}
+                      <span class="tag tag--small">#{{ block.settings.hashtag_2_3 }}</span>
+                    {%- endif -%}
+                  </div>
+                </a>
+              </li>
+            {%- endif -%}
+          </ul>
+        {%- when 'style_3' -%}
+          <ul class="gallery__grid{% if block.settings.reverse_block_3 %} gallery__grid-b-reverse{% else%} gallery__grid-b{% endif %}">
+            {%- if block.settings.img_3_1 != blank -%}
+              <li>
+                <a href="{{ block.settings.link_3_1 }}">
+                  <div class="gallery__image tagged-image">
+                    <img data-src="{{ block.settings.img_3_1 | image_url: width: 1400 }}" alt="">
+                    {%- if block.settings.hashtag_3_1 != blank -%}
+                      <span class="tag tag--small">#{{ block.settings.hashtag_3_1 }}</span>
+                    {%- endif -%}
+                  </div>
+                </a>
+              </li>
+            {%- endif -%}
+
+            {%- if block.settings.img_3_2 != blank -%}
+              <li>
+                <a href="{{ block.settings.link_3_2 }}">
+                  <div class="gallery__image tagged-image">
+                    <img data-src="{{ block.settings.img_3_2 | image_url: width: 1400 }}" alt="">
+                    {%- if block.settings.hashtag_3_2 != blank -%}
+                      <span class="tag tag--small">#{{ block.settings.hashtag_3_2 }}</span>
+                    {%- endif -%}
+                  </div>
+                </a>
+              </li>
+            {%- endif -%}
+
+            {%- if block.settings.img_3_3 != blank -%}
+              <li>
+                <a href="{{ block.settings.link_3_3 }}">
+                  <div class="gallery__image tagged-image">
+                    <img data-src="{{ block.settings.img_3_3 | image_url: width: 1400 }}" alt="">
+                    {%- if block.settings.hashtag_3_3 != blank -%}
+                      <span class="tag tag--small">#{{ block.settings.hashtag_3_3 }}</span>
+                    {%- endif -%}
+                  </div>
+                </a>
+              </li>
+            {%- endif -%}
+
+            {%- if block.settings.img_3_4 != blank -%}
+              <li>
+                <a href="{{ block.settings.link_3_4 }}">
+                  <div class="gallery__image tagged-image">
+                    <img data-src="{{ block.settings.img_3_4 | image_url: width: 1400 }}" alt="">
+                    {%- if block.settings.hashtag_3_4 != blank -%}
+                      <span class="tag tag--small">#{{ block.settings.hashtag_3_4 }}</span>
+                    {%- endif -%}
+                  </div>
+                </a>
+              </li>
+            {%- endif -%}
+          </ul>
+      {%- endcase -%}
+    {%- endfor -%}
+</div>
+{% schema %}
+{
+  "name": "ハッシュタグ付き画像",
+  "class": "section-img-hashtag",
+  "settings": [
+    {
+      "type":"checkbox",
+      "id": "language",
+      "label": "Show Page In English"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "style_1",
+      "name": "Style 1",
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "reverse_block_1",
+          "label": "Reverse block",
+          "default": false
+        },
+        {
+          "type": "image_picker",
+          "id": "img_1_1",
+          "label": "画像"
+        },
+        {
+          "type": "text",
+          "id": "hashtag_1_1",
+          "label": "ハッシュタグ"
+        },
+        {
+          "type": "url",
+          "id": "link_1_1",
+          "label": "画像のリンク"
+        },
+        {
+          "type": "image_picker",
+          "id": "img_1_2",
+          "label": "画像"
+        },
+        {
+          "type": "text",
+          "id": "hashtag_1_2",
+          "label": "ハッシュタグ"
+        },
+        {
+          "type": "url",
+          "id": "link_1_2",
+          "label": "画像のリンク"
+        },
+        {
+          "type": "image_picker",
+          "id": "img_1_3",
+          "label": "画像"
+        },
+        {
+          "type": "text",
+          "id": "hashtag_1_3",
+          "label": "ハッシュタグ"
+        },
+        {
+          "type": "url",
+          "id": "link_1_3",
+          "label": "画像のリンク"
+        }
+      ]
+    },
+    {
+      "type": "style_2",
+      "name": "Style 2",
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "reverse_block_2",
+          "label": "Reverse block",
+          "default": false
+        },
+        {
+          "type": "image_picker",
+          "id": "img_2_1",
+          "label": "画像"
+        },
+        {
+          "type": "text",
+          "id": "hashtag_2_1",
+          "label": "ハッシュタグ"
+        },
+        {
+          "type": "url",
+          "id": "link_2_1",
+          "label": "画像のリンク"
+        },
+        {
+          "type": "image_picker",
+          "id": "img_2_2",
+          "label": "画像"
+        },
+        {
+          "type": "text",
+          "id": "hashtag_2_2",
+          "label": "ハッシュタグ"
+        },
+        {
+          "type": "url",
+          "id": "link_2_2",
+          "label": "画像のリンク"
+        },
+        {
+          "type": "image_picker",
+          "id": "img_2_3",
+          "label": "画像"
+        },
+        {
+          "type": "text",
+          "id": "hashtag_2_3",
+          "label": "ハッシュタグ"
+        },
+        {
+          "type": "url",
+          "id": "link_2_3",
+          "label": "画像のリンク"
+        }
+      ]
+    },
+    {
+      "type": "style_3",
+      "name": "Style 3",
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "reverse_block_3",
+          "label": "Reverse block",
+          "default": false
+        },
+        {
+          "type": "image_picker",
+          "id": "img_3_1",
+          "label": "画像"
+        },
+        {
+          "type": "text",
+          "id": "hashtag_3_1",
+          "label": "ハッシュタグ"
+        },
+        {
+          "type": "url",
+          "id": "link_3_1",
+          "label": "画像のリンク"
+        },
+        {
+          "type": "image_picker",
+          "id": "img_3_2",
+          "label": "画像"
+        },
+        {
+          "type": "text",
+          "id": "hashtag_3_2",
+          "label": "ハッシュタグ"
+        },
+        {
+          "type": "url",
+          "id": "link_3_2",
+          "label": "画像のリンク"
+        },
+        {
+          "type": "image_picker",
+          "id": "img_3_3",
+          "label": "画像"
+        },
+        {
+          "type": "text",
+          "id": "hashtag_3_3",
+          "label": "ハッシュタグ"
+        },
+        {
+          "type": "url",
+          "id": "link_3_3",
+          "label": "画像のリンク"
+        },
+        {
+          "type": "image_picker",
+          "id": "img_3_4",
+          "label": "画像"
+        },
+        {
+          "type": "text",
+          "id": "hashtag_3_4",
+          "label": "ハッシュタグ"
+        },
+        {
+          "type": "url",
+          "id": "link_3_4",
+          "label": "画像のリンク"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "ハッシュタグ付き画像"
+    }
+  ]
+}
+{% endschema %}
